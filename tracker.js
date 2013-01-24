@@ -173,7 +173,10 @@ exports.getUpdatedDependencies = function(pkgName, callback) {
 		
 		var pkg = pkgs[pkgName];
 		
-		callback(new Error('Package ' + pkgName + ' not found. Did you add it yet?'));
+		if(!pkg) {
+			callback(new Error('Package ' + pkgName + ' not found. Did you add it yet?'));
+			return;
+		}
 		
 		var updatedPkgs = [];
 		
