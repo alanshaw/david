@@ -7,7 +7,6 @@
  * dependencyVersionChange(packageData, oldVersion)
  */
 
-var util = require("util");
 var events = require("events");
 var request = require('request');
 var npm = require('npm');
@@ -124,7 +123,6 @@ exports.updateDependencyVersions = function(callback) {
  * 
  * @param {String} packageJsonUrl URL of the package.json file
  * @param {Function<Error, Object>} [callback] Callback that receives details of the created package
- * @return {boolean}
  */
 exports.addPackage = function(packageJsonUrl, callback) {
 	
