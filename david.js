@@ -11,7 +11,7 @@ tracker.addPackage('https://raw.github.com/alanshaw/grunt-jsio/master/package.js
 	console.log('Package added to tracker', data.name, data.version, data.dependencies);
 	
 	// Listen for when version change events occur
-	tracker.on('packageVersionChange', function(pkgData, oldVersion) {
+	tracker.on('dependencyVersionChange', function(pkgData, oldVersion) {
 		console.log('Dependency ' + pkgData.name + ' changed version from ' + oldVersion + ' to ' + pkgData.version);
 	});
 	

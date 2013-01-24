@@ -13,7 +13,7 @@ var request = require('request');
 var npm = require('npm');
 
 // Give this module ability to emit events (and for others to listen)
-util.inherits(module.exports, events.EventEmitter);
+var exports = new events.EventEmitter();
 
 function Package(name, version) {
 	// TODO: Sanitise name && dependencies names
@@ -48,34 +48,39 @@ var pkgs = {};
  */
 function updateDependencyVersion(pkgName) {
 	
-	npm.commands.view([pkgName, 'dist-tags.latest'], function(error, version) {
+	npm.load({}, function(err) {
 		
-		if(error) {
-			console.error(error);
-			return;
-		}
-		
-		console.log('Found latest version', pkgName, version);
-		
-		if(!deps[pkgName]) {
+		npm.commands.view([pkgName, 'dist-tags.latest'], function(err, data) {
 			
-			deps[pkgName] = new Package(pkgName, version);
-			
-			module.exports.emit('dependencyVersionChange', JSON.parse(deps[pkgName].toJSON()));
-			
-		} else {
-			
-			var oldVersion = deps[pkgName].version;
-			
-			if(oldVersion != version) {
-				
-				deps[pkgName].version = version;
-				
-				module.exports.emit('dependencyVersionChange', JSON.parse(deps[pkgName].toJSON()), oldVersion);
+			if(err) {
+				console.error(err);
+				return;
 			}
-		}
-		
-		// TODO: Update package dependencies
+			
+			var version = Object.keys(data)[0];
+			
+			console.log('Found latest version', pkgName, version);
+			
+			if(!deps[pkgName]) {
+				
+				deps[pkgName] = new Package(pkgName, version);
+				
+				exports.emit('dependencyVersionChange', JSON.parse(deps[pkgName].toJSON()));
+				
+			} else {
+				
+				var oldVersion = deps[pkgName].version;
+				
+				if(oldVersion != version) {
+					
+					deps[pkgName].version = version;
+					
+					exports.emit('dependencyVersionChange', JSON.parse(deps[pkgName].toJSON()), oldVersion);
+				}
+			}
+			
+			// TODO: Update package dependencies
+		});
 	});
 }
 
@@ -84,17 +89,30 @@ function updateDependencyVersion(pkgName) {
  * 
  * @param {Function<Error>} [callback] Callback invoked after the packages have been updated
  */
-module.exports.updateDependencyVersions = function(callback) {
+exports.updateDependencyVersions = function(callback) {
 	
 	process.nextTick(function() {
 		
-		for(var pkgName in deps) {
+		var updatedDeps = {};
+		
+		for(var pkgName in pkgs) {
 			
-			if(!deps.hasOwnProperty(pkgName)) continue;
+			if(!pkgs.hasOwnProperty(pkgName)) continue;
 			
-			console.log('Updating package version', pkgName);
+			var pkg = pkgs[pkgName];
 			
-			updateDependencyVersion(pkgName);
+			for(var depName in pkg.dependencies) {
+				
+				if(!pkg.dependencies.hasOwnProperty(depName)) continue;
+				
+				if(updatedDeps[depName]) continue;
+				
+				updatedDeps[depName] = true;
+				
+				console.log('Updating package version', depName);
+				
+				updateDependencyVersion(depName);
+			}
 		}
 		
 		if(callback) callback();
@@ -108,7 +126,7 @@ module.exports.updateDependencyVersions = function(callback) {
  * @param {Function<Error, Object>} [callback] Callback that receives details of the created package
  * @return {boolean}
  */
-module.exports.addPackage = function(packageJsonUrl, callback) {
+exports.addPackage = function(packageJsonUrl, callback) {
 	
 	process.nextTick(function() {
 		
@@ -123,7 +141,7 @@ module.exports.addPackage = function(packageJsonUrl, callback) {
 				var data = JSON.parse(body);
 				
 				var pkg = new Package(data.name, data.version);
-					
+				
 				pkg.dependencies = data.dependencies;
 				
 				pkgs[data.name] = pkg;
@@ -151,7 +169,7 @@ module.exports.addPackage = function(packageJsonUrl, callback) {
  * @param {String} pkgName
  * @param {Function<Error, Array<Object>>} callback Function that receives the results
  */
-module.exports.getUpdatedDependencies = function(pkgName, callback) {
+exports.getUpdatedDependencies = function(pkgName, callback) {
 	
 	process.nextTick(function() {
 		
@@ -174,4 +192,6 @@ module.exports.getUpdatedDependencies = function(pkgName, callback) {
 		
 		callback(null, updatedPkgs);
 	});
-}
+};
+
+module.exports = exports;
