@@ -12,17 +12,10 @@ Getting Started
 
 Install [Node.js](http://nodejs.org/)
 
-Install grunt:
-
-	npm install -g grunt
-
 Install dependencies:
 
-	npm install request
-	npm install npm
-	npm install express
-	npm install moment
-	npm install semver
+	cd /path/to/david
+	npm install
 
 Run david:
 
