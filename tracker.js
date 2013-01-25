@@ -8,8 +8,8 @@
  */
 
 var events = require("events");
-var request = require('request');
 var npm = require('npm');
+var moment = require('moment');
 
 // Give this module ability to emit events (and for others to listen)
 var exports = new events.EventEmitter();
@@ -19,6 +19,7 @@ function Package(name, version) {
 	this.name = name;
 	this.version = version;
 	this.dependencies = {};
+	this.expires = moment().add(Package.TTL);
 }
 
 Package.prototype.toJSON = function() {
@@ -29,169 +30,116 @@ Package.prototype.toJSON = function() {
 	});
 };
 
-/**
- * Cache of the npm packages that projects depend on. Keyed by Package.name.
- */
-var deps = {};
+Package.TTL = moment.duration({days: 1});
 
-/**
- * Packages users have submitted to the site. Keyed by Package.name.
- */
-var pkgs = {};
-
-/**
- * Update version information for the provided NPM package. Emits a packageVersionChange event if the version number
- * changes.
- * 
- * @param {String} pkgName
- */
-function updateDependencyVersion(pkgName) {
+Package.fromManifest = function(manifest) {
 	
-	npm.load({}, function(err) {
+	// Make a copy of the passed manifest incase its values are changed elsewhere
+	manifest = JSON.parse(JSON.stringify(manifest));
+	
+	var pkg = new Package(manifest.name, manifest.version);
+	
+	pkg.dependencies = manifest.dependencies || {};
+	
+	return pkg;
+};
+
+/**
+ * Cache of the npm packages that projects depend on. Keyed by package name.
+ */
+var dependencies = {};
+
+/**
+ * Get a package for a given dependency name, guaranteed to be less old than Package.TTL
+ * 
+ * @param pkgName
+ * @param callback
+ */
+function getDependency(pkgName, callback) {
+	
+	process.nextTick(function() {
 		
-		npm.commands.view([pkgName, 'dist-tags.latest'], function(err, data) {
+		var dep = dependencies[pkgName];
+		
+		if(dep && dep.expires > new Date()) {
+			callback(null, dep);
+			return;
+		}
+		
+		npm.load({}, function(err) {
 			
-			if(err) {
-				console.error(err);
-				return;
-			}
+			if(err) callback(err);
 			
-			var version = Object.keys(data)[0];
-			
-			console.log('Found latest version', pkgName, version);
-			
-			if(!deps[pkgName]) {
+			npm.commands.view([pkgName, 'dist-tags.latest'], function(err, data) {
 				
-				deps[pkgName] = new Package(pkgName, version);
+				if(err) callback(err);
 				
-				exports.emit('dependencyVersionChange', JSON.parse(deps[pkgName].toJSON()));
+				var version = Object.keys(data)[0];
 				
-			} else {
+				console.log('Found latest version', pkgName, version);
 				
-				var oldVersion = deps[pkgName].version;
+				var oldVersion = dep ? dep.version : undefined;
+				
+				dep = dependencies[pkgName] = new Package(pkgName, version);
 				
 				if(oldVersion != version) {
-					
-					deps[pkgName].version = version;
-					
-					exports.emit('dependencyVersionChange', JSON.parse(deps[pkgName].toJSON()), oldVersion);
+					exports.emit('dependencyVersionChange', JSON.parse(dep.toJSON()), oldVersion);
 				}
-			}
-			
-			// TODO: Update package dependencies
+				
+				// TODO: Update package dependencies
+				
+				callback(null, dep);
+			});
 		});
 	});
 }
 
 /**
- * Update the cache of dependencies versions our packages are depending on
+ * Get a list of updated packages for the passed manifest.
  * 
- * @param {Function<Error>} [callback] Callback invoked after the packages have been updated
- */
-exports.updateDependencyVersions = function(callback) {
-	
-	process.nextTick(function() {
-		
-		var updatedDeps = {};
-		
-		for(var pkgName in pkgs) {
-			
-			if(!pkgs.hasOwnProperty(pkgName)) continue;
-			
-			var pkg = pkgs[pkgName];
-			
-			for(var depName in pkg.dependencies) {
-				
-				if(!pkg.dependencies.hasOwnProperty(depName)) continue;
-				
-				if(updatedDeps[depName]) continue;
-				
-				updatedDeps[depName] = true;
-				
-				console.log('Updating package version', depName);
-				
-				updateDependencyVersion(depName);
-			}
-		}
-		
-		if(callback) callback();
-	});
-};
-
-/**
- * Add a package to the list of packages we keep track of dependencies of
- * 
- * @param {String} packageJsonUrl URL of the package.json file
- * @param {Function<Error, Object>} [callback] Callback that receives details of the created package
- */
-exports.addPackage = function(packageJsonUrl, callback) {
-	
-	process.nextTick(function() {
-		
-		console.log('Adding package', packageJsonUrl);
-		
-		request(packageJsonUrl, function(error, response, body) {
-			
-			if(!error && response.statusCode == 200) {
-				
-				console.log('Successfully retrieved package.json');
-				
-				var data = JSON.parse(body);
-				
-				var pkg = new Package(data.name, data.version);
-				
-				pkg.dependencies = data.dependencies;
-				
-				pkgs[data.name] = pkg;
-				
-				if(callback) callback(null, JSON.parse(pkg.toJSON()));
-				
-			} else {
-				
-				if(callback) {
-					
-					if(!error) {
-						callback(new Error('Failed to add package. HTTP response was: ' + response.statusCode));
-					} else {
-						callback(error);
-					}
-				}
-			}
-		});
-	});
-};
-
-/**
- * Get a list of updated packages for the passed package name.
- * 
- * @param {String} pkgName
+ * @param {String} manifest Parsed package.json file contents
  * @param {Function<Error, Array<Object>>} callback Function that receives the results
  */
-exports.getUpdatedDependencies = function(pkgName, callback) {
+exports.getUpdatedDependencies = function(manifest, callback) {
 	
 	process.nextTick(function() {
 		
-		var pkg = pkgs[pkgName];
+		var pkg = Package.fromManifest(manifest);
+		var updatedPkgs = [];
+		var depNames = Object.keys(pkg.dependencies);
 		
-		if(!pkg) {
-			callback(new Error('Package ' + pkgName + ' not found. Did you add it yet?'));
+		if(!depNames.length) {
+			callback(null, updatedPkgs);
 			return;
 		}
 		
-		var updatedPkgs = [];
+		var processedDeps = 0;
 		
-		Object.keys(pkg.dependencies).forEach(function(pkgName) {
+		depNames.forEach(function(depName) {
 			
-			if(!deps[pkgName]) return;
-			
-			var projectVersion = pkg.dependencies[pkgName];
-			
-			if(projectVersion != deps[pkgName].version) {
-				updatedPkgs.push(JSON.parse(deps[pkgName].toJSON()));
-			}
+			getDependency(depName, function(err, dep) {
+				
+				processedDeps++;
+				
+				if(err) {
+					
+					console.log('Failed to get dependency', depName, err);
+					
+				} else {
+					
+					var pkgDepVersion = pkg.dependencies[depName];
+					
+					// TODO: function to determine when a package version using semver syntax is considered different from absolute version number
+					if(pkgDepVersion != dep.version) {
+						updatedPkgs.push(JSON.parse(dep.toJSON()));
+					}
+				}
+				
+				if(processedDeps == depNames.length) {
+					callback(null, updatedPkgs);
+				}
+			});
 		});
-		
-		callback(null, updatedPkgs);
 	});
 };
 

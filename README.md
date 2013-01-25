@@ -19,6 +19,7 @@ Install dependencies:
 	npm install request
 	npm install npm
 	npm install express
+	npm install moment
 
 Run david:
 
