@@ -10,6 +10,7 @@
 var events = require("events");
 var npm = require('npm');
 var moment = require('moment');
+var semver = require('semver');
 
 // Give this module ability to emit events (and for others to listen)
 var exports = new events.EventEmitter();
@@ -98,14 +99,14 @@ function getDependency(pkgName, callback) {
  * Get a list of updated packages for the passed manifest.
  * 
  * @param {String} manifest Parsed package.json file contents
- * @param {Function<Error, Array<Object>>} callback Function that receives the results
+ * @param {Function<Error, Object>} callback Function that receives the results
  */
 exports.getUpdatedDependencies = function(manifest, callback) {
 	
 	process.nextTick(function() {
 		
 		var pkg = Package.fromManifest(manifest);
-		var updatedPkgs = [];
+		var updatedPkgs = {};
 		var depNames = Object.keys(pkg.dependencies);
 		
 		if(!depNames.length) {
@@ -129,9 +130,10 @@ exports.getUpdatedDependencies = function(manifest, callback) {
 					
 					var pkgDepVersion = pkg.dependencies[depName];
 					
-					// TODO: function to determine when a package version using semver syntax is considered different from absolute version number
-					if(pkgDepVersion != dep.version) {
-						updatedPkgs.push(JSON.parse(dep.toJSON()));
+					var range = semver.validRange(pkgDepVersion);
+					
+					if(!range || !semver.satisfies(dep.version, range)) {
+						updatedPkgs[depName] = dep.version;
 					}
 				}
 				
