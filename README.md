@@ -23,5 +23,5 @@ Install dependencies:
 
 Run david:
 
-	node david
+	node david 8080
 
