@@ -3,7 +3,9 @@
 David
 =====
 
-Nodejs based web service that tells you when your project npm dependencies are out of date.
+Nodejs based web service that tells you when your project npm dependencies are out of date. To use David, your project must include a [package.json](https://npmjs.org/doc/json.html) file in the root of your repository.
+
+Currently David works with package.json files found in _public_ github repositories only.
 
 Getting Started
 ---------------
