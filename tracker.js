@@ -1,7 +1,6 @@
 /**
- * Keeps track of the packages David is meant to be watching as well as the NPM packages they depend on.
- * 
- * Allows users of the module to add packages to the watch list as well as query what dependencies have been updated.
+ * Keeps a cache of dependencies it has recently looked up versions for. Allows users to get a list of their package 
+ * dependencies that are out of date.
  * 
  * Events:
  * dependencyVersionChange(packageData, oldVersion)
@@ -16,34 +15,19 @@ var semver = require('semver');
 var exports = new events.EventEmitter();
 
 function Package(name, version) {
-	// TODO: Sanitise name && dependencies names
 	this.name = name;
 	this.version = version;
-	this.dependencies = {};
 	this.expires = moment().add(Package.TTL);
 }
 
 Package.prototype.toJSON = function() {
 	return JSON.stringify({
 		name: this.name,
-		version: this.version,
-		dependencies: this.dependencies
+		version: this.version
 	});
 };
 
 Package.TTL = moment.duration({days: 1});
-
-Package.fromManifest = function(manifest) {
-	
-	// Make a copy of the passed manifest incase its values are changed elsewhere
-	manifest = JSON.parse(JSON.stringify(manifest));
-	
-	var pkg = new Package(manifest.name, manifest.version);
-	
-	pkg.dependencies = manifest.dependencies || {};
-	
-	return pkg;
-};
 
 /**
  * Cache of the npm packages that projects depend on. Keyed by package name.
@@ -87,8 +71,6 @@ function getDependency(pkgName, callback) {
 					exports.emit('dependencyVersionChange', JSON.parse(dep.toJSON()), oldVersion);
 				}
 				
-				// TODO: Update package dependencies
-				
 				callback(null, dep);
 			});
 		});
@@ -105,9 +87,8 @@ exports.getUpdatedDependencies = function(manifest, callback) {
 	
 	process.nextTick(function() {
 		
-		var pkg = Package.fromManifest(manifest);
 		var updatedPkgs = {};
-		var depNames = Object.keys(pkg.dependencies);
+		var depNames = Object.keys(manifest.dependencies || {});
 		
 		if(!depNames.length) {
 			callback(null, updatedPkgs);
@@ -128,7 +109,7 @@ exports.getUpdatedDependencies = function(manifest, callback) {
 					
 				} else {
 					
-					var pkgDepVersion = pkg.dependencies[depName];
+					var pkgDepVersion = manifest.dependencies[depName];
 					
 					var range = semver.validRange(pkgDepVersion);
 					
