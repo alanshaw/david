@@ -6,7 +6,7 @@
  * dependencyVersionChange(packageData, oldVersion)
  */
 
-var events = require("events");
+var events = require('events');
 var npm = require('npm');
 var moment = require('moment');
 var semver = require('semver');
@@ -124,6 +124,15 @@ exports.getUpdatedDependencies = function(manifest, callback) {
 			});
 		});
 	});
+};
+
+/**
+ * Set the TTL for cached packages.
+ * 
+ * @param {moment.duration} duration Time period the packages will be cahced for, expressed as a moment.duration.
+ */
+exports.setCacheDuration = function(duration) {
+	Package.TTL = duration;
 };
 
 module.exports = exports;
