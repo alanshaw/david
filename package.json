@@ -1,11 +1,9 @@
 {
 	"name": "David",
-	"description": "Nodejs based web service that tells you when your project npm dependencies are out of date.",
+	"description": "Nodejs module that tells you when your project npm dependencies are out of date.",
 	"version": "0.0.1",
 	"dependencies": {
-		"request": "~2.12.0",
 		"npm": "~1.2.3",
-		"express": "~3.0.6",
 		"moment": "~1.7.2",
 		"semver": "~1.1.2"
 	},

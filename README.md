@@ -12,24 +12,38 @@ Getting Started
 
 Install [Node.js](http://nodejs.org/)
 
-Install dependencies:
+Install david:
 
-	cd /path/to/david
-	npm install
+	npm install david
 
-Run david:
+Use:
 
-	node david 8080
-
-
-Example usage
--------------
-
-Get all dependencies (and their versions) for _public_ GitHub repository "grunt-jsio" owned by "alanshaw":
-
-	curl http://localhost:8080/alanshaw/grunt-jsio/deps
-
-Get updated dependencies (and their current version numbers):
-
-	curl http://localhost:8080/alanshaw/grunt-jsio/deps/updated
+```javascript
+	
+	var david = require('david');
+	
+	// Your package.json
+	var manifest = {
+		name: 'xxx',
+		dependencies: {
+			'yyy': '~0.0.0',
+			'zzz': '~0.0.0',
+		}
+	};
+	
+	david.getDependencies(manifest, function(err, deps) {
+		console.log('Latest dependency versions for', manifest.name);
+		Object.keys(deps, function(depName) {
+			console.log(depName + ' - ' + deps[depName]);
+		});
+	});
+	
+	david.getUpdatedDependencies(manifest, function(err, deps) {
+		console.log('Out of date dependencies and their versions for', manifest.name);
+		Object.keys(deps, function(depName) {
+			console.log(depName + ' - ' + deps[depName]);
+		});
+	});
+	
+```
 
