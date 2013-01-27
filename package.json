@@ -1,5 +1,5 @@
 {
-	"name": "David",
+	"name": "david",
 	"description": "Nodejs module that tells you when your project npm dependencies are out of date.",
 	"version": "0.0.1",
 	"dependencies": {
