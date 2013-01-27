@@ -1,4 +1,4 @@
-<img src="https://raw.github.com/alanshaw/david/master/david.png"/>
+<img src="https://raw.github.com/alanshaw/david-www/master/david.png"/>
 
 David
 =====
