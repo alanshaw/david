@@ -12,7 +12,7 @@ Install [Node.js](http://nodejs.org/)
 
 Install david:
 
-	npm install david
+	npm install
 
 Use:
 
