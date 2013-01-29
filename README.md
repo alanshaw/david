@@ -1,6 +1,6 @@
 <img src="https://raw.github.com/alanshaw/david-www/master/david.png"/>
 
-David
+David [![Dependency Status](http://david-dm.org/alanshaw/david/status.png)](http://david-dm.org/alanshaw/david)
 =====
 
 Nodejs module that tells you when your package NPM dependencies are out of date.
