@@ -53,11 +53,17 @@ function getDependency(pkgName, callback) {
 		
 		npm.load({}, function(err) {
 			
-			if(err) callback(err);
+			if(err) {
+				callback(err);
+				return;
+			}
 			
 			npm.commands.view([pkgName, 'dist-tags.latest'], function(err, data) {
 				
-				if(err) callback(err);
+				if(err) {
+					callback(err);
+					return;
+				}
 				
 				var version = Object.keys(data)[0];
 				
