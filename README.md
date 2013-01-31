@@ -12,7 +12,8 @@ Install [Node.js](http://nodejs.org/)
 
 Install david:
 
-	npm install
+	cd /your/project/directory
+	npm install david
 
 Use:
 
