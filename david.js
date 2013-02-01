@@ -155,12 +155,17 @@ exports.getUpdatedDependencies = function(manifest, callback) {
 					
 				} else {
 					
-					var pkgDepVersion = manifest.dependencies[depName];
+					var pkgDepVersion = manifest.dependencies[depName] || '*';
 					
-					var range = semver.validRange(pkgDepVersion);
-					
-					if(!range || !semver.satisfies(dep.version, range)) {
-						updatedPkgs[depName] = dep.version;
+					// TODO: Handle tags correctly
+					// TODO: Handle git repositories
+					if(pkgDepVersion != 'latest' && pkgDepVersion != '*') {
+						
+						var range = semver.validRange(pkgDepVersion);
+						
+						if(!range || !semver.satisfies(dep.version, range)) {
+							updatedPkgs[depName] = dep.version;
+						}
 					}
 				}
 				
