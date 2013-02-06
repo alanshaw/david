@@ -3,7 +3,14 @@
  * dependencies that are out of date.
  * 
  * Events:
- * dependencyVersionChange(packageData, oldVersion)
+ * 
+ * stableVersionChange(name, fromVersion, toVersion)
+ * Cached dependency stable version changed from a stable version to a stable version.
+ * Note: fromVersion may be undefined
+ * 
+ * latestVersionChange(name, fromVersion, toVersion)
+ * Cached dependency latest version changed from stable or build or patch version to stable or build or patch version
+ * Note: fromVersion may be undefined
  */
 
 var events = require('events');
@@ -14,18 +21,12 @@ var semver = require('semver');
 // Give this module ability to emit events (and for others to listen)
 var exports = new events.EventEmitter();
 
-function Package(name, version) {
+function Package(name, stable, latest) {
 	this.name = name;
-	this.version = version;
+	this.stable = stable;
+	this.latest = latest;
 	this.expires = moment().add(Package.TTL);
 }
-
-Package.prototype.toJSON = function() {
-	return JSON.stringify({
-		name: this.name,
-		version: this.version
-	});
-};
 
 Package.TTL = moment.duration({days: 1});
 
@@ -58,23 +59,27 @@ function getDependency(pkgName, callback) {
 				return;
 			}
 			
-			npm.commands.view([pkgName, 'dist-tags.latest'], function(err, data) {
+			npm.commands.view([pkgName, 'versions'], function(err, data) {
 				
 				if(err) {
 					callback(err);
 					return;
 				}
 				
-				var version = Object.keys(data)[0];
+				var latest = Object.keys(data)[0],
+					versions = data[latest].versions,
+					stable = getLatestStable(versions),
+					oldStable = dep ? dep.stable : undefined,
+					oldLatest = dep ? dep.latest : undefined;
 				
-				console.log('Found latest version', pkgName, version);
+				dep = dependencies[pkgName] = new Package(pkgName, stable, latest);
 				
-				var oldVersion = dep ? dep.version : undefined;
+				if(oldStable != stable) {
+					exports.emit('stableVersionChange', pkgName, oldStable, stable);
+				}
 				
-				dep = dependencies[pkgName] = new Package(pkgName, version);
-				
-				if(oldVersion != version) {
-					exports.emit('dependencyVersionChange', JSON.parse(dep.toJSON()), oldVersion);
+				if(oldLatest != latest) {
+					exports.emit('latestVersionChange', pkgName, oldLatest, latest);
 				}
 				
 				callback(null, dep);
@@ -84,7 +89,37 @@ function getDependency(pkgName, callback) {
 }
 
 /**
- * Get a list packages for the passed manifest.
+ * Determine if a version is a stable version or not.
+ * 
+ * @param {String} version
+ * @return {Boolean}
+ */
+function isStable(version) {
+	return version && version.indexOf('-') == -1 && version.indexOf('+') == -1;
+}
+
+/**
+ * Get the latest stable version from a list of versions in ascending order.
+ * 
+ * @param {Array<String>} versions
+ * @return {String}
+ */
+function getLatestStable(versions) {
+	
+	while(versions.length) {
+		
+		var version = versions.pop();
+		
+		if(isStable(version)) {
+			return version;
+		}
+	}
+	
+	return null;
+}
+
+/**
+ * Get a list of dependencies for the passed manifest.
  * 
  * @param {String} manifest Parsed package.json file contents
  * @param {Function<Error, Object>} callback Function that receives the results
@@ -112,7 +147,11 @@ exports.getDependencies = function(manifest, callback) {
 				if(err) {
 					console.log('Failed to get dependency', depName, err);
 				} else {
-					pkgs[depName] = dep.version;
+					pkgs[depName] = {
+						required: manifest.dependencies[depName],
+						stable: dep.stable,
+						latest: dep.latest
+					};
 				}
 				
 				if(processedDeps == depNames.length) {
@@ -158,13 +197,16 @@ exports.getUpdatedDependencies = function(manifest, callback) {
 					var pkgDepVersion = manifest.dependencies[depName] || '*';
 					
 					// TODO: Handle tags correctly
-					// TODO: Handle git repositories
 					if(pkgDepVersion != 'latest' && pkgDepVersion != '*') {
 						
 						var range = semver.validRange(pkgDepVersion);
 						
 						if(!range || !semver.satisfies(dep.version, range)) {
-							updatedPkgs[depName] = dep.version;
+							updatedPkgs[depName] = {
+								required: pkgDepVersion,
+								stable: dep.stable,
+								latest: dep.latest
+							};
 						}
 					}
 				}
