@@ -8,6 +8,9 @@
 		"semver": "~1.1.2"
 	},
 	"main": "david.js",
+	"scripts": {
+		"test": "grunt test"
+	},
 	"license": {
 		"type": "MIT",
 		"url": "https://github.com/alanshaw/david/raw/master/LICENSE"
@@ -15,5 +18,8 @@
 	"repository": {
 		"type": "git",
 		"url": "git://github.com/alanshaw/david.git"
+	},
+	"devDependencies": {
+		"rewire": "~1.0.3"
 	}
 }
