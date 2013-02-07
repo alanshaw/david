@@ -49,7 +49,7 @@ Use:
 		Object.keys(deps, function(depName) {
 			var required = deps[depName].required || '*';
 			var stable = deps[depName].stable || 'None';
-			var latest = deps[depName].latest || 'None';
+			var latest = deps[depName].latest;
 			console.log(depName + 'Required: ' + required + ' Stable: ' + stable + ' Latest: ' + latest);
 		});
 	}
