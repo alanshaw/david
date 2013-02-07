@@ -32,33 +32,27 @@ Use:
 	
 	david.getDependencies(manifest, function(err, deps) {
 		console.log('Latest dependency information for', manifest.name);
-		Object.keys(deps, function(depName) {
-			var required = deps[depName].required || '*';
-			var stable = deps[depName].stable || 'None';
-			var latest = deps[depName].latest || 'None';
-			console.log(depName + 'Required: ' + required + ' Stable: ' + stable + ' Latest: ' + latest);
-		});
+		listDependencies(deps);
 	});
 	
 	david.getUpdatedDependencies(manifest, false, function(err, deps) {
 		console.log('Dependencies with newer versions for', manifest.name);
-		Object.keys(deps, function(depName) {
-			var required = deps[depName].required || '*';
-			var stable = deps[depName].stable || 'None';
-			var latest = deps[depName].latest || 'None';
-			console.log(depName + 'Required: ' + required + ' Stable: ' + stable + ' Latest: ' + latest);
-		});
+		listDependencies(deps);
 	});
 	
 	david.getUpdatedDependencies(manifest, true, function(err, deps) {
 		console.log('Dependencies with newer STABLE versions for', manifest.name);
+		listDependencies(deps);
+	});
+	
+	function listDependencies(deps) {
 		Object.keys(deps, function(depName) {
 			var required = deps[depName].required || '*';
 			var stable = deps[depName].stable || 'None';
 			var latest = deps[depName].latest || 'None';
 			console.log(depName + 'Required: ' + required + ' Stable: ' + stable + ' Latest: ' + latest);
 		});
-	});
+	}
 	
 ```
 
