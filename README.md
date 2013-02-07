@@ -40,8 +40,18 @@ Use:
 		});
 	});
 	
-	david.getUpdatedDependencies(manifest, function(err, deps) {
+	david.getUpdatedDependencies(manifest, false, function(err, deps) {
 		console.log('Dependencies with newer versions for', manifest.name);
+		Object.keys(deps, function(depName) {
+			var required = deps[depName].required || '*';
+			var stable = deps[depName].stable || 'None';
+			var latest = deps[depName].latest || 'None';
+			console.log(depName + 'Required: ' + required + ' Stable: ' + stable + ' Latest: ' + latest);
+		});
+	});
+	
+	david.getUpdatedDependencies(manifest, true, function(err, deps) {
+		console.log('Dependencies with newer STABLE versions for', manifest.name);
 		Object.keys(deps, function(depName) {
 			var required = deps[depName].required || '*';
 			var stable = deps[depName].stable || 'None';

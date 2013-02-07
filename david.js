@@ -163,9 +163,10 @@ var semver = require('semver');
 	 * Get a list of updated packages for the passed manifest.
 	 * 
 	 * @param {Object} manifest Parsed package.json file contents
+	 * @param {Boolean} onlyStable Consider only stable packages
 	 * @param {Function<Error, Object>} callback Function that receives the results
 	 */
-	exports.getUpdatedDependencies = function(manifest, callback) {
+	exports.getUpdatedDependencies = function(manifest, onlyStable, callback) {
 		
 		process.nextTick(function() {
 			
@@ -197,13 +198,17 @@ var semver = require('semver');
 						if(pkgDepVersion != 'latest' && pkgDepVersion != '*') {
 							
 							var range = semver.validRange(pkgDepVersion);
+							var version = onlyStable ? dep.stable : dep.latest;
 							
-							if(!range || !semver.satisfies(dep.latest, range)) {
-								updatedPkgs[depName] = {
-									required: pkgDepVersion,
-									stable: dep.stable,
-									latest: dep.latest
-								};
+							if(version) {
+								
+								if(!range || !semver.satisfies(version, range)) {
+									updatedPkgs[depName] = {
+										required: pkgDepVersion,
+										stable: dep.stable,
+										latest: dep.latest
+									};
+								}
 							}
 						}
 					}

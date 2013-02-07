@@ -25,7 +25,7 @@
 			
 			test.expect(3);
 			
-			david.getUpdatedDependencies({}, function(err, deps) {
+			david.getUpdatedDependencies({}, false, function(err, deps) {
 				test.equal(err, null);
 				test.ok(deps);
 				test.strictEqual(Object.keys(deps).length, 0);
@@ -148,7 +148,7 @@
 				}
 			};
 			
-			david.getUpdatedDependencies(manifest, function(err, deps) {
+			david.getUpdatedDependencies(manifest, false, function(err, deps) {
 				test.expect(2);
 				test.ok(deps);
 				test.strictEqual(Object.keys(deps).length, 0);
@@ -187,7 +187,7 @@
 				}
 			};
 			
-			david.getUpdatedDependencies(manifest, function(err, deps) {
+			david.getUpdatedDependencies(manifest, false, function(err, deps) {
 				test.expect(5);
 				test.ok(deps);
 				test.ok(deps['testDepName']);
@@ -229,7 +229,7 @@
 				}
 			};
 			
-			david.getUpdatedDependencies(manifest, function(err, deps) {
+			david.getUpdatedDependencies(manifest, false, function(err, deps) {
 				test.expect(5);
 				test.ok(deps);
 				test.ok(deps['testDepName']);
