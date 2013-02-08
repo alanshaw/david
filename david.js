@@ -10,6 +10,7 @@ var events = require('events');
 var npm = require('npm');
 var moment = require('moment');
 var semver = require('semver');
+var semverext = require('./semverext');
 
 (function() {
 	
@@ -92,7 +93,7 @@ var semver = require('semver');
 	 * @return {Boolean}
 	 */
 	function isStable(version) {
-		return version && version.indexOf('-') == -1 && version.indexOf('+') == -1;
+		return !(/[a-z+\-]/i.test(version || ''));
 	}
 	
 	/**
@@ -102,6 +103,8 @@ var semver = require('semver');
 	 * @return {String}
 	 */
 	function getLatestStable(versions) {
+		
+		versions = versions.slice();
 		
 		while(versions.length) {
 			
@@ -197,18 +200,36 @@ var semver = require('semver');
 						// TODO: Handle tags correctly
 						if(pkgDepVersion != 'latest' && pkgDepVersion != '*') {
 							
-							var range = semver.validRange(pkgDepVersion);
+							var range = semver.validRange(pkgDepVersion) || '';
 							var version = onlyStable ? dep.stable : dep.latest;
+							var addToUpdatedPkgs = false;
 							
 							if(version) {
 								
-								if(!range || !semver.satisfies(version, range)) {
-									updatedPkgs[depName] = {
-										required: pkgDepVersion,
-										stable: dep.stable,
-										latest: dep.latest
-									};
+								if(!range) {
+									
+									addToUpdatedPkgs = true;
+									
+								} else if(!semver.satisfies(version, range)) {
+									
+									if(onlyStable && semverext.gtr(version, range)) {
+										
+										addToUpdatedPkgs = true;
+										
+									} else if(!onlyStable) {
+										
+										addToUpdatedPkgs = true;
+									}
 								}
+							}
+							
+							if(addToUpdatedPkgs) {
+								
+								updatedPkgs[depName] = {
+									required: pkgDepVersion,
+									stable: dep.stable,
+									latest: dep.latest
+								};
 							}
 						}
 					}
@@ -224,7 +245,7 @@ var semver = require('semver');
 	/**
 	 * Set the TTL for cached packages.
 	 * 
-	 * @param {moment.duration} duration Time period the packages will be cahced for, expressed as a moment.duration.
+	 * @param {moment.duration} duration Time period the packages will be cacched for, expressed as a moment.duration.
 	 */
 	exports.setCacheDuration = function(duration) {
 		Package.TTL = duration;
