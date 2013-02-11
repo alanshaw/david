@@ -1,6 +1,6 @@
 <img src="https://raw.github.com/alanshaw/david-www/master/david.png"/>
 
-David [![Build Status](https://travis-ci.org/alanshaw/david.png)](https://travis-ci.org/alanshaw/david) [![Dependency Status](http://david-dm.org/alanshaw/david.png)](http://david-dm.org/alanshaw/david)
+David [![Build Status](https://travis-ci.org/alanshaw/david.png)](https://travis-ci.org/alanshaw/david) [![Dependency Status](https://david-dm.org/alanshaw/david.png)](https://david-dm.org/alanshaw/david)
 =====
 
 Nodejs module that tells you when your package NPM dependencies are out of date.
