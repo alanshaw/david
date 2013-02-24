@@ -9,7 +9,7 @@
 	},
 	"main": "david.js",
 	"scripts": {
-		"test": "grunt test"
+		"test": "grunt"
 	},
 	"license": {
 		"type": "MIT",
