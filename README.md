@@ -84,4 +84,4 @@ Note: fromVersion may be undefined
 
 Fired when a latest version changed from stable or build or patch version to stable or build or patch version
 
-Note: fromVersion may be undefined
+Note that fromVersion may be undefined. Also note that these events are retroactive. David will only fire them after a call to `getDependencies` or `getUpdatedDependencies` when one or more of the dependencies for the passed manifest have been updated in NPM since david last cached them. The events are not guaranteed to be fired for each version change. If david caches 0.0.1 and version 0.0.2 and 0.0.3 are released before the cache expires, david will only fire an event with 0.0.1 and 0.0.3 as the `fromVersion` and `toVersion` respectively.

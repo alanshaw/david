@@ -1,7 +1,5 @@
 module.exports = function(grunt) {
 	
-	"use strict";
-	
 	grunt.initConfig({
 		
 		nodeunit: {
@@ -9,10 +7,6 @@ module.exports = function(grunt) {
 		},
 		
 		jshint: {
-			options: {
-				node: true,
-				es5: true
-			},
 			files: 'david.js'
 		}
 	});
