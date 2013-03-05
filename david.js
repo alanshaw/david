@@ -121,14 +121,25 @@ function getLatestStable(versions) {
  * Get a list of dependencies for the passed manifest.
  * 
  * @param {Object} manifest Parsed package.json file contents
+ * @param {Object|Function<Error, Object>} [options] Options or callback
+ * @param {Boolean} [options.dev] Consider devDependencies
  * @param {Function<Error, Object>} callback Function that receives the results
  */
-exports.getDependencies = function(manifest, callback) {
+exports.getDependencies = function(manifest, options, callback) {
 	
 	process.nextTick(function() {
 		
+		// Allow callback to be passed as second parameter
+		if(!callback) {
+			callback = options;
+			options = {};
+		} else {
+			options = options || {};
+		}
+		
 		var pkgs = {};
-		var depNames = Object.keys(manifest.dependencies || {});
+		var deps = manifest[options.dev ? 'devDependencies' : 'dependencies'] || {};
+		var depNames = Object.keys(deps);
 		
 		if(!depNames.length) {
 			callback(null, pkgs);
@@ -146,11 +157,7 @@ exports.getDependencies = function(manifest, callback) {
 				if(err) {
 					console.log('Failed to get dependency', depName, err);
 				} else {
-					pkgs[depName] = {
-						required: manifest.dependencies[depName],
-						stable: dep.stable,
-						latest: dep.latest
-					};
+					pkgs[depName] = {required: deps[depName], stable: dep.stable, latest: dep.latest};
 				}
 				
 				if(processedDeps == depNames.length) {
@@ -165,15 +172,26 @@ exports.getDependencies = function(manifest, callback) {
  * Get a list of updated packages for the passed manifest.
  * 
  * @param {Object} manifest Parsed package.json file contents
- * @param {Boolean} onlyStable Consider only stable packages
+ * @param {Object|Function<Error, Object>} [options] Options or callback
+ * @param {Boolean} [options.stable] Consider only stable packages
+ * @param {Boolean} [options.dev] Consider devDependencies
  * @param {Function<Error, Object>} callback Function that receives the results
  */
-exports.getUpdatedDependencies = function(manifest, onlyStable, callback) {
+exports.getUpdatedDependencies = function(manifest, options, callback) {
 	
 	process.nextTick(function() {
 		
+		// Allow callback to be passed as second parameter
+		if(!callback) {
+			callback = options;
+			options = {};
+		} else {
+			options = options || {};
+		}
+		
 		var updatedPkgs = {};
-		var depNames = Object.keys(manifest.dependencies || {});
+		var deps = manifest[options.dev ? 'devDependencies' : 'dependencies'] || {};
+		var depNames = Object.keys(deps);
 		
 		if(!depNames.length) {
 			callback(null, updatedPkgs);
@@ -194,13 +212,13 @@ exports.getUpdatedDependencies = function(manifest, onlyStable, callback) {
 					
 				} else {
 					
-					var pkgDepVersion = manifest.dependencies[depName] || '*';
+					var pkgDepVersion = deps[depName] || '*';
 					
 					// TODO: Handle tags correctly
 					if(pkgDepVersion != 'latest' && pkgDepVersion != '*') {
 						
 						var range = semver.validRange(pkgDepVersion) || '';
-						var version = onlyStable ? dep.stable : dep.latest;
+						var version = options.stable ? dep.stable : dep.latest;
 						var addToUpdatedPkgs = false;
 						
 						if(version) {
@@ -211,11 +229,11 @@ exports.getUpdatedDependencies = function(manifest, onlyStable, callback) {
 								
 							} else if(!semver.satisfies(version, range)) {
 								
-								if(onlyStable && semverext.gtr(version, range)) {
+								if(options.stable && semverext.gtr(version, range)) {
 									
 									addToUpdatedPkgs = true;
 									
-								} else if(!onlyStable) {
+								} else if(!options.stable) {
 									
 									addToUpdatedPkgs = true;
 								}
@@ -223,12 +241,7 @@ exports.getUpdatedDependencies = function(manifest, onlyStable, callback) {
 						}
 						
 						if(addToUpdatedPkgs) {
-							
-							updatedPkgs[depName] = {
-								required: pkgDepVersion,
-								stable: dep.stable,
-								latest: dep.latest
-							};
+							updatedPkgs[depName] = {required: pkgDepVersion, stable: dep.stable, latest: dep.latest};
 						}
 					}
 				}

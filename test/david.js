@@ -47,7 +47,7 @@ module.exports = {
 		
 		test.expect(3);
 		
-		david.getUpdatedDependencies({}, false, function(err, deps) {
+		david.getUpdatedDependencies({}, function(err, deps) {
 			test.equal(err, null);
 			test.ok(deps);
 			test.strictEqual(Object.keys(deps).length, 0);
@@ -110,7 +110,7 @@ module.exports = {
 			}
 		};
 		
-		david.getUpdatedDependencies(manifest, false, function(err, deps) {
+		david.getUpdatedDependencies(manifest, function(err, deps) {
 			test.expect(2);
 			test.ok(deps);
 			test.strictEqual(Object.keys(deps).length, 0);
@@ -129,7 +129,7 @@ module.exports = {
 			}
 		};
 		
-		david.getUpdatedDependencies(manifest, false, function(err, deps) {
+		david.getUpdatedDependencies(manifest, function(err, deps) {
 			test.expect(5);
 			test.ok(deps);
 			test.ok(deps['testDepName']);
@@ -151,7 +151,7 @@ module.exports = {
 			}
 		};
 		
-		david.getUpdatedDependencies(manifest, false, function(err, deps) {
+		david.getUpdatedDependencies(manifest, function(err, deps) {
 			test.expect(5);
 			test.ok(deps);
 			test.ok(deps['testDepName']);
@@ -192,7 +192,7 @@ module.exports = {
 				
 				manifest.dependencies[testDepName] = data[1];
 				
-				david.getUpdatedDependencies(manifest, true, function(err, deps) {
+				david.getUpdatedDependencies(manifest, {stable: true}, function(err, deps) {
 					
 					test.ok(deps);
 					test.ok(deps[testDepName]);
@@ -248,7 +248,7 @@ module.exports = {
 				
 				manifest.dependencies['testDepName' + i] = data[1];
 				
-				david.getUpdatedDependencies(manifest, true, function(err, deps) {
+				david.getUpdatedDependencies(manifest, {stable: true}, function(err, deps) {
 					
 					test.ok(deps);
 					test.equal(deps['testDepName' + i], undefined);
@@ -317,5 +317,49 @@ module.exports = {
 			test.done();
 			
 		}, 1000);
-	} 
+	},
+	'Test getDependencies will consider devDependencies': function(test) {
+		
+		var npmMock = mockNpm(['0.0.1', '0.0.2', '0.0.3']);
+		
+		david.__set__('npm', npmMock);
+		
+		var manifest = {
+			devDependencies: {
+				'testDepName': '~0.0.2'
+			}
+		};
+		
+		david.getDependencies(manifest, {dev: true}, function(err, deps) {
+			test.expect(5);
+			test.ok(deps);
+			test.ok(deps['testDepName']);
+			test.strictEqual(deps['testDepName'].required, '~0.0.2');
+			test.strictEqual(deps['testDepName'].stable, '0.0.3');
+			test.strictEqual(deps['testDepName'].latest, '0.0.3');
+			test.done();
+		});
+	},
+	'Test getUpdatedDependencies will consider devDependencies': function(test) {
+		
+		var npmMock = mockNpm(['0.0.1', '0.0.2', '0.0.3']);
+		
+		david.__set__('npm', npmMock);
+		
+		var manifest = {
+			devDependencies: {
+				'testDepName': '0.0.1'
+			}
+		};
+		
+		david.getUpdatedDependencies(manifest, {dev: true}, function(err, deps) {
+			test.expect(5);
+			test.ok(deps);
+			test.ok(deps['testDepName']);
+			test.strictEqual(deps['testDepName'].required, '0.0.1');
+			test.strictEqual(deps['testDepName'].stable, '0.0.3');
+			test.strictEqual(deps['testDepName'].latest, '0.0.3');
+			test.done();
+		});
+	}
 };

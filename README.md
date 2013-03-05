@@ -25,23 +25,42 @@ Use:
 	var manifest = {
 		name: 'xxx',
 		dependencies: {
+			'aaa': '~0.0.0',
+			'bbb': '~0.0.0',
+		},
+		devDependencies: {
 			'yyy': '~0.0.0',
 			'zzz': '~0.0.0',
 		}
 	};
 	
 	david.getDependencies(manifest, function(err, deps) {
-		console.log('Latest dependency information for', manifest.name);
+		console.log('latest dependencies information for', manifest.name);
 		listDependencies(deps);
 	});
 	
-	david.getUpdatedDependencies(manifest, false, function(err, deps) {
-		console.log('Dependencies with newer versions for', manifest.name);
+	david.getDependencies(manifest, {dev: true}, function(err, deps) {
+		console.log('latest devDependencies information for', manifest.name);
 		listDependencies(deps);
 	});
 	
-	david.getUpdatedDependencies(manifest, true, function(err, deps) {
-		console.log('Dependencies with newer STABLE versions for', manifest.name);
+	david.getUpdatedDependencies(manifest, function(err, deps) {
+		console.log('dependencies with newer versions for', manifest.name);
+		listDependencies(deps);
+	});
+	
+	david.getUpdatedDependencies(manifest, {dev: true}, function(err, deps) {
+		console.log('devDependencies with newer versions for', manifest.name);
+		listDependencies(deps);
+	});
+	
+	david.getUpdatedDependencies(manifest, {stable: true}, function(err, deps) {
+		console.log('dependencies with newer STABLE versions for', manifest.name);
+		listDependencies(deps);
+	});
+	
+	david.getUpdatedDependencies(manifest, {dev: true, stable: true}, function(err, deps) {
+		console.log('devDependencies with newer STABLE versions for', manifest.name);
 		listDependencies(deps);
 	});
 	
