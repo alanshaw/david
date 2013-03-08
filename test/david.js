@@ -18,7 +18,7 @@ function mockNpm(versions, depName) {
 			callback();
 		},
 		commands: {
-			view: function(args, callback) {
+			view: function(args, silent, callback) {
 				process.nextTick(function() {
 					if(args[0] == depName) {
 						callback(null, npmData);

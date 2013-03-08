@@ -53,7 +53,7 @@ function getDependency(pkgName, callback) {
 				return;
 			}
 			
-			npm.commands.view([pkgName, 'versions'], function(err, data) {
+			npm.commands.view([pkgName, 'versions'], true, function(err, data) {
 				
 				if(err) {
 					callback(err);
