@@ -81,6 +81,9 @@ Both `getDependencies` and `getUpdatedDependencies` return an object result, who
 - `stable` - The latest stable version available
 - `latest` - The latest version available (including build and patch versions)
 
+### CLI
+
+If you install David globally (`npm install -g david`), you can run `david` in your project directory to see which dependencies are out of date.
 
 ### Cache
 
