@@ -24,5 +24,8 @@
 		"grunt-contrib-nodeunit": "~0.1.2",
 		"grunt-contrib-jshint": "~0.1.1",
 		"rewire": "~1.1.0"
-	}
+	},
+  "bin": {
+    "david" : "./bin/david.js"
+  }
 }
