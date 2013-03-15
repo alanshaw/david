@@ -89,7 +89,7 @@ If you install David globally (`npm install -g david`), you can run `david` in y
 
 David caches packages it looks up from NPM for 1 day. You can set the cache duration by calling `setCacheDuration` and passing it a [moment](http://momentjs.com/docs/) [duration](http://momentjs.com/docs/#/durations/).
 
-N.B. Packages are actually cached forever, but are refreshed according to this duration. You can control the number of pcakages david will cache by calling `setCacheSize`.
+N.B. Packages are actually cached forever, but are refreshed according to this duration. You can control the number of packages david will cache by calling `setCacheSize`.
 
 
 ### Events
