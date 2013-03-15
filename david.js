@@ -24,10 +24,57 @@ function Package(name, stable, latest) {
 
 Package.TTL = moment.duration({days: 1});
 
+var dependencies = {}; // Cache of the npm packages that projects depend on. Keyed by package name.
+var dependenciesCount = 0; // The current number of dependencies in the cache
+var maxDependencies = Infinity; // The maximum number of dependencies allowed in the cache
+
 /**
- * Cache of the npm packages that projects depend on. Keyed by package name.
+ * Cache a dependency if maxDependencies > 0.
+ * 
+ * @param {Package} dep
+ * @return {Package} The cached dependency
  */
-var dependencies = {};
+function cacheDependency(dep) {
+	
+	// Do we cache?
+	if(maxDependencies > 0) {
+		
+		// Is it a new entry?
+		if(!dependencies[dep.name]) {
+			
+			// Have we cached too many?
+			if(dependenciesCount + 1 > maxDependencies) {
+				
+				var foundExpired = false,
+					depNames = Object.keys(dependencies),
+					now = new Date(),
+					oldestDepName = depNames[0];
+				
+				// Find an expired dependency to remove from the cache
+				for(var i = 0, len = depNames.length; i < len; ++i) {
+					
+					if(dependencies[depNames[i]].expires < now) {
+						foundExpired = true;
+						delete dependencies[depNames[i]];
+						break;
+					} else if(dependencies[depNames[i]].expires < dependencies[oldestDepName].expires) {
+						// Keep track of the oldest dependency incase we don't find an expired dependency
+						oldestDepName = depNames;
+					}
+				}
+				
+				if(!foundExpired) {
+					delete dependencies[oldestDepName];
+				}
+				
+			} else {
+				dependenciesCount++;
+			}
+		}
+	}
+	
+	return dependencies[dep.name] = dep;
+}
 
 /**
  * Get a package for a given dependency name, guaranteed to be less old than Package.TTL
@@ -69,7 +116,7 @@ function getDependency(pkgName, callback) {
 					oldStable = dep ? dep.stable : undefined,
 					oldLatest = dep ? dep.latest : undefined;
 				
-				dep = dependencies[pkgName] = new Package(pkgName, stable, latest);
+				dep = cacheDependency(new Package(pkgName, stable, latest));
 				
 				if(oldStable != stable) {
 					exports.emit('stableVersionChange', pkgName, oldStable, stable);
@@ -261,6 +308,15 @@ exports.getUpdatedDependencies = function(manifest, options, callback) {
  */
 exports.setCacheDuration = function(duration) {
 	Package.TTL = duration;
+};
+
+/**
+ * Set the maximum number of dependencies that can be stored in the cache.
+ * 
+ * @param {Integer} size
+ */
+exports.setCacheSize = function(size) {
+	maxDependencies = size;
 };
 
 module.exports = exports;
