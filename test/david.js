@@ -361,5 +361,139 @@ module.exports = {
 			test.strictEqual(deps['testDepName'].latest, '0.0.3');
 			test.done();
 		});
+	},
+	'Test cacheDependency': function(test) {
+		
+		var previousCacheSize = david.__get__('maxDependencies');
+		var dependencies = {};
+		
+		david.__set__('dependencies', dependencies);
+		
+		var cacheDependency = david.__get__('cacheDependency');
+		
+		test.expect(3);
+		test.strictEqual(0, Object.keys(dependencies).length);
+		
+		var dep = {name: 'foo', expires: moment().add(moment.duration({days: 1}))};
+		
+		// Method under test
+		cacheDependency(dep);
+		
+		test.strictEqual(1, Object.keys(dependencies).length);
+		test.strictEqual(dep, dependencies['foo']);
+		
+		// Tear down
+		david.setCacheSize(previousCacheSize);
+		david.__set__('dependencies', {});
+		david.__set__('dependenciesCount', 0);
+		
+		test.done();
+	},
+	'Test cacheDependency when cache size is 0': function(test) {
+		
+		var previousCacheSize = david.__get__('maxDependencies');
+		var dependencies = {};
+		
+		david.__set__('dependencies', dependencies);
+		
+		var cacheDependency = david.__get__('cacheDependency');
+		
+		test.expect(3);
+		test.strictEqual(0, Object.keys(dependencies).length);
+		
+		david.setCacheSize(0);
+		
+		var dep = {name: 'foo', expires: moment().add(moment.duration({days: 1}))};
+		
+		// Method under test
+		cacheDependency(dep);
+		
+		test.strictEqual(0, Object.keys(dependencies).length);
+		test.strictEqual(undefined, dependencies['foo']);
+		
+		// Tear down
+		david.setCacheSize(previousCacheSize);
+		david.__set__('dependencies', {});
+		david.__set__('dependenciesCount', 0);
+		
+		test.done();
+	},
+	'Test cacheDependency when cache is full': function(test) {
+		
+		var previousCacheSize = david.__get__('maxDependencies');
+		var dependencies = {};
+		
+		david.__set__('dependencies', dependencies);
+		
+		var cacheDependency = david.__get__('cacheDependency');
+		
+		test.expect(6);
+		test.strictEqual(0, Object.keys(dependencies).length);
+		
+		david.setCacheSize(1);
+		
+		var dep1 = {name: 'foo', expires: moment().add(moment.duration({days: 1}))};
+		var dep2 = {name: 'bar', expires: moment().add(moment.duration({days: 1}))};
+		
+		cacheDependency(dep1);
+		
+		test.strictEqual(1, Object.keys(dependencies).length);
+		test.strictEqual(dep1, dependencies['foo']);
+		
+		// Method under test
+		cacheDependency(dep2);
+		
+		// Expect dep1 to have been taken out of the cache
+		test.strictEqual(1, Object.keys(dependencies).length);
+		test.strictEqual(undefined, dependencies['foo']);
+		test.strictEqual(dep2, dependencies['bar']);
+		
+		// Tear down
+		david.setCacheSize(previousCacheSize);
+		david.__set__('dependencies', {});
+		david.__set__('dependenciesCount', 0);
+		
+		test.done();
+	},
+	'Test cacheDependency removes expired dependency when cache is full': function(test) {
+		
+		var previousCacheSize = david.__get__('maxDependencies');
+		var dependencies = {};
+		
+		david.__set__('dependencies', dependencies);
+		
+		var cacheDependency = david.__get__('cacheDependency');
+		
+		test.expect(8);
+		test.strictEqual(0, Object.keys(dependencies).length);
+		
+		david.setCacheSize(2);
+		
+		var dep1 = {name: 'foo', expires: moment().add(moment.duration({days: 1}))};
+		var dep2 = {name: 'bar', expires: moment().subtract(moment.duration({years: 138}))}; // Expired
+		var dep3 = {name: 'baz', expires: moment().add(moment.duration({days: 1}))};
+		
+		// Add dep1 and expired dep 2
+		cacheDependency(dep1);
+		cacheDependency(dep2);
+		
+		test.strictEqual(2, Object.keys(dependencies).length);
+		test.strictEqual(dep1, dependencies['foo']);
+		test.strictEqual(dep2, dependencies['bar']);
+		
+		// Exceed cache size
+		cacheDependency(dep3);
+		
+		test.strictEqual(2, Object.keys(dependencies).length);
+		test.strictEqual(dep1, dependencies['foo']);
+		test.strictEqual(undefined, dependencies['bar']); // bar should have been removed
+		test.strictEqual(dep3, dependencies['baz']);
+		
+		// Tear down
+		david.setCacheSize(previousCacheSize);
+		david.__set__('dependencies', {});
+		david.__set__('dependenciesCount', 0);
+		
+		test.done();
 	}
 };

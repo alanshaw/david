@@ -71,9 +71,11 @@ function cacheDependency(dep) {
 				dependenciesCount++;
 			}
 		}
+		
+		dependencies[dep.name] = dep;
 	}
 	
-	return dependencies[dep.name] = dep;
+	return dep;
 }
 
 /**
