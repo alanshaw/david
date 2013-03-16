@@ -28,6 +28,12 @@ var printDeps = function(deps, type) {
   } else {
     type = '';
   }
+  var oneline = ['npm install'];
+  if (type == 'Dev ') {
+    oneline.push('--save-dev');
+  } else {
+    oneline.push('--save');
+  }
 
   console.log('');
   console.log('%sOutdated %sDependencies%s', yellow, type, reset);
@@ -35,6 +41,7 @@ var printDeps = function(deps, type) {
 
   for (var name in deps) {
     var dep = deps[name];
+    oneline.push(name+'@'+dep.stable);
     console.log('%s%s%s %s(package:%s %s, %slatest: %s%s%s)%s', 
                 green,
                 name,
@@ -51,6 +58,8 @@ var printDeps = function(deps, type) {
                 reset
                );
   }
+  console.log('');
+  console.log('%s%s%s', gray, oneline.join(' '), reset);
   console.log('');
 }
 
