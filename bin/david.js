@@ -11,7 +11,7 @@ if (!fs.existsSync(packageFile)) {
   return;
 }
 
-var package = require(cwd + '/package.json');
+var pkg = require(cwd + '/package.json');
 
 var blue  = '\033[34m';
 var reset = '\033[0m';
@@ -20,7 +20,7 @@ var gray = '\033[90m';
 var yellow = '\033[33m';
 
 var printDeps = function(deps, type) {
-  if (Object.keys(deps).length == 0) {
+  if (Object.keys(deps).length === 0) {
     return;
   }
   if (type) {
@@ -61,13 +61,13 @@ var printDeps = function(deps, type) {
   console.log('');
   console.log('%s%s%s', gray, oneline.join(' '), reset);
   console.log('');
-}
+};
 
-david.getUpdatedDependencies(package, { stable: true }, function(err, deps) {
+david.getUpdatedDependencies(pkg, { stable: true }, function(err, deps) {
 
   var primaryDeps = deps;
 
-  david.getUpdatedDependencies(package, { dev: true, stable: true }, function(err, deps) {
+  david.getUpdatedDependencies(pkg, { dev: true, stable: true }, function(err, deps) {
     var devDeps = deps;
 
 

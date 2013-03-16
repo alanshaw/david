@@ -7,7 +7,7 @@ module.exports = function(grunt) {
 		},
 		
 		jshint: {
-			files: 'david.js'
+			files: ['david.js', 'bin/david.js']
 		}
 	});
 	
