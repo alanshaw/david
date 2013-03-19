@@ -75,7 +75,7 @@ var getDeps = function(pkg, global) {
     });
 
   });
-}
+};
 
 if (process.argv.indexOf('--global') != -1) {
 
