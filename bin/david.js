@@ -3,15 +3,9 @@
 var david = require('../');
 var fs = require('fs');
 var util = require('util');
+var npm = require('npm');
 var cwd = process.cwd();
 var packageFile = cwd + '/package.json';
-
-if (!fs.existsSync(packageFile)) {
-  console.log('package.json does not exist');
-  return;
-}
-
-var pkg = require(cwd + '/package.json');
 
 var blue  = '\033[34m';
 var reset = '\033[0m';
@@ -31,6 +25,8 @@ var printDeps = function(deps, type) {
   var oneline = ['npm install'];
   if (type == 'Dev ') {
     oneline.push('--save-dev');
+  } else if (type == 'Global ') {
+    oneline.push('--global');
   } else {
     oneline.push('--save');
   }
@@ -63,19 +59,53 @@ var printDeps = function(deps, type) {
   console.log('');
 };
 
-david.getUpdatedDependencies(pkg, { stable: true }, function(err, deps) {
 
-  var primaryDeps = deps;
+var getDeps = function(pkg, global) {
+  david.getUpdatedDependencies(pkg, { stable: true }, function(err, deps) {
 
-  david.getUpdatedDependencies(pkg, { dev: true, stable: true }, function(err, deps) {
-    var devDeps = deps;
+    var primaryDeps = deps;
+
+    david.getUpdatedDependencies(pkg, { dev: true, stable: true }, function(err, deps) {
+      var devDeps = deps;
 
 
-    printDeps(primaryDeps);
-    printDeps(devDeps, 'Dev');
+      printDeps(primaryDeps, (global) ? 'Global' : '');
+      printDeps(devDeps, (global) ? 'Global' : 'Dev');
 
+    });
 
   });
+};
 
-});
+if (process.argv.indexOf('--global') != -1) {
+
+  npm.load({ global: true }, function(err) {
+    if (err) {
+      throw err;
+    }
+    npm.commands.ls([], true, function(err, data, issues) {
+      if (err) {
+        throw err;
+      }
+      var pkg = {
+        name: 'Global Dependencies',
+        dependencies: {}
+      };
+      for (var key in data.dependencies) {
+        pkg.dependencies[key] = data.dependencies[key].version;
+      }
+      getDeps(pkg, true);
+    });
+  });
+
+} else {
+  if (!fs.existsSync(packageFile)) {
+    console.log('package.json does not exist');
+    return;
+  }
+
+  var pkg = require(cwd + '/package.json');
+  getDeps(pkg);
+}
+
 
