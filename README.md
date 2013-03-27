@@ -85,6 +85,8 @@ Both `getDependencies` and `getUpdatedDependencies` return an object result, who
 
 If you install David globally (`npm install -g david`), you can run `david` in your project directory to see which dependencies are out of date.
 
+You can also run `david --global` to see your outdated global dependencies.
+
 ### Cache
 
 David caches packages it looks up from NPM for 1 day. You can set the cache duration by calling `setCacheDuration` and passing it a [moment](http://momentjs.com/docs/) [duration](http://momentjs.com/docs/#/durations/).
