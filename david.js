@@ -86,7 +86,7 @@ function cacheDependency(dep) {
  */
 function getDependency(pkgName, callback) {
 	
-	process.nextTick(function() {
+	setImmediate(function() {
 		
 		var dep = dependencies[pkgName];
 		
@@ -176,7 +176,7 @@ function getLatestStable(versions) {
  */
 exports.getDependencies = function(manifest, options, callback) {
 	
-	process.nextTick(function() {
+	setImmediate(function() {
 		
 		// Allow callback to be passed as second parameter
 		if(!callback) {
@@ -228,7 +228,7 @@ exports.getDependencies = function(manifest, options, callback) {
  */
 exports.getUpdatedDependencies = function(manifest, options, callback) {
 	
-	process.nextTick(function() {
+	setImmediate(function() {
 		
 		// Allow callback to be passed as second parameter
 		if(!callback) {
