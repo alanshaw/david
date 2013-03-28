@@ -1,9 +1,11 @@
 <img src="https://raw.github.com/alanshaw/david-www/master/david.png"/>
 
+
 David [![Build Status](https://travis-ci.org/alanshaw/david.png)](https://travis-ci.org/alanshaw/david) [![Dependency Status](https://david-dm.org/alanshaw/david.png)](https://david-dm.org/alanshaw/david)
 =====
 
 Nodejs module that tells you when your package NPM dependencies are out of date.
+
 
 Getting Started
 ---------------
@@ -81,33 +83,49 @@ Both `getDependencies` and `getUpdatedDependencies` return an object result, who
 - `stable` - The latest stable version available
 - `latest` - The latest version available (including build and patch versions)
 
-### CLI
+
+CLI
+---
 
 If you install David globally (`npm install -g david`), you can run `david` in your project directory to see which dependencies are out of date.
 
 You can also run `david --global` to see your outdated global dependencies.
 
-### Cache
+
+Cache
+-----
 
 David caches packages it looks up from NPM for 1 day. You can set the cache duration by calling `setCacheDuration` and passing it a [moment](http://momentjs.com/docs/) [duration](http://momentjs.com/docs/#/durations/).
 
 N.B. Packages are actually cached forever, but are refreshed according to this duration. You can control the number of packages david will cache by calling `setCacheSize`.
 
 
-### Events
+Events
+------
 
 David will let you know when versions for packages it has cached change. Listen to the following events:
 
-#### stableVersionChange(name, fromVersion, toVersion)
+### stableVersionChange(name, fromVersion, toVersion)
 
 Fired when a dependency stable version changed from a stable version to a stable version.
 
 N.B. fromVersion may be undefined
 
-#### latestVersionChange(name, fromVersion, toVersion)
+### latestVersionChange(name, fromVersion, toVersion)
 
 Fired when a latest version changed from stable or build or patch version to stable or build or patch version
 
 N.B. fromVersion may be undefined.
 
 N.B. These events are retroactive. David will only fire them after a call to `getDependencies` or `getUpdatedDependencies` when one or more of the dependencies for the passed manifest have been updated in NPM since david last cached them. The events are not guaranteed to be fired for each version change. If david caches 0.0.1 and version 0.0.2 and 0.0.3 are released before the cache expires, david will only fire an event with 0.0.1 and 0.0.3 as the `fromVersion` and `toVersion` respectively.
+
+
+Release History
+---------------
+
+ * 2013-03-27    v1.5.0    CLI added --global flag to find outdated global dependencies
+ * 2013-03-15    v1.4.0    Allow set the maximum number of dependencies that can be stored in the cache
+ * 2013-03-14    v1.3.0    Added CLI support
+ * 2013-03-05    v1.2.0    David can now get dependency information for devDependencies
+ * 2013-02-07    v1.1.0    Adds onlyStable param to getUpdatedDependencies to filter by dependencies that are updated and stable
+ * 2013-02-06    v1.0.0    Return latest stable version as well as latest version (including patch and build versions). API return values changed. Events changed.
