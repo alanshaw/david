@@ -1,7 +1,7 @@
 {
   "name": "david",
   "description": "Nodejs module that tells you when your project npm dependencies are out of date.",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "dependencies": {
     "npm": "~1.2.3",
     "moment": "~2.0.0",
