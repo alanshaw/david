@@ -123,9 +123,9 @@ N.B. These events are retroactive. David will only fire them after a call to `ge
 Release History
 ---------------
 
- * 2013-03-27    v1.5.0    CLI added --global flag to find outdated global dependencies
- * 2013-03-15    v1.4.0    Allow set the maximum number of dependencies that can be stored in the cache
- * 2013-03-14    v1.3.0    Added CLI support
- * 2013-03-05    v1.2.0    David can now get dependency information for devDependencies
- * 2013-02-07    v1.1.0    Adds onlyStable param to getUpdatedDependencies to filter by dependencies that are updated and stable
- * 2013-02-06    v1.0.0    Return latest stable version as well as latest version (including patch and build versions). API return values changed. Events changed.
+ * 2013-03-27   v1.5.0   CLI added --global flag to find outdated global dependencies
+ * 2013-03-15   v1.4.0   Allow set the maximum number of dependencies that can be stored in the cache
+ * 2013-03-14   v1.3.0   Added CLI support
+ * 2013-03-05   v1.2.0   David can now get dependency information for devDependencies
+ * 2013-02-07   v1.1.0   Adds onlyStable param to getUpdatedDependencies to filter by dependencies that are updated and stable
+ * 2013-02-06   v1.0.0   Return latest stable version as well as latest version (including patch and build versions). API return values changed. Events changed.
