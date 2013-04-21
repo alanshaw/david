@@ -495,5 +495,25 @@ module.exports = {
 		david.__set__('dependenciesCount', 0);
 		
 		test.done();
+	},
+	'Test support dependencies specified as an array': function(test) {
+		
+		var npmMock = mockNpm(['0.0.0']);
+		
+		david.__set__('npm', npmMock);
+		
+		var manifest = {
+			dependencies: ['testDepName']
+		};
+		
+		david.getDependencies(manifest, function(err, deps) {
+			test.expect(5);
+			test.ok(deps);
+			test.ok(deps['testDepName']);
+			test.strictEqual(deps['testDepName'].required, '*');
+			test.strictEqual(deps['testDepName'].stable, '0.0.0');
+			test.strictEqual(deps['testDepName'].latest, '0.0.0');
+			test.done();
+		});
 	}
 };

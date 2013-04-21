@@ -166,6 +166,20 @@ function getLatestStable(versions) {
 	return null;
 }
 
+// Convert dependencies specified as an array to an object
+function normaliseDeps(deps) {
+	
+	if(Object.prototype.toString.call(deps) == '[object Array]') {
+		
+		deps = deps.reduce(function(d, depName) {
+			d[depName] = '*';
+			return d;
+		}, {});
+	}
+	
+	return deps;
+}
+
 /**
  * Get a list of dependencies for the passed manifest.
  * 
@@ -187,7 +201,7 @@ exports.getDependencies = function(manifest, options, callback) {
 		}
 		
 		var pkgs = {};
-		var deps = manifest[options.dev ? 'devDependencies' : 'dependencies'] || {};
+		var deps = normaliseDeps(manifest[options.dev ? 'devDependencies' : 'dependencies'] || {});
 		var depNames = Object.keys(deps);
 		
 		if(!depNames.length) {
@@ -239,7 +253,7 @@ exports.getUpdatedDependencies = function(manifest, options, callback) {
 		}
 		
 		var updatedPkgs = {};
-		var deps = manifest[options.dev ? 'devDependencies' : 'dependencies'] || {};
+		var deps = normaliseDeps(manifest[options.dev ? 'devDependencies' : 'dependencies'] || {});
 		var depNames = Object.keys(deps);
 		
 		if(!depNames.length) {
