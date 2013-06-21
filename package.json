@@ -2,14 +2,10 @@
   "name": "david",
   "description": "Nodejs module that tells you when your project npm dependencies are out of date.",
   "version": "1.6.0",
-  "dependencies": {
-    "npm": "~1.2.3",
-    "moment": "~2.0.0",
-    "semver": "~1.1.2"
-  },
-  "main": "david.js",
+  "main": "lib/david.js",
   "scripts": {
-    "test": "grunt"
+    "test": "nodeunit test",
+    "coveralls": "jscoverage lib && DAVID_COV=1 nodeunit --reporter=lcov test | coveralls"
   },
   "license": {
     "type": "MIT",
@@ -19,10 +15,15 @@
     "type": "git",
     "url": "git://github.com/alanshaw/david.git"
   },
+  "dependencies": {
+    "npm": "~1.2.3",
+    "moment": "~2.0.0",
+    "semver": "~1.1.2"
+  },
   "devDependencies": {
-    "grunt": "~0.4.0",
-    "grunt-contrib-nodeunit": "~0.1.2",
-    "grunt-contrib-jshint": "~0.3.0",
+    "nodeunit": "https://github.com/alanshaw/nodeunit/tarball/master",
+    "jscoverage": "~0.3.7",
+    "coveralls": "~2.0.9",
     "rewire": "~1.1.0"
   },
   "bin": {

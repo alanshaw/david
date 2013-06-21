@@ -1,6 +1,6 @@
 var moment = require('moment');
 var rewire = require('rewire');
-var david = rewire('../david');
+var david = process.env.DAVID_COV ? rewire('../lib-cov/david') : rewire('../lib/david');
 
 david.setCacheDuration(moment.duration({days: -1}));
 

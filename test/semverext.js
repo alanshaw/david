@@ -2,7 +2,7 @@
 	
 	"use strict";
 	
-	var semverext = require('../semverext');
+	var semverext = process.env.DAVID_COV ? require('../lib-cov/semverext') : require('../lib/semverext');
 	
 	// Many of these version numbers lifted from versions numbers used in semver range tests
 	// Thank you https://github.com/isaacs/node-semver/blob/master/test.js
