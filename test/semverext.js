@@ -37,7 +37,7 @@
 			  , ["~ 1.0", "1.1.0"]
 			  , ["<1.2", "1.2.0"]
 			  , ["< 1.2", "1.2.1"]
-			  , ["1", "2.0.0beta"]
+			  , ["1", "2.0.0beta", true]
 			  , ["~v0.5.4-pre", "0.6.0"]
 			  , ["~v0.5.4-pre", "0.6.1-pre"]
 			  , ["=0.7.x", "0.8.0"]
@@ -65,9 +65,9 @@
 			  , ["~>1", "2.2.3"]
 			  , ["~1.0", "1.1.0"] // >=1.0.0 <1.1.0
 			  , ["<1", "1.0.0"]
-			  , ["1", "2.0.0beta"]
-			  , ["<1", "1.0.0beta"]
-			  , ["< 1", "1.0.0beta"]
+			  , ["1", "2.0.0beta", true]
+			  , ["<1", "1.0.0beta", true]
+			  , ["< 1", "1.0.0beta", true]
 			  , ["=0.7.x", "0.8.2"]
 			  , ["<=0.7.x", "0.7.2"]
 			];
@@ -77,7 +77,7 @@
 			data.forEach(function(tuple) {
 				//console.log('Is', tuple[1], 'greater than', tuple[0], '?');
 				
-				var result = semverext.gtr(tuple[1], tuple[0]);
+				var result = semverext.gtr(tuple[1], tuple[0], tuple[2]);
 				
 				//console.log(result ? 'Yes' : 'No', result ?  '(Expected)' : '<--- UNEXPECTED');
 				
@@ -86,7 +86,7 @@
 			
 			test.done();
 		},
-		'Negative gtr tests': function(test) {
+		'negative gtr tests': function(test) {
 			
 			var data = [ 
 				['~0.6.1-1', '0.6.1-1']
@@ -94,7 +94,7 @@
 			  , ["1.0.0 - 2.0.0", "0.9.9"]
 			  , ["1.0.0", "1.0.0"]
 			  , [">=*", "0.2.4"]
-			  , ["", "1.0.0"]
+			  , ["", "1.0.0", true]
 			  , ["*", "1.2.3"]
 			  , ["*", "v1.2.3-foo"]
 			  , [">=1.0.0", "1.0.0"]
@@ -150,7 +150,7 @@
 			  , [">= 1", "1.0.0"]
 			  , ["<1.2", "1.1.1"]
 			  , ["< 1.2", "1.1.1"]
-			  , ["1", "1.0.0beta"]
+			  , ["1", "1.0.0beta", true]
 			  , ["~v0.5.4-pre", "0.5.5"]
 			  , ["~v0.5.4-pre", "0.5.4"]
 			  , ["=0.7.x", "0.7.2"]
@@ -163,11 +163,11 @@
 			test.expect(data.length);
 			
 			data.forEach(function(tuple) {
-				//console.log('Is', tuple[1], 'greater than', tuple[0], '?');
+				console.log('Is', tuple[1], 'greater than', tuple[0], '?');
 				
-				var result = semverext.gtr(tuple[1], tuple[0]);
+				var result = semverext.gtr(tuple[1], tuple[0], tuple[2]);
 				
-				//console.log(result ? 'Yes' : 'No', result ? '<--- UNEXPECTED' : '(Expected)');
+				console.log(result ? 'Yes' : 'No', result ? '<--- UNEXPECTED' : '(Expected)');
 				
 				test.strictEqual(false, result);
 			});
