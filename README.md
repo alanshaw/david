@@ -123,6 +123,7 @@ N.B. These events are retroactive. David will only fire them after a call to `ge
 Release History
 ---------------
 
+ * 2013-06-27   v1.7.0   Updated to use semver 2 module. Simplified code that determines if a version is greater than a range
  * 2013-03-28   v1.6.0   Use setImmediate instead of process.nextTick. David now requires NodeJS 0.10.x
  * 2013-03-27   v1.5.0   CLI added --global flag to find outdated global dependencies
  * 2013-03-15   v1.4.0   Allow set the maximum number of dependencies that can be stored in the cache
