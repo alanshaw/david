@@ -1,7 +1,4 @@
-<img src="https://raw.github.com/alanshaw/david-www/master/david.png"/>
-
-
-David [![Build Status](https://travis-ci.org/alanshaw/david.png)](https://travis-ci.org/alanshaw/david) [![Dependency Status](https://david-dm.org/alanshaw/david.png)](https://david-dm.org/alanshaw/david) [![Coverage Status](https://coveralls.io/repos/alanshaw/david/badge.png?branch=master)](https://coveralls.io/r/alanshaw/david?branch=master)
+<img src="https://raw.github.com/alanshaw/david-www/master/david.png" title="David"/> [![Build Status](https://travis-ci.org/alanshaw/david.png)](https://travis-ci.org/alanshaw/david) [![Dependency Status](https://david-dm.org/alanshaw/david.png)](https://david-dm.org/alanshaw/david) [![Coverage Status](https://coveralls.io/repos/alanshaw/david/badge.png?branch=master)](https://coveralls.io/r/alanshaw/david?branch=master)
 =====
 
 Nodejs module that tells you when your package NPM dependencies are out of date.
