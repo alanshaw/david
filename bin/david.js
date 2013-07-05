@@ -77,13 +77,13 @@ var getDeps = function(pkg, global) {
   });
 };
 
-if (process.argv.indexOf('--global') != -1) {
+if (process.argv.indexOf('-g') > -1 || process.argv.indexOf('--global') > -1) {
 
   npm.load({ global: true }, function(err) {
     if (err) {
       throw err;
     }
-    npm.commands.ls([], true, function(err, data, issues) {
+    npm.commands.ls([], true, function(err, data) {
       if (err) {
         throw err;
       }
