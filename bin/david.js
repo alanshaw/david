@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 var david = require('../');
+var argv = require('optimist').argv;
 var fs = require('fs');
 var util = require('util');
 var npm = require('npm');
@@ -13,16 +14,15 @@ var green = '\033[32m';
 var gray = '\033[90m';
 var yellow = '\033[33m';
 
-var printDeps = function(deps, type) {
-  if (Object.keys(deps).length === 0) {
+function printDeps (deps, type) {
+  if (!Object.keys(deps).length) {
     return;
   }
-  if (type) {
-    type += ' ';
-  } else {
-    type = '';
-  }
+  
+  type = type ? type + ' ' : '';
+
   var oneline = ['npm install'];
+  
   if (type == 'Dev ') {
     oneline.push('--save-dev');
   } else if (type == 'Global ') {
@@ -57,27 +57,39 @@ var printDeps = function(deps, type) {
   console.log('');
   console.log('%s%s%s', gray, oneline.join(' '), reset);
   console.log('');
-};
+}
 
-
-var getDeps = function(pkg, global) {
-  david.getUpdatedDependencies(pkg, { stable: true }, function(err, deps) {
-
-    var primaryDeps = deps;
-
-    david.getUpdatedDependencies(pkg, { dev: true, stable: true }, function(err, deps) {
-      var devDeps = deps;
-
-
-      printDeps(primaryDeps, (global) ? 'Global' : '');
-      printDeps(devDeps, (global) ? 'Global' : 'Dev');
-
+// Get updated deps and devDeps
+function getDeps (pkg, cb) {
+  
+  david.getUpdatedDependencies(pkg, { stable: true }, function(er, deps) {
+    if (er) return cb(er);
+    
+    david.getUpdatedDependencies(pkg, { dev: true, stable: true }, function(er, devDeps) {
+      cb(er, deps, devDeps);
     });
-
   });
-};
+}
 
-if (process.argv.indexOf('-g') > -1 || process.argv.indexOf('--global') > -1) {
+function installDeps (deps, opts, cb) {
+  var args = [];
+  
+  for (var name in deps) {
+    var dep = deps[name];
+    args.push(name + '@' + dep.stable);
+  }
+  
+  if (opts.save) {
+    args.push('--save' + (opts.dev ? '-dev' : ''));
+  }
+  
+  npm.load({global: opts.global}, function(er) {
+    if (er) return cb(er);
+    npm.commands.install(args, cb);
+  });
+}
+
+if (argv.g || argv.global) {
 
   npm.load({ global: true }, function(err) {
     if (err) {
@@ -91,21 +103,55 @@ if (process.argv.indexOf('-g') > -1 || process.argv.indexOf('--global') > -1) {
         name: 'Global Dependencies',
         dependencies: {}
       };
+      
       for (var key in data.dependencies) {
         pkg.dependencies[key] = data.dependencies[key].version;
       }
-      getDeps(pkg, true);
+      
+      getDeps(pkg, function (er, deps, devDeps) {
+        if (er) return console.error('Failed to get updated dependencies/devDependencies', er);
+        
+        if (!argv.install) {
+          
+          printDeps(deps, 'Global');
+          
+        } else {
+          
+          installDeps(deps, {global: true}, function (er) {
+            if (er) return console.error('Failed to install global dependencies', er);
+          });
+        }
+      });
     });
   });
 
 } else {
+
   if (!fs.existsSync(packageFile)) {
-    console.log('package.json does not exist');
-    return;
+    return console.error('package.json does not exist');
   }
 
   var pkg = require(cwd + '/package.json');
-  getDeps(pkg);
+  
+  getDeps(pkg, function (er, deps, devDeps) {
+    if (er) return console.error('Failed to get updated dependencies/devDependencies', er);
+    
+    if (!argv.install) {
+      
+      printDeps(deps);
+      printDeps(devDeps, 'Dev');
+      
+    } else {
+      
+      installDeps(deps, {save: argv.save}, function (er) {
+        if (er) return console.error('Failed to install/save dependencies', er);
+        
+        installDeps(devDeps, {save: argv.save, dev: true}, function (er) {
+          if (er) return console.error('Failed to install/save devDependencies', er);
+        });
+      });
+    }
+  });
 }
 
 
