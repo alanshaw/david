@@ -30,7 +30,7 @@ module.exports = {
           test.ifError(er);
           
           // Should have installed dependencies
-          var pkg = require('./fixtures/test-install/package.json');
+          var pkg = JSON.parse(fs.readFileSync('test/fixtures/test-install/package.json'));
           var depNames = Object.keys(pkg.dependencies).concat(Object.keys(pkg.devDependencies));
           
           depNames.forEach(function (depName) {
@@ -61,7 +61,7 @@ module.exports = {
           test.ifError(er);
           
           // Should have installed dependencies
-          var pkg = require('./fixtures/test-install/package.json');
+          var pkg = JSON.parse(fs.readFileSync('test/fixtures/test-install/package.json'));
           var depNames = Object.keys(pkg.dependencies);
           var devDepNames = Object.keys(pkg.devDependencies);
           
@@ -74,7 +74,7 @@ module.exports = {
           });
           
           // Version numbers should have changed
-          var updatedPkg = require('./tmp/test-install/package.json');
+          var updatedPkg = JSON.parse(fs.readFileSync('test/tmp/test-install/package.json'));
           
           depNames.forEach(function (depName) {
             test.notEqual(pkg.dependencies[depName], updatedPkg.dependencies[depName], depName + ' version expected to have changed');
