@@ -3,7 +3,6 @@
 var david = require('../');
 var argv = require('optimist').argv;
 var fs = require('fs');
-var util = require('util');
 var npm = require('npm');
 var cwd = process.cwd();
 var packageFile = cwd + '/package.json';
@@ -13,6 +12,13 @@ var reset = '\033[0m';
 var green = '\033[32m';
 var gray = '\033[90m';
 var yellow = '\033[33m';
+
+if (argv.v || argv.version) {
+  console.log(require('../package.json').version);
+  return;
+}
+
+argv.install = argv._.indexOf('install') > -1 || argv._.indexOf('i') > -1;
 
 function printDeps (deps, type) {
   if (!Object.keys(deps).length) {
@@ -71,6 +77,16 @@ function getDeps (pkg, cb) {
   });
 }
 
+/**
+ * Install the passed dependencies
+ * 
+ * @param {Object} deps Dependencies to install (result from david)
+ * @param {Object} opts Install options
+ * @param {Boolean} [opts.global] Install globally
+ * @param {Boolean} [opts.save] Save installed dependencies to dependencies/devDependencies
+ * @param {Boolean} [opts.dev] Provided dependencies are dev dependencies
+ * @param {Function} cb Callback
+ */
 function installDeps (deps, opts, cb) {
   
   var installArgs = [];
@@ -87,20 +103,21 @@ function installDeps (deps, opts, cb) {
       npm.config.set('save' + (opts.dev ? '-dev' : ''), true);
     }
     
-    npm.commands.install(installArgs, cb);
+    npm.commands.install(installArgs, function (er) {
+      npm.config.set('save' + (opts.dev ? '-dev' : ''), false);
+      cb(er);
+    });
   });
 }
 
 if (argv.g || argv.global) {
 
   npm.load({ global: true }, function(err) {
-    if (err) {
-      throw err;
-    }
+    if (err) throw err;
+    
     npm.commands.ls([], true, function(err, data) {
-      if (err) {
-        throw err;
-      }
+      if (err) throw err;
+      
       var pkg = {
         name: 'Global Dependencies',
         dependencies: {}
@@ -113,7 +130,7 @@ if (argv.g || argv.global) {
       getDeps(pkg, function (er, deps, devDeps) {
         if (er) return console.error('Failed to get updated dependencies/devDependencies', er);
         
-        if (argv._.indexOf('install') == -1) {
+        if (!argv.install) {
           
           printDeps(deps, 'Global');
           
@@ -126,19 +143,19 @@ if (argv.g || argv.global) {
       });
     });
   });
-
+  
 } else {
-
+  
   if (!fs.existsSync(packageFile)) {
     return console.error('package.json does not exist');
   }
-
+  
   var pkg = require(cwd + '/package.json');
   
   getDeps(pkg, function (er, deps, devDeps) {
     if (er) return console.error('Failed to get updated dependencies/devDependencies', er);
     
-    if (argv._.indexOf('install') == -1) {
+    if (!argv.install) {
       
       printDeps(deps);
       printDeps(devDeps, 'Dev');
