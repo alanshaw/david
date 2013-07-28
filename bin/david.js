@@ -62,30 +62,32 @@ function printDeps (deps, type) {
 // Get updated deps and devDeps
 function getDeps (pkg, cb) {
   
-  david.getUpdatedDependencies(pkg, { stable: true }, function(er, deps) {
+  david.getUpdatedDependencies(pkg, { stable: true }, function (er, deps) {
     if (er) return cb(er);
     
-    david.getUpdatedDependencies(pkg, { dev: true, stable: true }, function(er, devDeps) {
+    david.getUpdatedDependencies(pkg, { dev: true, stable: true }, function (er, devDeps) {
       cb(er, deps, devDeps);
     });
   });
 }
 
 function installDeps (deps, opts, cb) {
-  var args = [];
+  
+  var installArgs = [];
   
   for (var name in deps) {
     var dep = deps[name];
-    args.push(name + '@' + dep.stable);
+    installArgs.push(name + '@' + dep.stable);
   }
   
-  if (opts.save) {
-    args.push('--save' + (opts.dev ? '-dev' : ''));
-  }
-  
-  npm.load({global: opts.global}, function(er) {
+  npm.load({global: opts.global}, function (er) {
     if (er) return cb(er);
-    npm.commands.install(args, cb);
+    
+    if (opts.save) {
+      npm.config.set('save' + (opts.dev ? '-dev' : ''), true);
+    }
+    
+    npm.commands.install(installArgs, cb);
   });
 }
 
@@ -111,7 +113,7 @@ if (argv.g || argv.global) {
       getDeps(pkg, function (er, deps, devDeps) {
         if (er) return console.error('Failed to get updated dependencies/devDependencies', er);
         
-        if (!argv.install) {
+        if (argv._.indexOf('install') == -1) {
           
           printDeps(deps, 'Global');
           
@@ -136,7 +138,7 @@ if (argv.g || argv.global) {
   getDeps(pkg, function (er, deps, devDeps) {
     if (er) return console.error('Failed to get updated dependencies/devDependencies', er);
     
-    if (!argv.install) {
+    if (argv._.indexOf('install') == -1) {
       
       printDeps(deps);
       printDeps(devDeps, 'Dev');
