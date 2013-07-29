@@ -9,7 +9,7 @@ function cp (src, dest, cb) {
     return cb(null);
   });
   
-  rs.pipe(fs.createWriteStream(dest));
+  rs.pipe(fs.createWriteStream(dest, {mode: 0666}));
 }
 
 module.exports = {
@@ -19,37 +19,6 @@ module.exports = {
       fs.mkdir('test/tmp', cb);
     });
   },
-  'Test install dependencies and devDependencies': function (test) {
-    
-    fs.mkdir('test/tmp/test-install', function (er) {
-      test.ifError(er);
-      
-      cp('test/fixtures/test-install/package.json', 'test/tmp/test-install/package.json', function () {
-        
-        var proc = childProcess.exec('cd test/tmp/test-install && node ../../../bin/david install', function (er) {
-          test.ifError(er);
-          
-          // Should have installed dependencies
-          var pkg = JSON.parse(fs.readFileSync('test/fixtures/test-install/package.json'));
-          var depNames = Object.keys(pkg.dependencies).concat(Object.keys(pkg.devDependencies));
-          
-          depNames.forEach(function (depName) {
-            test.ok(fs.existsSync('test/tmp/test-install/node_modules/' + depName), depName + " expected to be installed");
-          });
-          
-          test.done();
-        });
-        
-        proc.stdout.on('data', function (data) {
-          console.log(data.toString().trim());
-        });
-        
-        proc.stderr.on('data', function (data) {
-          console.error(data.toString().trim());
-        });
-      });
-    });
-  },
   'Test install and save dependencies and devDependencies': function (test) {
     
     fs.mkdir('test/tmp/test-install', function (er) {
@@ -57,7 +26,7 @@ module.exports = {
       
       cp('test/fixtures/test-install/package.json', 'test/tmp/test-install/package.json', function () {
         
-        var proc = childProcess.exec('cd test/tmp/test-install && node ../../../bin/david install --save', function (er) {
+        var proc = childProcess.exec('cd test/tmp/test-install && node ../../../bin/david update', function (er) {
           test.ifError(er);
           
           // Should have installed dependencies

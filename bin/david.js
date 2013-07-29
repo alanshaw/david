@@ -18,7 +18,7 @@ if (argv.v || argv.version) {
   return;
 }
 
-argv.install = argv._.indexOf('install') > -1 || argv._.indexOf('i') > -1;
+argv.update = argv._.indexOf('update') > -1 || argv._.indexOf('u') > -1;
 
 function printDeps (deps, type) {
   if (!Object.keys(deps).length) {
@@ -89,6 +89,8 @@ function getDeps (pkg, cb) {
  */
 function installDeps (deps, opts, cb) {
   
+  opts = opts || {};
+  
   var installArgs = [];
   
   for (var name in deps) {
@@ -127,18 +129,17 @@ if (argv.g || argv.global) {
         pkg.dependencies[key] = data.dependencies[key].version;
       }
       
-      getDeps(pkg, function (er, deps, devDeps) {
+      getDeps(pkg, function (er, deps) {
         if (er) return console.error('Failed to get updated dependencies/devDependencies', er);
         
-        if (!argv.install) {
-          
-          printDeps(deps, 'Global');
-          
-        } else {
+        if (argv.update) {
           
           installDeps(deps, {global: true}, function (er) {
-            if (er) return console.error('Failed to install global dependencies', er);
+            if (er) return console.error('Failed to update global dependencies', er);
           });
+          
+        } else {
+          printDeps(deps, 'Global');
         }
       });
     });
@@ -155,20 +156,19 @@ if (argv.g || argv.global) {
   getDeps(pkg, function (er, deps, devDeps) {
     if (er) return console.error('Failed to get updated dependencies/devDependencies', er);
     
-    if (!argv.install) {
+    if (argv.update) {
       
-      printDeps(deps);
-      printDeps(devDeps, 'Dev');
-      
-    } else {
-      
-      installDeps(deps, {save: argv.save}, function (er) {
-        if (er) return console.error('Failed to install/save dependencies', er);
+      installDeps(deps, {save: true}, function (er) {
+        if (er) return console.error('Failed to update/save dependencies', er);
         
-        installDeps(devDeps, {save: argv.save, dev: true}, function (er) {
-          if (er) return console.error('Failed to install/save devDependencies', er);
+        installDeps(devDeps, {save: true, dev: true}, function (er) {
+          if (er) return console.error('Failed to update/save devDependencies', er);
         });
       });
+      
+    } else {
+      printDeps(deps);
+      printDeps(devDeps, 'Dev');
     }
   });
 }
