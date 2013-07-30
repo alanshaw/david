@@ -91,19 +91,16 @@ function installDeps (deps, opts, cb) {
   
   opts = opts || {};
   
-  var installArgs = [];
-  
-  for (var name in deps) {
-    var dep = deps[name];
-    installArgs.push(name + '@' + dep.stable);
-  }
-  
   npm.load({global: opts.global}, function (er) {
     if (er) return cb(er);
     
     if (opts.save) {
       npm.config.set('save' + (opts.dev ? '-dev' : ''), true);
     }
+    
+    var installArgs = Object.keys(deps).map(function (depName) {
+      return depName + '@' + deps[depName].stable;
+    });
     
     npm.commands.install(installArgs, function (er) {
       npm.config.set('save' + (opts.dev ? '-dev' : ''), false);
