@@ -88,6 +88,20 @@ If you install David globally (`npm install -g david`), you can run `david` in y
 
 You can also run `david --global` to see your outdated global dependencies.
 
+### Update to latest
+
+To update your project dependencies to the latest versions (as per the output from running `david` in your project directory) and save to your `package.json`, run:
+
+```sh
+david update
+```
+
+You can also update global dependencies to latest versions:
+
+```sh
+david update --global
+```
+
 
 Cache
 -----
@@ -120,6 +134,7 @@ N.B. These events are retroactive. David will only fire them after a call to `ge
 Release History
 ---------------
 
+ * 2013-07-30   v1.8.0   CLI added `david update` to update dependencies to latest stable versions and save to your project `package.json`
  * 2013-06-27   v1.7.0   Updated to use semver 2 module. Simplified code that determines if a version is greater than a range
  * 2013-03-28   v1.6.0   Use setImmediate instead of process.nextTick. David now requires NodeJS 0.10.x
  * 2013-03-27   v1.5.0   CLI added --global flag to find outdated global dependencies
