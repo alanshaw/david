@@ -8,7 +8,11 @@ var optimist = require('optimist')
     '  update, u  Update dependencies to latest STABLE versions and save to package.json'
   )
   .alias('g', 'global')
-  .describe('g', 'Consider global dependencies');
+  .describe('g', 'Consider global dependencies')
+  .alias('u', 'unstable')
+  .describe('u', 'Use UNSTABLE dependencies')
+  .alias('v', 'version')
+  .describe('v', 'Print version number and exit');
 
 var david = require('../');
 var argv = optimist.argv;
@@ -27,7 +31,7 @@ if (argv.usage || argv.help) {
   return optimist.showHelp();
 }
 
-if (argv.v || argv.version) {
+if (argv.version) {
   return console.log('v' + require('../package.json').version);
 }
 
@@ -56,7 +60,7 @@ function printDeps (deps, type) {
 
   for (var name in deps) {
     var dep = deps[name];
-    oneline.push(name+'@'+dep.stable);
+    oneline.push(name+'@'+dep[argv.unstable ? 'latest' : 'stable']);
     console.log('%s%s%s %s(package:%s %s, %slatest: %s%s%s)%s', 
                 green,
                 name,
@@ -68,7 +72,7 @@ function printDeps (deps, type) {
 
                 gray,
                 blue,
-                dep.stable,
+                dep[argv.unstable ? 'latest' : 'stable'],
                 gray,
                 reset
                );
@@ -81,10 +85,10 @@ function printDeps (deps, type) {
 // Get updated deps and devDeps
 function getDeps (pkg, cb) {
   
-  david.getUpdatedDependencies(pkg, { stable: true }, function (er, deps) {
+  david.getUpdatedDependencies(pkg, { stable: !argv.unstable }, function (er, deps) {
     if (er) return cb(er);
     
-    david.getUpdatedDependencies(pkg, { dev: true, stable: true }, function (er, devDeps) {
+    david.getUpdatedDependencies(pkg, { dev: true, stable: !argv.unstable }, function (er, devDeps) {
       cb(er, deps, devDeps);
     });
   });
@@ -112,7 +116,7 @@ function installDeps (deps, opts, cb) {
     }
     
     var installArgs = Object.keys(deps).map(function (depName) {
-      return depName + '@' + deps[depName].stable;
+      return depName + '@' + deps[depName][argv.unstable ? 'latest' : 'stable'];
     });
     
     npm.commands.install(installArgs, function (er) {
@@ -122,7 +126,7 @@ function installDeps (deps, opts, cb) {
   });
 }
 
-if (argv.g || argv.global) {
+if (argv.global) {
 
   npm.load({ global: true }, function(err) {
     if (err) throw err;
