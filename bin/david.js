@@ -1,7 +1,17 @@
 #!/usr/bin/env node
 
+var optimist = require('optimist')
+  .usage(
+    'Get latest dependency version information.\n' +
+    'Usage: $0 [command] [options...]\n\n' +
+    'Command:\n' +
+    '  update, u  Update dependencies to latest STABLE versions and save to package.json'
+  )
+  .alias('g', 'global')
+  .describe('g', 'Consider global dependencies');
+
 var david = require('../');
-var argv = require('optimist').argv;
+var argv = optimist.argv;
 var fs = require('fs');
 var npm = require('npm');
 var cwd = process.cwd();
@@ -13,9 +23,12 @@ var green = '\033[32m';
 var gray = '\033[90m';
 var yellow = '\033[33m';
 
+if (argv.usage || argv.help) {
+  return optimist.showHelp();
+}
+
 if (argv.v || argv.version) {
-  console.log(require('../package.json').version);
-  return;
+  return console.log('v' + require('../package.json').version);
 }
 
 argv.update = argv._.indexOf('update') > -1 || argv._.indexOf('u') > -1;
