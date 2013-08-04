@@ -90,7 +90,7 @@ You can also run `david --global` to see your outdated global dependencies.
 
 ### Update to latest
 
-To update your project dependencies to the latest versions (as per the output from running `david` in your project directory) and save to your `package.json`, run:
+To update all your project dependencies to the latest _stable_ versions, and save to your `package.json`, run:
 
 ```sh
 david update
@@ -100,6 +100,12 @@ You can also update global dependencies to latest versions:
 
 ```sh
 david update --global
+```
+
+To update all your project dependencies to the latest versions (including unstable versions), pass the `--unstable` flag:
+
+```sh
+david update --unstable
 ```
 
 
