@@ -17,61 +17,60 @@ Install david:
 Use:
 
 ```javascript
-	
-	var david = require('david');
-	
-	// Your package.json
-	var manifest = {
-		name: 'xxx',
-		dependencies: {
-			'aaa': '~0.0.0',
-			'bbb': '~0.0.0',
-		},
-		devDependencies: {
-			'yyy': '~0.0.0',
-			'zzz': '~0.0.0',
-		}
-	};
-	
-	david.getDependencies(manifest, function(err, deps) {
-		console.log('latest dependencies information for', manifest.name);
-		listDependencies(deps);
-	});
-	
-	david.getDependencies(manifest, {dev: true}, function(err, deps) {
-		console.log('latest devDependencies information for', manifest.name);
-		listDependencies(deps);
-	});
-	
-	david.getUpdatedDependencies(manifest, function(err, deps) {
-		console.log('dependencies with newer versions for', manifest.name);
-		listDependencies(deps);
-	});
-	
-	david.getUpdatedDependencies(manifest, {dev: true}, function(err, deps) {
-		console.log('devDependencies with newer versions for', manifest.name);
-		listDependencies(deps);
-	});
-	
-	david.getUpdatedDependencies(manifest, {stable: true}, function(err, deps) {
-		console.log('dependencies with newer STABLE versions for', manifest.name);
-		listDependencies(deps);
-	});
-	
-	david.getUpdatedDependencies(manifest, {dev: true, stable: true}, function(err, deps) {
-		console.log('devDependencies with newer STABLE versions for', manifest.name);
-		listDependencies(deps);
-	});
-	
-	function listDependencies(deps) {
-		Object.keys(deps, function(depName) {
-			var required = deps[depName].required || '*';
-			var stable = deps[depName].stable || 'None';
-			var latest = deps[depName].latest;
-			console.log(depName + 'Required: ' + required + ' Stable: ' + stable + ' Latest: ' + latest);
-		});
+
+var david = require('david');
+
+// Your package.json
+var manifest = {
+	name: 'xxx',
+	dependencies: {
+		'aaa': '~0.0.0',
+		'bbb': '~0.0.0',
+	},
+	devDependencies: {
+		'yyy': '~0.0.0',
+		'zzz': '~0.0.0',
 	}
-	
+};
+
+david.getDependencies(manifest, function(err, deps) {
+	console.log('latest dependencies information for', manifest.name);
+	listDependencies(deps);
+});
+
+david.getDependencies(manifest, {dev: true}, function(err, deps) {
+	console.log('latest devDependencies information for', manifest.name);
+	listDependencies(deps);
+});
+
+david.getUpdatedDependencies(manifest, function(err, deps) {
+	console.log('dependencies with newer versions for', manifest.name);
+	listDependencies(deps);
+});
+
+david.getUpdatedDependencies(manifest, {dev: true}, function(err, deps) {
+	console.log('devDependencies with newer versions for', manifest.name);
+	listDependencies(deps);
+});
+
+david.getUpdatedDependencies(manifest, {stable: true}, function(err, deps) {
+	console.log('dependencies with newer STABLE versions for', manifest.name);
+	listDependencies(deps);
+});
+
+david.getUpdatedDependencies(manifest, {dev: true, stable: true}, function(err, deps) {
+	console.log('devDependencies with newer STABLE versions for', manifest.name);
+	listDependencies(deps);
+});
+
+function listDependencies(deps) {
+	Object.keys(deps, function(depName) {
+		var required = deps[depName].required || '*';
+		var stable = deps[depName].stable || 'None';
+		var latest = deps[depName].latest;
+		console.log(depName + 'Required: ' + required + ' Stable: ' + stable + ' Latest: ' + latest);
+	});
+}
 ```
 
 Both `getDependencies` and `getUpdatedDependencies` return an object result, whose keys are package names. The values are objects which contain the following properties:
