@@ -69,7 +69,7 @@ function listDependencies(deps) {
     var required = deps[depName].required || '*';
     var stable = deps[depName].stable || 'None';
     var latest = deps[depName].latest;
-    console.log("%s Required: %s Stable: %s Latest: %s", depName required, stable, latest);
+    console.log("%s Required: %s Stable: %s Latest: %s", depName, required, stable, latest);
   });
 }
 ```
