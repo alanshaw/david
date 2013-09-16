@@ -1,13 +1,18 @@
 var rewire = require("rewire")
+  , semver = require("semver")
   , david = process.env.DAVID_COV ? rewire("../lib-cov/david") : rewire("../lib/david")
 
-function mockNpm (versions, depName) {
+function mockNpm (versions, depName, latestTag) {
   
   depName = depName || "testDepName"
   
   var npmData = {}
+  var time = {}
   
-  npmData[versions[versions.length - 1]] = {versions: versions}
+  versions.forEach(function (value, index) { time[value] = (new Date(index)).toISOString() })
+  latestTag = latestTag || versions[versions.length - 1]
+  versions.sort(function (a,b) { return semver.compare(a, b) })
+  npmData[latestTag] = {versions: versions, time: time}
   
   // Mock out NPM
   return {
@@ -170,6 +175,50 @@ module.exports = {
       test.done()
     })
   },
+  "Test getUpdatedDependencies returns correct dependency updates when latest tag point to the stable version": function (test) {
+
+    var npmMock = mockNpm(["0.0.1", "0.1.2", "0.1.3", "0.1.4"], "testDepName", "0.1.3")
+
+    david.__set__("npm", npmMock)
+
+    var manifest = {
+      dependencies: {
+        testDepName: "~0.0.1"
+      }
+    }
+
+    david.getUpdatedDependencies(manifest, function (er, deps) {
+      test.expect(5)
+      test.ok(deps)
+      test.ok(deps["testDepName"])
+      test.strictEqual(deps["testDepName"].required, "~0.0.1")
+      test.strictEqual(deps["testDepName"].stable, "0.1.3")
+      test.strictEqual(deps["testDepName"].latest, "0.1.4")
+      test.done()
+    })
+  },
+  "Test getUpdatedDependencies returns correct dependency updates when versions is not sorted by time": function (test) {
+
+    var npmMock = mockNpm(["0.0.1", "0.1.2", "0.1.3", "0.1.4-alpha9", "0.1.4-alpha10"])
+
+    david.__set__("npm", npmMock)
+
+    var manifest = {
+      dependencies: {
+        testDepName: "~0.0.1"
+      }
+    }
+
+    david.getUpdatedDependencies(manifest, function (er, deps) {
+      test.expect(5)
+      test.ok(deps)
+      test.ok(deps["testDepName"])
+      test.strictEqual(deps["testDepName"].required, "~0.0.1")
+      test.strictEqual(deps["testDepName"].stable, "0.1.3")
+      test.strictEqual(deps["testDepName"].latest, "0.1.4-alpha10")
+      test.done()
+    })
+  },
   "Positive getUpdatedDependencies onlyStable=true tests": function (test) {
     
     var dataSets = [
@@ -236,7 +285,7 @@ module.exports = {
       [["0.0.1"], ">=0.0.1"],
       [["0.0.1", "0.0.2", "0.0.3", "0.0.4"], "<=0.0.2 || >0.0.4"],
       [["0.0.1", "0.0.2", "0.0.3", "0.0.4"], "<=0.0.2 || ~0.0.4"],
-      [["0.0.1", "0.0.2", "0.0.3", "0.0.4", "0.1.0beta"], "<=0.0.2 || ~0.0.4"]
+      [["0.0.1", "0.0.2", "0.0.3", "0.0.4", "0.1.0-beta"], "<=0.0.2 || ~0.0.4"]
       
     ]
     
