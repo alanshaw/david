@@ -112,6 +112,7 @@ david update --unstable
 Release History
 ---------------
 
+ * 2013-09-16   v2.1.0   Fixed issues with latest/stable version detection
  * 2013-08-25   v2.0.0   Simplification refactor to remove caching and useless events. Code style changes, performance improvements.
  * 2013-08-04   v1.9.0   CLI added `--unstable` flag to view/update to latest _unstable_ dependency versions
  * 2013-07-30   v1.8.0   CLI added `david update` to update dependencies to latest _stable_ versions and save to your project `package.json`
