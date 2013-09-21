@@ -197,6 +197,28 @@ module.exports = {
       test.done()
     })
   },
+  "Test getUpdatedDependencies returns correct dependency updates when unstable version is not the most recent version": function (test) {
+
+    var npmMock = mockNpm(["0.0.1", "0.1.2", "0.2.0", "0.1.4"], "testDepName", "0.1.4")
+
+    david.__set__("npm", npmMock)
+
+    var manifest = {
+      dependencies: {
+        testDepName: "~0.0.1"
+      }
+    }
+
+    david.getUpdatedDependencies(manifest, function (er, deps) {
+      test.expect(5)
+      test.ok(deps)
+      test.ok(deps["testDepName"])
+      test.strictEqual(deps["testDepName"].required, "~0.0.1")
+      test.strictEqual(deps["testDepName"].stable, "0.1.4")
+      test.strictEqual(deps["testDepName"].latest, "0.2.0")
+      test.done()
+    })
+  },
   "Test getUpdatedDependencies returns correct dependency updates when versions is not sorted by time": function (test) {
 
     var npmMock = mockNpm(["0.0.1", "0.1.2", "0.1.3", "0.1.4-alpha9", "0.1.4-alpha10"])
