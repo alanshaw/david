@@ -241,6 +241,28 @@ module.exports = {
       test.done()
     })
   },
+  "Test getDependencies returns correct dependencies when there is no stable version": function (test) {
+
+    var npmMock = mockNpm(["0.0.0-alpha1", "0.0.0-alpha2", "0.0.0-alpha3"], "testDepName", "0.0.0-alpha3")
+
+    david.__set__("npm", npmMock)
+
+    var manifest = {
+      dependencies: {
+        testDepName: "~0.0.0"
+      }
+    }
+
+    david.getDependencies(manifest, function (er, deps) {
+      test.expect(5)
+      test.ok(deps)
+      test.ok(deps["testDepName"])
+      test.strictEqual(deps["testDepName"].required, "~0.0.0")
+      test.strictEqual(deps["testDepName"].stable, null)
+      test.strictEqual(deps["testDepName"].latest, "0.0.0-alpha3")
+      test.done()
+    })
+  },
   "Positive getUpdatedDependencies onlyStable=true tests": function (test) {
     
     var dataSets = [
