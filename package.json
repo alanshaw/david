@@ -1,7 +1,7 @@
 {
   "name": "david",
   "description": "Nodejs module that tells you when your project npm dependencies are out of date.",
-  "version": "2.1.2",
+  "version": "2.1.3",
   "main": "lib/david.js",
   "scripts": {
     "test": "nodeunit test",
