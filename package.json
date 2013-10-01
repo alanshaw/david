@@ -32,6 +32,6 @@
     "david": "./bin/david.js"
   },
   "engines": {
-    "node": "~0.10.1"
+    "node": "~0.10.1 || ~0.11.0"
   }
 }
