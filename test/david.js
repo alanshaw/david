@@ -1,3 +1,5 @@
+/* jshint camelcase: false */
+
 var rewire = require("rewire")
   , semver = require("semver")
   , david = process.env.DAVID_COV ? rewire("../lib-cov/david") : rewire("../lib/david")
@@ -9,10 +11,10 @@ function mockNpm (versions, depName, latestTag) {
   var npmData = {}
   var time = {}
 
-  versions.forEach(function (value, index) { time[value] = (new Date(index)).toISOString() })
+  versions.forEach(function (value, index) { time[value] = new Date(index).toISOString() })
   latestTag = latestTag || versions[versions.length - 1]
-  versions.sort(function (a,b) { return semver.compare(a, b) })
-  npmData[latestTag] = {versions: versions, time: time}
+  versions.sort(function (a, b) { return semver.compare(a, b) })
+  npmData[latestTag] = { versions: versions, time: time }
 
   // Mock out NPM
   return {
@@ -22,7 +24,7 @@ function mockNpm (versions, depName, latestTag) {
     commands: {
       view: function (args, silent, cb) {
         process.nextTick(function () {
-          if (args[0] == depName) {
+          if (args[0] === depName) {
             cb(null, npmData)
           } else {
             cb(new Error(), null)
@@ -83,10 +85,10 @@ module.exports = {
     david.getDependencies(manifest, function (er, deps) {
       test.expect(5)
       test.ok(deps)
-      test.ok(deps["testDepName"])
-      test.strictEqual(deps["testDepName"].required, "~0.0.2")
-      test.strictEqual(deps["testDepName"].stable, "0.0.3")
-      test.strictEqual(deps["testDepName"].latest, "0.0.3")
+      test.ok(deps.testDepName)
+      test.strictEqual(deps.testDepName.required, "~0.0.2")
+      test.strictEqual(deps.testDepName.stable, "0.0.3")
+      test.strictEqual(deps.testDepName.latest, "0.0.3")
       test.done()
     })
   },
@@ -105,10 +107,10 @@ module.exports = {
     david.getDependencies(manifest, function (er, deps) {
       test.expect(5)
       test.ok(deps)
-      test.ok(deps["testDepName"])
-      test.strictEqual(deps["testDepName"].required, "~0.0.3")
-      test.strictEqual(deps["testDepName"].stable, "0.0.3")
-      test.strictEqual(deps["testDepName"].latest, "0.0.4-beta")
+      test.ok(deps.testDepName)
+      test.strictEqual(deps.testDepName.required, "~0.0.3")
+      test.strictEqual(deps.testDepName.stable, "0.0.3")
+      test.strictEqual(deps.testDepName.latest, "0.0.4-beta")
       test.done()
     })
   },
@@ -146,10 +148,10 @@ module.exports = {
     david.getUpdatedDependencies(manifest, function (er, deps) {
       test.expect(5)
       test.ok(deps)
-      test.ok(deps["testDepName"])
-      test.strictEqual(deps["testDepName"].required, "0.0.1")
-      test.strictEqual(deps["testDepName"].stable, "0.0.3")
-      test.strictEqual(deps["testDepName"].latest, "0.0.3")
+      test.ok(deps.testDepName)
+      test.strictEqual(deps.testDepName.required, "0.0.1")
+      test.strictEqual(deps.testDepName.stable, "0.0.3")
+      test.strictEqual(deps.testDepName.latest, "0.0.3")
       test.done()
     })
   },
@@ -168,10 +170,10 @@ module.exports = {
     david.getUpdatedDependencies(manifest, function (er, deps) {
       test.expect(5)
       test.ok(deps)
-      test.ok(deps["testDepName"])
-      test.strictEqual(deps["testDepName"].required, "~0.0.1")
-      test.strictEqual(deps["testDepName"].stable, "0.1.3")
-      test.strictEqual(deps["testDepName"].latest, "0.1.4+build.11.e0f985a")
+      test.ok(deps.testDepName)
+      test.strictEqual(deps.testDepName.required, "~0.0.1")
+      test.strictEqual(deps.testDepName.stable, "0.1.3")
+      test.strictEqual(deps.testDepName.latest, "0.1.4+build.11.e0f985a")
       test.done()
     })
   },
@@ -190,10 +192,10 @@ module.exports = {
     david.getUpdatedDependencies(manifest, function (er, deps) {
       test.expect(5)
       test.ok(deps)
-      test.ok(deps["testDepName"])
-      test.strictEqual(deps["testDepName"].required, "~0.0.1")
-      test.strictEqual(deps["testDepName"].stable, "0.1.3")
-      test.strictEqual(deps["testDepName"].latest, "0.1.4")
+      test.ok(deps.testDepName)
+      test.strictEqual(deps.testDepName.required, "~0.0.1")
+      test.strictEqual(deps.testDepName.stable, "0.1.3")
+      test.strictEqual(deps.testDepName.latest, "0.1.4")
       test.done()
     })
   },
@@ -212,10 +214,10 @@ module.exports = {
     david.getUpdatedDependencies(manifest, function (er, deps) {
       test.expect(5)
       test.ok(deps)
-      test.ok(deps["testDepName"])
-      test.strictEqual(deps["testDepName"].required, "~0.0.1")
-      test.strictEqual(deps["testDepName"].stable, "0.1.4")
-      test.strictEqual(deps["testDepName"].latest, "0.2.0")
+      test.ok(deps.testDepName)
+      test.strictEqual(deps.testDepName.required, "~0.0.1")
+      test.strictEqual(deps.testDepName.stable, "0.1.4")
+      test.strictEqual(deps.testDepName.latest, "0.2.0")
       test.done()
     })
   },
@@ -234,10 +236,10 @@ module.exports = {
     david.getUpdatedDependencies(manifest, function (er, deps) {
       test.expect(5)
       test.ok(deps)
-      test.ok(deps["testDepName"])
-      test.strictEqual(deps["testDepName"].required, "~0.0.1")
-      test.strictEqual(deps["testDepName"].stable, "0.1.3")
-      test.strictEqual(deps["testDepName"].latest, "0.1.4-alpha10")
+      test.ok(deps.testDepName)
+      test.strictEqual(deps.testDepName.required, "~0.0.1")
+      test.strictEqual(deps.testDepName.stable, "0.1.3")
+      test.strictEqual(deps.testDepName.latest, "0.1.4-alpha10")
       test.done()
     })
   },
@@ -256,10 +258,10 @@ module.exports = {
     david.getDependencies(manifest, function (er, deps) {
       test.expect(5)
       test.ok(deps)
-      test.ok(deps["testDepName"])
-      test.strictEqual(deps["testDepName"].required, "~0.0.0")
-      test.strictEqual(deps["testDepName"].stable, null)
-      test.strictEqual(deps["testDepName"].latest, "0.0.0-alpha3")
+      test.ok(deps.testDepName)
+      test.strictEqual(deps.testDepName.required, "~0.0.0")
+      test.strictEqual(deps.testDepName.stable, null)
+      test.strictEqual(deps.testDepName.latest, "0.0.0-alpha3")
       test.done()
     })
   },
@@ -290,11 +292,11 @@ module.exports = {
 
         david.__set__("npm", npmMock)
 
-        var manifest = {dependencies: {}}
+        var manifest = { dependencies: {} }
 
         manifest.dependencies[testDepName] = data[1]
 
-        david.getUpdatedDependencies(manifest, {stable: true}, function (er, deps) {
+        david.getUpdatedDependencies(manifest, { stable: true }, function (er, deps) {
 
           test.ok(deps)
           test.ok(deps[testDepName])
@@ -304,7 +306,7 @@ module.exports = {
 
           done++
 
-          if (done == dataSets.length) {
+          if (done === dataSets.length) {
             test.done()
           } else {
             tests[done]()
@@ -346,11 +348,11 @@ module.exports = {
 
         david.__set__("npm", npmMock)
 
-        var manifest = {dependencies: {}}
+        var manifest = { dependencies: {} }
 
         manifest.dependencies["testDepName" + i] = data[1]
 
-        david.getUpdatedDependencies(manifest, {stable: true}, function (er, deps) {
+        david.getUpdatedDependencies(manifest, { stable: true }, function (er, deps) {
 
           test.ok(deps)
           test.equal(deps["testDepName" + i], undefined)
@@ -358,7 +360,7 @@ module.exports = {
 
           done++
 
-          if (done == dataSets.length) {
+          if (done === dataSets.length) {
             test.done()
           } else {
             tests[done]()
@@ -381,13 +383,13 @@ module.exports = {
       }
     }
 
-    david.getDependencies(manifest, {dev: true}, function (er, deps) {
+    david.getDependencies(manifest, { dev: true }, function (er, deps) {
       test.expect(5)
       test.ok(deps)
-      test.ok(deps["testDepName"])
-      test.strictEqual(deps["testDepName"].required, "~0.0.2")
-      test.strictEqual(deps["testDepName"].stable, "0.0.3")
-      test.strictEqual(deps["testDepName"].latest, "0.0.3")
+      test.ok(deps.testDepName)
+      test.strictEqual(deps.testDepName.required, "~0.0.2")
+      test.strictEqual(deps.testDepName.stable, "0.0.3")
+      test.strictEqual(deps.testDepName.latest, "0.0.3")
       test.done()
     })
   },
@@ -403,13 +405,13 @@ module.exports = {
       }
     }
 
-    david.getUpdatedDependencies(manifest, {dev: true}, function (er, deps) {
+    david.getUpdatedDependencies(manifest, { dev: true }, function (er, deps) {
       test.expect(5)
       test.ok(deps)
-      test.ok(deps["testDepName"])
-      test.strictEqual(deps["testDepName"].required, "0.0.1")
-      test.strictEqual(deps["testDepName"].stable, "0.0.3")
-      test.strictEqual(deps["testDepName"].latest, "0.0.3")
+      test.ok(deps.testDepName)
+      test.strictEqual(deps.testDepName.required, "0.0.1")
+      test.strictEqual(deps.testDepName.stable, "0.0.3")
+      test.strictEqual(deps.testDepName.latest, "0.0.3")
       test.done()
     })
   },
@@ -425,13 +427,13 @@ module.exports = {
       }
     }
 
-    david.getDependencies(manifest, {optional: true}, function (er, deps) {
+    david.getDependencies(manifest, { optional: true }, function (er, deps) {
       test.expect(5)
       test.ok(deps)
-      test.ok(deps["testDepName"])
-      test.strictEqual(deps["testDepName"].required, "~0.0.2")
-      test.strictEqual(deps["testDepName"].stable, "0.0.3")
-      test.strictEqual(deps["testDepName"].latest, "0.0.3")
+      test.ok(deps.testDepName)
+      test.strictEqual(deps.testDepName.required, "~0.0.2")
+      test.strictEqual(deps.testDepName.stable, "0.0.3")
+      test.strictEqual(deps.testDepName.latest, "0.0.3")
       test.done()
     })
   },
@@ -447,13 +449,13 @@ module.exports = {
       }
     }
 
-    david.getUpdatedDependencies(manifest, {optional: true}, function (er, deps) {
+    david.getUpdatedDependencies(manifest, { optional: true }, function (er, deps) {
       test.expect(5)
       test.ok(deps)
-      test.ok(deps["testDepName"])
-      test.strictEqual(deps["testDepName"].required, "0.0.1")
-      test.strictEqual(deps["testDepName"].stable, "0.0.3")
-      test.strictEqual(deps["testDepName"].latest, "0.0.3")
+      test.ok(deps.testDepName)
+      test.strictEqual(deps.testDepName.required, "0.0.1")
+      test.strictEqual(deps.testDepName.stable, "0.0.3")
+      test.strictEqual(deps.testDepName.latest, "0.0.3")
       test.done()
     })
   },
@@ -469,13 +471,13 @@ module.exports = {
       }
     }
 
-    david.getDependencies(manifest, {peer: true}, function (er, deps) {
+    david.getDependencies(manifest, { peer: true }, function (er, deps) {
       test.expect(5)
       test.ok(deps)
-      test.ok(deps["testDepName"])
-      test.strictEqual(deps["testDepName"].required, "~0.0.2")
-      test.strictEqual(deps["testDepName"].stable, "0.0.3")
-      test.strictEqual(deps["testDepName"].latest, "0.0.3")
+      test.ok(deps.testDepName)
+      test.strictEqual(deps.testDepName.required, "~0.0.2")
+      test.strictEqual(deps.testDepName.stable, "0.0.3")
+      test.strictEqual(deps.testDepName.latest, "0.0.3")
       test.done()
     })
   },
@@ -491,13 +493,13 @@ module.exports = {
       }
     }
 
-    david.getUpdatedDependencies(manifest, {peer: true}, function (er, deps) {
+    david.getUpdatedDependencies(manifest, { peer: true }, function (er, deps) {
       test.expect(5)
       test.ok(deps)
-      test.ok(deps["testDepName"])
-      test.strictEqual(deps["testDepName"].required, "0.0.1")
-      test.strictEqual(deps["testDepName"].stable, "0.0.3")
-      test.strictEqual(deps["testDepName"].latest, "0.0.3")
+      test.ok(deps.testDepName)
+      test.strictEqual(deps.testDepName.required, "0.0.1")
+      test.strictEqual(deps.testDepName.stable, "0.0.3")
+      test.strictEqual(deps.testDepName.latest, "0.0.3")
       test.done()
     })
   },
@@ -514,10 +516,10 @@ module.exports = {
     david.getDependencies(manifest, function (er, deps) {
       test.expect(5)
       test.ok(deps)
-      test.ok(deps["testDepName"])
-      test.strictEqual(deps["testDepName"].required, "*")
-      test.strictEqual(deps["testDepName"].stable, "0.0.0")
-      test.strictEqual(deps["testDepName"].latest, "0.0.0")
+      test.ok(deps.testDepName)
+      test.strictEqual(deps.testDepName.required, "*")
+      test.strictEqual(deps.testDepName.stable, "0.0.0")
+      test.strictEqual(deps.testDepName.latest, "0.0.0")
       test.done()
     })
   },
@@ -541,7 +543,7 @@ module.exports = {
     var manifest = {dependencies: ["0"]}
 
     test.doesNotThrow(function () {
-      david.getDependencies(manifest, function (er, deps) {})
+      david.getDependencies(manifest, function () {})
     })
 
     test.done()

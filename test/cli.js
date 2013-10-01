@@ -22,7 +22,7 @@ module.exports = {
 
       cp("test/fixtures/test-update/package.json", "test/tmp/test-update/package.json", function () {
 
-        var proc = childProcess.exec("node ../../../bin/david update", {cwd: "test/tmp/test-update"}, function (er) {
+        var proc = childProcess.exec("node ../../../bin/david update", { cwd: "test/tmp/test-update" }, function (er) {
           test.ifError(er)
 
           // Should have installed dependencies
@@ -79,7 +79,7 @@ module.exports = {
             , optionalDepNames = Object.keys(pkg.optionalDependencies)
           
           depNames.concat(devDepNames).concat(optionalDepNames).forEach(function (depName) {
-            if (depName == "async" || depName == "grunt") {
+            if (depName === "async" || depName === "grunt") {
               test.ok(fs.existsSync("test/tmp/test-filtered-update/node_modules/" + depName), depName + " expected to be installed")
             } else {
               test.ok(!fs.existsSync("test/tmp/test-filtered-update/node_modules/" + depName), depName + " not expected to be installed")
@@ -90,7 +90,7 @@ module.exports = {
           var updatedPkg = JSON.parse(fs.readFileSync("test/tmp/test-filtered-update/package.json"))
 
           depNames.forEach(function (depName) {
-            if (depName == "async") {
+            if (depName === "async") {
               test.notEqual(pkg.dependencies[depName], updatedPkg.dependencies[depName], depName + " version expected to have changed")
             } else {
               test.equal(pkg.dependencies[depName], updatedPkg.dependencies[depName], depName + " version not expected to have changed")
@@ -98,7 +98,7 @@ module.exports = {
           })
 
           devDepNames.forEach(function (depName) {
-            if (depName == "grunt") {
+            if (depName === "grunt") {
               test.notEqual(pkg.devDependencies[depName], updatedPkg.devDependencies[depName], depName + " version expected to have changed")
             } else {
               test.equal(pkg.devDependencies[depName], updatedPkg.devDependencies[depName], depName + " version not expected to have changed")

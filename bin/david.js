@@ -46,11 +46,11 @@ function printDeps (deps, type) {
 
   var oneline = ["npm install"]
 
-  if (type == "Dev ") {
+  if (type === "Dev ") {
     oneline.push("--save-dev")
-  } else if (type == "Optional ") {
+  } else if (type === "Optional ") {
     oneline.push("--save-optional")
-  } else if (type == "Global ") {
+  } else if (type === "Global ") {
     oneline.push("--global")
   } else {
     oneline.push("--save")
@@ -86,7 +86,7 @@ function printDeps (deps, type) {
 
 // Get a list of dependency filters
 var filterList = argv._.filter(function (v) {
-  return !(v == "update" || v == "u")
+  return !(v === "update" || v === "u")
 })
 
 // Filter the passed deps (result from david) by the dependency names passed on the command line
@@ -220,5 +220,3 @@ if (argv.global) {
     }
   })
 }
-
-

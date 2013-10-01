@@ -75,7 +75,7 @@ module.exports = {
 
       var result = semverext.gtr(tuple[1], tuple[0], tuple[2])
 
-      console.log(result ? "Yes" : "No", result ?  "(Expected)" : "<--- UNEXPECTED")
+      console.log(result ? "Yes" : "No", result ? "(Expected)" : "<--- UNEXPECTED")
 
       test.strictEqual(true, result)
     })
