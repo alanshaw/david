@@ -112,6 +112,7 @@ david update --unstable
 Release History
 ---------------
 
+ * 2013-10-01   v2.2.0   Support for `optionalDependencies` and `peerDependencies`
  * 2013-09-16   v2.1.0   Fixed issues with latest/stable version detection
  * 2013-08-25   v2.0.0   Simplification refactor to remove caching and useless events. Code style changes, performance improvements.
  * 2013-08-04   v1.9.0   CLI added `--unstable` flag to view/update to latest _unstable_ dependency versions
