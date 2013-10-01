@@ -1,6 +1,6 @@
 *.iml
-.idea
-node_modules
 *.log
+.idea
 lib-cov
+node_modules
 tmp

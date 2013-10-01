@@ -1,7 +1,7 @@
-node_modules
-.npmignore
-.gitignore
-.idea
 *.iml
 *.log
+.gitignore
+.idea
+.npmignore
 .travis.yml
+node_modules
