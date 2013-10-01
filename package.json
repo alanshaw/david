@@ -19,6 +19,11 @@
     "test": "nodeunit test"
   },
   "license": "MIT",
+  "files": [
+    "bin",
+    "lib",
+    "LICENCE"
+  ],
   "dependencies": {
     "async": "~0.2.9",
     "npm": "~1.3.6",
