@@ -15,7 +15,7 @@ module.exports = {
       fs.mkdir("test/tmp", cb)
     })
   },
-  "Test update and save dependencies and devDependencies": function (test) {
+  "Test update and save dependencies, devDependencies & optionalDependencies": function (test) {
     
     fs.mkdir("test/tmp/test-update", function (er) {
       test.ifError(er)
@@ -27,14 +27,20 @@ module.exports = {
           
           // Should have installed dependencies
           var pkg = JSON.parse(fs.readFileSync("test/fixtures/test-update/package.json"))
-          var depNames = Object.keys(pkg.dependencies)
-          var devDepNames = Object.keys(pkg.devDependencies)
+            , depNames = Object.keys(pkg.dependencies)
+            , devDepNames = Object.keys(pkg.devDependencies)
+            , optionalDepNames = Object.keys(pkg.optionalDependencies)
+          
           
           depNames.forEach(function (depName) {
             test.ok(fs.existsSync("test/tmp/test-update/node_modules/" + depName), depName + " expected to be installed")
           })
           
           devDepNames.forEach(function (depName) {
+            test.ok(fs.existsSync("test/tmp/test-update/node_modules/" + depName), depName + " expected to be installed")
+          })
+          
+          optionalDepNames.forEach(function (depName) {
             test.ok(fs.existsSync("test/tmp/test-update/node_modules/" + depName), depName + " expected to be installed")
           })
           
@@ -47,6 +53,10 @@ module.exports = {
           
           devDepNames.forEach(function (depName) {
             test.notEqual(pkg.devDependencies[depName], updatedPkg.devDependencies[depName], depName + " version expected to have changed")
+          })
+          
+          optionalDepNames.forEach(function (depName) {
+            test.notEqual(pkg.devDependencies[depName], updatedPkg.optionalDependencies[depName], depName + " version expected to have changed")
           })
           
           test.done()

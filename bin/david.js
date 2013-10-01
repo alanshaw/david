@@ -82,14 +82,18 @@ function printDeps (deps, type) {
   console.log("")
 }
 
-// Get updated deps and devDeps
+// Get updated deps, devDeps and optionalDeps
 function getDeps (pkg, cb) {
   
   david.getUpdatedDependencies(pkg, { stable: !argv.unstable }, function (er, deps) {
     if (er) return cb(er)
     
     david.getUpdatedDependencies(pkg, { dev: true, stable: !argv.unstable }, function (er, devDeps) {
-      cb(er, deps, devDeps)
+      if (er) return cb(er)
+      
+      david.getUpdatedDependencies(pkg, { optional: true, stable: !argv.unstable }, function (er, optionalDeps) {
+        cb(er, deps, devDeps, optionalDeps)
+      })
     })
   })
 }
@@ -100,8 +104,9 @@ function getDeps (pkg, cb) {
  * @param {Object} deps Dependencies to install (result from david)
  * @param {Object} opts Install options
  * @param {Boolean} [opts.global] Install globally
- * @param {Boolean} [opts.save] Save installed dependencies to dependencies/devDependencies
+ * @param {Boolean} [opts.save] Save installed dependencies to dependencies/devDependencies/optionalDependencies
  * @param {Boolean} [opts.dev] Provided dependencies are dev dependencies
+ * @param {Boolean} [opts.optional] Provided dependencies are optional dependencies
  * @param {Function} cb Callback
  */
 function installDeps (deps, opts, cb) {
@@ -111,7 +116,7 @@ function installDeps (deps, opts, cb) {
     if (er) return cb(er)
     
     if (opts.save) {
-      npm.config.set("save" + (opts.dev ? "-dev" : ""), true)
+      npm.config.set("save" + (opts.dev ? "-dev" : opts.optional ? "-optional" : ""), true)
     }
     
     var installArgs = Object.keys(deps).map(function (depName) {
@@ -119,7 +124,7 @@ function installDeps (deps, opts, cb) {
     })
     
     npm.commands.install(installArgs, function (er) {
-      npm.config.set("save" + (opts.dev ? "-dev" : ""), false)
+      npm.config.set("save" + (opts.dev ? "-dev" : opts.optional ? "-optional" : ""), false)
       cb(er)
     })
   })
@@ -166,7 +171,7 @@ if (argv.global) {
   
   var pkg = require(cwd + "/package.json")
   
-  getDeps(pkg, function (er, deps, devDeps) {
+  getDeps(pkg, function (er, deps, devDeps, optionalDeps) {
     if (er) return console.error("Failed to get updated dependencies/devDependencies", er)
     
     if (argv.update) {
@@ -176,6 +181,10 @@ if (argv.global) {
         
         installDeps(devDeps, {save: true, dev: true}, function (er) {
           if (er) return console.error("Failed to update/save devDependencies", er)
+          
+          installDeps(optionalDeps, {save: true, optional: true}, function (er) {
+            if (er) return console.error("Failed to update/save optionalDependencies", er)
+          })
         })
       })
       

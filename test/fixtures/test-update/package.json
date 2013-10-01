@@ -15,5 +15,8 @@
   "devDependencies": {
     "grunt": "~0.3.0",
     "mocha": "0.14.x"
+  },
+  "optionalDependencies": {
+    "through": "~2.2.6"
   }
 }

@@ -413,6 +413,94 @@ module.exports = {
       test.done()
     })
   },
+  "Test getDependencies will consider optionalDependencies": function (test) {
+    
+    var npmMock = mockNpm(["0.0.1", "0.0.2", "0.0.3"])
+    
+    david.__set__("npm", npmMock)
+    
+    var manifest = {
+      optionalDependencies: {
+        testDepName: "~0.0.2"
+      }
+    }
+    
+    david.getDependencies(manifest, {optional: true}, function (er, deps) {
+      test.expect(5)
+      test.ok(deps)
+      test.ok(deps["testDepName"])
+      test.strictEqual(deps["testDepName"].required, "~0.0.2")
+      test.strictEqual(deps["testDepName"].stable, "0.0.3")
+      test.strictEqual(deps["testDepName"].latest, "0.0.3")
+      test.done()
+    })
+  },
+  "Test getUpdatedDependencies will consider optionalDependencies": function (test) {
+    
+    var npmMock = mockNpm(["0.0.1", "0.0.2", "0.0.3"])
+    
+    david.__set__("npm", npmMock)
+    
+    var manifest = {
+      optionalDependencies: {
+        testDepName: "0.0.1"
+      }
+    }
+    
+    david.getUpdatedDependencies(manifest, {optional: true}, function (er, deps) {
+      test.expect(5)
+      test.ok(deps)
+      test.ok(deps["testDepName"])
+      test.strictEqual(deps["testDepName"].required, "0.0.1")
+      test.strictEqual(deps["testDepName"].stable, "0.0.3")
+      test.strictEqual(deps["testDepName"].latest, "0.0.3")
+      test.done()
+    })
+  },
+  "Test getDependencies will consider peerDependencies": function (test) {
+    
+    var npmMock = mockNpm(["0.0.1", "0.0.2", "0.0.3"])
+    
+    david.__set__("npm", npmMock)
+    
+    var manifest = {
+      peerDependencies: {
+        testDepName: "~0.0.2"
+      }
+    }
+    
+    david.getDependencies(manifest, {peer: true}, function (er, deps) {
+      test.expect(5)
+      test.ok(deps)
+      test.ok(deps["testDepName"])
+      test.strictEqual(deps["testDepName"].required, "~0.0.2")
+      test.strictEqual(deps["testDepName"].stable, "0.0.3")
+      test.strictEqual(deps["testDepName"].latest, "0.0.3")
+      test.done()
+    })
+  },
+  "Test getUpdatedDependencies will consider peerDependencies": function (test) {
+    
+    var npmMock = mockNpm(["0.0.1", "0.0.2", "0.0.3"])
+    
+    david.__set__("npm", npmMock)
+    
+    var manifest = {
+      peerDependencies: {
+        testDepName: "0.0.1"
+      }
+    }
+    
+    david.getUpdatedDependencies(manifest, {peer: true}, function (er, deps) {
+      test.expect(5)
+      test.ok(deps)
+      test.ok(deps["testDepName"])
+      test.strictEqual(deps["testDepName"].required, "0.0.1")
+      test.strictEqual(deps["testDepName"].stable, "0.0.3")
+      test.strictEqual(deps["testDepName"].latest, "0.0.3")
+      test.done()
+    })
+  },
   "Test support dependencies specified as an array": function (test) {
     
     var npmMock = mockNpm(["0.0.0"])
