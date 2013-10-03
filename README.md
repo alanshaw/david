@@ -1,11 +1,16 @@
-<img src="https://raw.github.com/alanshaw/david-www/master/david.png" title="David"/> [![Build Status](https://travis-ci.org/alanshaw/david.png)](https://travis-ci.org/alanshaw/david) [![Dependency Status](https://david-dm.org/alanshaw/david.png)](https://david-dm.org/alanshaw/david) [![Coverage Status](https://coveralls.io/repos/alanshaw/david/badge.png?branch=master)](https://coveralls.io/r/alanshaw/david?branch=master)
-=====
+[![David](https://raw.github.com/alanshaw/david-www/master/david.png)](https://david-dm.org/)
+
+[![Build Status](https://travis-ci.org/alanshaw/david.png)](https://travis-ci.org/alanshaw/david)
+[![Coverage Status](https://coveralls.io/repos/alanshaw/david/badge.png?branch=master)](https://coveralls.io/r/alanshaw/david?branch=master)
+[![Dependency Status](https://david-dm.org/alanshaw/david.png)](https://david-dm.org/alanshaw/david)
+[![devDependency Status](https://david-dm.org/alanshaw/david/dev-status.png)](https://david-dm.org/alanshaw/david#info=devDependencies)
+
+___
 
 Nodejs module that tells you when your package NPM dependencies are out of date.
 
 
-Getting Started
----------------
+## Getting Started
 
 Install [Node.js](http://nodejs.org/)
 
@@ -81,8 +86,7 @@ Both `getDependencies` and `getUpdatedDependencies` return an object result, who
 - `latest` - The latest version available (including build and patch versions)
 
 
-CLI
----
+## CLI
 
 If you install David globally (`npm install -g david`), you can run `david` in your project directory to see which dependencies are out of date.
 
