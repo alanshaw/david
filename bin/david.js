@@ -27,7 +27,7 @@ var blue  = "\033[34m"
   , gray = "\033[90m"
   , yellow = "\033[33m"
 
-if (argv.usage || argv.help) {
+if (argv.usage || argv.help || argv.h) {
   return optimist.showHelp()
 }
 
