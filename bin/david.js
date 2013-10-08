@@ -3,7 +3,7 @@
 var optimist = require("optimist")
   .usage(
     "Get latest dependency version information.\n" +
-    "Usage: $0 [command] [options...]\n\n" +
+    "Usage: $0 [command] [options...] [dependency names...]\n\n" +
     "Command:\n" +
     "  update, u  Update dependencies to latest STABLE versions and save to package.json"
   )
@@ -48,6 +48,8 @@ function printDeps (deps, type) {
   
   if (type == "Dev ") {
     oneline.push("--save-dev")
+  } else if (type == "Optional ") {
+    oneline.push("--save-optional")
   } else if (type == "Global ") {
     oneline.push("--global")
   } else {
@@ -82,9 +84,25 @@ function printDeps (deps, type) {
   console.log("")
 }
 
+// Get a list of dependency filters
+var filterList = argv._.filter(function (v) {
+  return !(v == "update" || v == "u")
+})
+
+// Filter the passed deps (result from david) by the dependency names passed on the command line
+function filterDeps (deps) {
+  if (!filterList.length) return deps
+  
+  return Object.keys(deps).reduce(function (filteredDeps, name) {
+    if (filterList.indexOf(name) !== -1) {
+      filteredDeps[name] = deps[name]
+    }
+    return filteredDeps
+  }, {})
+}
+
 // Get updated deps, devDeps and optionalDeps
 function getDeps (pkg, cb) {
-  
   david.getUpdatedDependencies(pkg, { stable: !argv.unstable }, function (er, deps) {
     if (er) return cb(er)
     
@@ -92,7 +110,7 @@ function getDeps (pkg, cb) {
       if (er) return cb(er)
       
       david.getUpdatedDependencies(pkg, { optional: true, stable: !argv.unstable }, function (er, optionalDeps) {
-        cb(er, deps, devDeps, optionalDeps)
+        cb(er, filterDeps(deps), filterDeps(devDeps), filterDeps(optionalDeps))
       })
     })
   })
@@ -112,6 +130,13 @@ function getDeps (pkg, cb) {
 function installDeps (deps, opts, cb) {
   opts = opts || {}
   
+  var depNames = Object.keys(deps)
+  
+  // Nothing to install!
+  if (!depNames.length) {
+    return cb(null)
+  }
+  
   npm.load({global: opts.global}, function (er) {
     if (er) return cb(er)
     
@@ -119,7 +144,7 @@ function installDeps (deps, opts, cb) {
       npm.config.set("save" + (opts.dev ? "-dev" : opts.optional ? "-optional" : ""), true)
     }
     
-    var installArgs = Object.keys(deps).map(function (depName) {
+    var installArgs = depNames.map(function (depName) {
       return depName + "@" + deps[depName][argv.unstable ? "latest" : "stable"]
     })
     
@@ -191,6 +216,7 @@ if (argv.global) {
     } else {
       printDeps(deps)
       printDeps(devDeps, "Dev")
+      printDeps(optionalDeps, "Optional")
     }
   })
 }
