@@ -520,5 +520,30 @@ module.exports = {
       test.strictEqual(deps["testDepName"].latest, "0.0.0")
       test.done()
     })
+  },
+  "Test `npm view 0 versions` does not throw!": function (test) {
+
+    var npmMock = {
+      load: function (config, cb) {
+        cb()
+      },
+      commands: {
+        view: function (args, silent, cb) {
+          process.nextTick(function () {
+            cb(null, {}) // return {} as per NPM
+          })
+        }
+      }
+    }
+
+    david.__set__("npm", npmMock)
+
+    var manifest = {dependencies: ["0"]}
+
+    test.doesNotThrow(function () {
+      david.getDependencies(manifest, function (er, deps) {})
+    })
+
+    test.done()
   }
 }
