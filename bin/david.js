@@ -49,7 +49,7 @@ function printDeps (deps, type) {
   if (type === "Dev ") {
     oneLine.push("--save-dev")
   } else if (type === "Optional ") {
-    oneline.push("--save-optional")
+    oneLine.push("--save-optional")
   } else if (type === "Global ") {
     oneLine.push("--global")
   } else {
