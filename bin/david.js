@@ -44,16 +44,16 @@ function printDeps (deps, type) {
 
   type = type ? type + " " : ""
 
-  var oneline = ["npm install"]
+  var oneLine = ["npm install"]
 
   if (type === "Dev ") {
-    oneline.push("--save-dev")
+    oneLine.push("--save-dev")
   } else if (type === "Optional ") {
     oneline.push("--save-optional")
   } else if (type === "Global ") {
-    oneline.push("--global")
+    oneLine.push("--global")
   } else {
-    oneline.push("--save")
+    oneLine.push("--save")
   }
 
   console.log("")
@@ -62,7 +62,7 @@ function printDeps (deps, type) {
 
   for (var name in deps) {
     var dep = deps[name]
-    oneline.push(name+"@"+dep[argv.unstable ? "latest" : "stable"])
+    oneLine.push(name+"@"+dep[argv.unstable ? "latest" : "stable"])
     console.log("%s%s%s %s(package:%s %s, %slatest: %s%s%s)%s",
                 green,
                 name,
@@ -80,7 +80,7 @@ function printDeps (deps, type) {
                )
   }
   console.log("")
-  console.log("%s%s%s", gray, oneline.join(" "), reset)
+  console.log("%s%s%s", gray, oneLine.join(" "), reset)
   console.log("")
 }
 
