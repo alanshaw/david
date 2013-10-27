@@ -39,32 +39,32 @@ var manifest = {
   }
 };
 
-david.getDependencies(manifest, function(er, deps) {
+david.getDependencies(manifest, function (er, deps) {
   console.log('latest dependencies information for', manifest.name);
   listDependencies(deps);
 });
 
-david.getDependencies(manifest, { dev: true }, function(er, deps) {
+david.getDependencies(manifest, { dev: true }, function (er, deps) {
   console.log('latest devDependencies information for', manifest.name);
   listDependencies(deps);
 });
 
-david.getUpdatedDependencies(manifest, function(er, deps) {
+david.getUpdatedDependencies(manifest, function (er, deps) {
   console.log('dependencies with newer versions for', manifest.name);
   listDependencies(deps);
 });
 
-david.getUpdatedDependencies(manifest, { dev: true }, function(er, deps) {
+david.getUpdatedDependencies(manifest, { dev: true }, function (er, deps) {
   console.log('devDependencies with newer versions for', manifest.name);
   listDependencies(deps);
 });
 
-david.getUpdatedDependencies(manifest, { stable: true }, function(er, deps) {
+david.getUpdatedDependencies(manifest, { stable: true }, function (er, deps) {
   console.log('dependencies with newer STABLE versions for', manifest.name);
   listDependencies(deps);
 });
 
-david.getUpdatedDependencies(manifest, { dev: true, stable: true }, function(er, deps) {
+david.getUpdatedDependencies(manifest, { dev: true, stable: true }, function (er, deps) {
   console.log('devDependencies with newer STABLE versions for', manifest.name);
   listDependencies(deps);
 });
