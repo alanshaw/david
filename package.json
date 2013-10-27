@@ -17,7 +17,7 @@
   "scripts": {
     "coveralls": "jscoverage lib && DAVID_COV=1 nodeunit --reporter=lcov test | coveralls",
     "lint": "jshint .",
-    "test": "nodeunit test && npm run lint"
+    "test": "jshint . && nodeunit test"
   },
   "license": "MIT",
   "files": [
