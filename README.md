@@ -120,6 +120,7 @@ david update --unstable
 Release History
 ---------------
 
+* 2013-10-27   v2.4.0   Removes `semverext.js`. The `gtr` function is now available in `semver`
 * 2013-10-08   v2.3.0   Support update specific modules from CLI via `david update [module]`
 * 2013-10-01   v2.2.0   Support for `optionalDependencies` and `peerDependencies`
 * 2013-09-16   v2.1.0   Fixed issues with latest/stable version detection
