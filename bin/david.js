@@ -41,19 +41,19 @@ function printDeps (deps, type) {
   if (!Object.keys(deps).length) {
     return
   }
-  
+
   type = type ? type + " " : ""
 
-  var oneline = ["npm install"]
-  
-  if (type == "Dev ") {
-    oneline.push("--save-dev")
-  } else if (type == "Optional ") {
-    oneline.push("--save-optional")
-  } else if (type == "Global ") {
-    oneline.push("--global")
+  var oneLine = ["npm install"]
+
+  if (type === "Dev ") {
+    oneLine.push("--save-dev")
+  } else if (type === "Optional ") {
+    oneLine.push("--save-optional")
+  } else if (type === "Global ") {
+    oneLine.push("--global")
   } else {
-    oneline.push("--save")
+    oneLine.push("--save")
   }
 
   console.log("")
@@ -62,8 +62,8 @@ function printDeps (deps, type) {
 
   for (var name in deps) {
     var dep = deps[name]
-    oneline.push(name+"@"+dep[argv.unstable ? "latest" : "stable"])
-    console.log("%s%s%s %s(package:%s %s, %slatest: %s%s%s)%s", 
+    oneLine.push(name+"@"+dep[argv.unstable ? "latest" : "stable"])
+    console.log("%s%s%s %s(package:%s %s, %slatest: %s%s%s)%s",
                 green,
                 name,
                 reset,
@@ -80,13 +80,13 @@ function printDeps (deps, type) {
                )
   }
   console.log("")
-  console.log("%s%s%s", gray, oneline.join(" "), reset)
+  console.log("%s%s%s", gray, oneLine.join(" "), reset)
   console.log("")
 }
 
 // Get a list of dependency filters
 var filterList = argv._.filter(function (v) {
-  return !(v == "update" || v == "u")
+  return !(v === "update" || v === "u")
 })
 
 // Filter the passed deps (result from david) by the dependency names passed on the command line
@@ -105,10 +105,10 @@ function filterDeps (deps) {
 function getDeps (pkg, cb) {
   david.getUpdatedDependencies(pkg, { stable: !argv.unstable }, function (er, deps) {
     if (er) return cb(er)
-    
+
     david.getUpdatedDependencies(pkg, { dev: true, stable: !argv.unstable }, function (er, devDeps) {
       if (er) return cb(er)
-      
+
       david.getUpdatedDependencies(pkg, { optional: true, stable: !argv.unstable }, function (er, optionalDeps) {
         cb(er, filterDeps(deps), filterDeps(devDeps), filterDeps(optionalDeps))
       })
@@ -118,7 +118,7 @@ function getDeps (pkg, cb) {
 
 /**
  * Install the passed dependencies
- * 
+ *
  * @param {Object} deps Dependencies to install (result from david)
  * @param {Object} opts Install options
  * @param {Boolean} [opts.global] Install globally
@@ -129,7 +129,7 @@ function getDeps (pkg, cb) {
  */
 function installDeps (deps, opts, cb) {
   opts = opts || {}
-  
+
   var depNames = Object.keys(deps)
   
   // Nothing to install!
@@ -139,15 +139,15 @@ function installDeps (deps, opts, cb) {
   
   npm.load({global: opts.global}, function (er) {
     if (er) return cb(er)
-    
+
     if (opts.save) {
       npm.config.set("save" + (opts.dev ? "-dev" : opts.optional ? "-optional" : ""), true)
     }
-    
+
     var installArgs = depNames.map(function (depName) {
       return depName + "@" + deps[depName][argv.unstable ? "latest" : "stable"]
     })
-    
+
     npm.commands.install(installArgs, function (er) {
       npm.config.set("save" + (opts.dev ? "-dev" : opts.optional ? "-optional" : ""), false)
       cb(er)
@@ -159,60 +159,60 @@ if (argv.global) {
 
   npm.load({ global: true }, function(err) {
     if (err) throw err
-    
+
     npm.commands.ls([], true, function(err, data) {
       if (err) throw err
-      
+
       var pkg = {
         name: "Global Dependencies",
         dependencies: {}
       }
-      
+
       for (var key in data.dependencies) {
         pkg.dependencies[key] = data.dependencies[key].version
       }
-      
+
       getDeps(pkg, function (er, deps) {
         if (er) return console.error("Failed to get updated dependencies/devDependencies", er)
-        
+
         if (argv.update) {
-          
+
           installDeps(deps, {global: true}, function (er) {
             if (er) return console.error("Failed to update global dependencies", er)
           })
-          
+
         } else {
           printDeps(deps, "Global")
         }
       })
     })
   })
-  
+
 } else {
-  
+
   if (!fs.existsSync(packageFile)) {
     return console.error("package.json does not exist")
   }
-  
+
   var pkg = require(cwd + "/package.json")
-  
+
   getDeps(pkg, function (er, deps, devDeps, optionalDeps) {
     if (er) return console.error("Failed to get updated dependencies/devDependencies", er)
-    
+
     if (argv.update) {
-      
+
       installDeps(deps, {save: true}, function (er) {
         if (er) return console.error("Failed to update/save dependencies", er)
-        
+
         installDeps(devDeps, {save: true, dev: true}, function (er) {
           if (er) return console.error("Failed to update/save devDependencies", er)
-          
+
           installDeps(optionalDeps, {save: true, optional: true}, function (er) {
             if (er) return console.error("Failed to update/save optionalDependencies", er)
           })
         })
       })
-      
+
     } else {
       printDeps(deps)
       printDeps(devDeps, "Dev")
@@ -220,5 +220,3 @@ if (argv.global) {
     }
   })
 }
-
-

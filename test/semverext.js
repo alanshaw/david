@@ -4,7 +4,7 @@ var semverext = process.env.DAVID_COV ? require("../lib-cov/semverext") : requir
 // Thank you https://github.com/isaacs/node-semver/blob/master/test.js
 module.exports = {
   "gtr tests": function (test) {
-    
+
     var data = [
       ["~1.2.2", "1.3.0"],
       ["~0.6.1-1", "0.7.1-1"],
@@ -67,24 +67,24 @@ module.exports = {
       ["=0.7.x", "0.8.2"],
       ["<=0.7.x", "0.7.2"]
     ]
-    
+
     test.expect(data.length)
-    
+
     data.forEach(function (tuple) {
       console.log("Is", tuple[1], "greater than", tuple[0], "?")
-      
+
       var result = semverext.gtr(tuple[1], tuple[0], tuple[2])
-      
-      console.log(result ? "Yes" : "No", result ?  "(Expected)" : "<--- UNEXPECTED")
-      
+
+      console.log(result ? "Yes" : "No", result ? "(Expected)" : "<--- UNEXPECTED")
+
       test.strictEqual(true, result)
     })
-    
+
     test.done()
   },
   "negative gtr tests": function (test) {
-      
-    var data = [ 
+
+    var data = [
       ["~0.6.1-1", "0.6.1-1"],
       ["1.0.0 - 2.0.0", "1.2.3"],
       ["1.0.0 - 2.0.0", "0.9.9"],
@@ -168,19 +168,19 @@ module.exports = {
       ["^0.1.0 || ~3.0.1 || 5.0.0", "5.0.0-0", true],
       ["^0.1.0 || ~3.0.1 || >4 <=5.0.0", "3.5.0"]
     ]
-    
+
     test.expect(data.length)
-    
+
     data.forEach(function (tuple) {
       console.log("Is", tuple[1], "greater than", tuple[0], "?")
-      
+
       var result = semverext.gtr(tuple[1], tuple[0], tuple[2])
-      
+
       console.log(result ? "Yes" : "No", result ? "<--- UNEXPECTED" : "(Expected)")
-      
+
       test.strictEqual(false, result)
     })
-    
+
     test.done()
   }
 }
