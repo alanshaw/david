@@ -18,7 +18,6 @@
   "node": true,
   "plusplus": false,
   "quotmark": "double",
-  "regexp": true,
   "shadow": true,
   "smarttabs": true,
   "strict": false,
