@@ -1,10 +1,10 @@
 [![David](https://raw.github.com/alanshaw/david-www/master/david.png)](https://david-dm.org/)
 
-[![Build Status](https://travis-ci.org/alanshaw/david.png)](https://travis-ci.org/alanshaw/david)
-[![Coverage Status](https://coveralls.io/repos/alanshaw/david/badge.png?branch=master)](https://coveralls.io/r/alanshaw/david?branch=master)
-[![Dependency Status](https://david-dm.org/alanshaw/david.png)](https://david-dm.org/alanshaw/david)
-[![devDependency Status](https://david-dm.org/alanshaw/david/dev-status.png)](https://david-dm.org/alanshaw/david#info=devDependencies)
-
+[![Build Status](https://img.shields.io/travis/alanshaw/david/master.svg)](https://travis-ci.org/alanshaw/david)
+[![Coverage Status](http://img.shields.io/coveralls/alanshaw/david.svg)](https://coveralls.io/r/alanshaw/david?branch=master)
+[![Dependency Status](https://david-dm.org/alanshaw/david.svg?theme=shields.io)](https://david-dm.org/alanshaw/david)
+[![devDependency Status](https://david-dm.org/alanshaw/david/dev-status.svg?theme=shields.io)](https://david-dm.org/alanshaw/david#info=devDependencies)
+[![Donate to help support David development](http://img.shields.io/gittip/_alanshaw.svg)](https://www.gittip.com/_alanshaw/)
 ___
 
 Node.js module that tells you when your package NPM dependencies are out of date.
