@@ -103,13 +103,13 @@ function filterDeps (deps) {
 
 // Get updated deps, devDeps and optionalDeps
 function getDeps (pkg, cb) {
-  david.getUpdatedDependencies(pkg, { stable: !argv.unstable }, function (er, deps) {
+  david.getUpdatedDependencies(pkg, { stable: !argv.unstable, loose: true }, function (er, deps) {
     if (er) return cb(er)
 
-    david.getUpdatedDependencies(pkg, { dev: true, stable: !argv.unstable }, function (er, devDeps) {
+    david.getUpdatedDependencies(pkg, { dev: true, stable: !argv.unstable, loose: true }, function (er, devDeps) {
       if (er) return cb(er)
 
-      david.getUpdatedDependencies(pkg, { optional: true, stable: !argv.unstable }, function (er, optionalDeps) {
+      david.getUpdatedDependencies(pkg, { optional: true, stable: !argv.unstable, loose: true }, function (er, optionalDeps) {
         cb(er, filterDeps(deps), filterDeps(devDeps), filterDeps(optionalDeps))
       })
     })

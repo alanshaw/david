@@ -547,5 +547,45 @@ module.exports = {
     })
 
     test.done()
+  },
+  "Test error whilst getting dependency status doesn't cause remaining processing to stop": function (test) {
+    var npmMock = {
+      load: function (config, cb) {
+        cb()
+      },
+      commands: {
+        view: function (args, silent, cb) {
+          process.nextTick(function () {
+            if (args[0] === "testDepName") {
+              cb(null, {"0.0.1rc1": {versions: ["0.0.1rc1", "1.0.0"], time: [new Date().toISOString()]}})
+            } else {
+              cb(null, {"1.2.3": {versions: ["1.2.3"], time: [new Date().toISOString()]}})
+            }
+          })
+        }
+      }
+    }
+
+    david.__set__("npm", npmMock)
+
+    var manifest = {
+      dependencies: {
+        testDepName: "0.0.1rc1",
+        testDepName2: "1.2.3"
+      }
+    }
+
+    // Force and error to be returned by david, by specifying dependecy as invalid semver (but valid loose semver)
+    david.getDependencies(manifest, {loose: false}, function (er, deps) {
+      test.expect(7)
+      test.ok(er) // An error object should have been passed back
+      test.ok(deps) // A deps object containing only testDepName2 should have been passed back
+      test.ok(!deps.testDepName)
+      test.ok(deps.testDepName2)
+      test.strictEqual(deps.testDepName2.required, "1.2.3")
+      test.strictEqual(deps.testDepName2.stable, "1.2.3")
+      test.strictEqual(deps.testDepName2.latest, "1.2.3")
+      test.done()
+    })
   }
 }

@@ -120,6 +120,7 @@ david update --unstable
 Release History
 ---------------
 
+* 2014-03-06   v3.0.0   Errors occurring whilst retrieving dependency status doesn't halt processing of other dependencies. An error object will be returned as first arg to callback, but status info for remaining dependencies will still be available (as second arg). CLI now uses loose semver version parsing. Also update npm dependency so `david update` uses "^" as per https://github.com/npm/npm/issues/4587
 * 2013-10-27   v2.4.0   Removes `semverext.js`. The `gtr` function is now available in `semver`
 * 2013-10-08   v2.3.0   Support update specific modules from CLI via `david update [module]`
 * 2013-10-01   v2.2.0   Support for `optionalDependencies` and `peerDependencies`
