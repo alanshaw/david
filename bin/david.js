@@ -13,6 +13,9 @@ var optimist = require("optimist")
   .describe("u", "Use UNSTABLE dependencies")
   .alias("v", "version")
   .describe("v", "Print version number and exit")
+  .default("registry", "https://registry.npmjs.org/")
+  .describe("the registry to use")
+  .alias("reg", "registry")
 
 var david = require("../")
   , argv = optimist.argv
@@ -103,13 +106,13 @@ function filterDeps (deps) {
 
 // Get updated deps, devDeps and optionalDeps
 function getDeps (pkg, cb) {
-  david.getUpdatedDependencies(pkg, { stable: !argv.unstable, loose: true }, function (er, deps) {
+  david.getUpdatedDependencies(pkg, { npm: { registry: argv.registry }, stable: !argv.unstable, loose: true }, function (er, deps) {
     if (er) return cb(er)
 
-    david.getUpdatedDependencies(pkg, { dev: true, stable: !argv.unstable, loose: true }, function (er, devDeps) {
+    david.getUpdatedDependencies(pkg, { npm: { registry: argv.registry }, dev: true, stable: !argv.unstable, loose: true }, function (er, devDeps) {
       if (er) return cb(er)
 
-      david.getUpdatedDependencies(pkg, { optional: true, stable: !argv.unstable, loose: true }, function (er, optionalDeps) {
+      david.getUpdatedDependencies(pkg, { npm: { registry: argv.registry }, optional: true, stable: !argv.unstable, loose: true }, function (er, optionalDeps) {
         cb(er, filterDeps(deps), filterDeps(devDeps), filterDeps(optionalDeps))
       })
     })
@@ -137,7 +140,10 @@ function installDeps (deps, opts, cb) {
     return cb(null)
   }
   
-  npm.load({global: opts.global}, function (er) {
+  npm.load({
+    registry: opts.registry,
+    global: opts.global
+  }, function (er) {
     if (er) return cb(er)
 
     if (opts.save) {
@@ -157,7 +163,7 @@ function installDeps (deps, opts, cb) {
 
 if (argv.global) {
 
-  npm.load({ global: true }, function(err) {
+  npm.load({ registry: argv.registry, global: true }, function(err) {
     if (err) throw err
 
     npm.commands.ls([], true, function(err, data) {
@@ -177,7 +183,7 @@ if (argv.global) {
 
         if (argv.update) {
 
-          installDeps(deps, {global: true}, function (er) {
+          installDeps(deps, { registry: argv.registry, global: true}, function (er) {
             if (er) return console.error("Failed to update global dependencies", er)
           })
 
@@ -201,13 +207,13 @@ if (argv.global) {
 
     if (argv.update) {
 
-      installDeps(deps, {save: true}, function (er) {
+      installDeps(deps, {registry: argv.registry, save: true}, function (er) {
         if (er) return console.error("Failed to update/save dependencies", er)
 
-        installDeps(devDeps, {save: true, dev: true}, function (er) {
+        installDeps(devDeps, {registry: argv.registry, save: true, dev: true}, function (er) {
           if (er) return console.error("Failed to update/save devDependencies", er)
 
-          installDeps(optionalDeps, {save: true, optional: true}, function (er) {
+          installDeps(optionalDeps, {registry: argv.registry, save: true, optional: true}, function (er) {
             if (er) return console.error("Failed to update/save optionalDependencies", er)
           })
         })
