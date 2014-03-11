@@ -116,6 +116,12 @@ To update all your project dependencies to the latest versions
 david update --unstable
 ```
 
+Use an alternate reigstry:
+
+```sh
+david update --registry http://registry.nodejitsu.com/
+```
+
 
 Release History
 ---------------

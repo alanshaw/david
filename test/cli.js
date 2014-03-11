@@ -22,7 +22,7 @@ module.exports = {
 
       cp("test/fixtures/test-update/package.json", "test/tmp/test-update/package.json", function () {
 
-        var proc = childProcess.exec("node ../../../bin/david update", { cwd: "test/tmp/test-update" }, function (er) {
+        var proc = childProcess.exec("node ../../../bin/david update --registry http://registry.nodejitsu.com/", { cwd: "test/tmp/test-update" }, function (er) {
           test.ifError(er)
 
           // Should have installed dependencies
