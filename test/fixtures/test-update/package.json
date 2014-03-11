@@ -13,7 +13,7 @@
     "rimraf": "~2.1.4"
   },
   "devDependencies": {
-    "grunt": "~0.3.0",
+    "request": "~0.1.9",
     "mocha": "0.14.x"
   },
   "optionalDependencies": {
