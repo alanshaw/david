@@ -62,14 +62,14 @@ module.exports = {
       })
     })
   },
-  "Test update & save only async and grunt dependencies": function (test) {
+  "Test update & save only async and request dependencies": function (test) {
     
     fs.mkdir("test/tmp/test-filtered-update", function (er) {
       test.ifError(er)
       
       cp("test/fixtures/test-update/package.json", "test/tmp/test-filtered-update/package.json", function () {
         
-        var proc = childProcess.exec("node ../../../bin/david update async grunt", {cwd: "test/tmp/test-filtered-update"}, function (er) {
+        var proc = childProcess.exec("node ../../../bin/david update async request", {cwd: "test/tmp/test-filtered-update"}, function (er) {
           test.ifError(er)
           
           // Should have installed dependencies
@@ -79,7 +79,7 @@ module.exports = {
             , optionalDepNames = Object.keys(pkg.optionalDependencies)
           
           depNames.concat(devDepNames).concat(optionalDepNames).forEach(function (depName) {
-            if (depName === "async" || depName === "grunt") {
+            if (depName === "async" || depName === "request") {
               test.ok(fs.existsSync("test/tmp/test-filtered-update/node_modules/" + depName), depName + " expected to be installed")
             } else {
               test.ok(!fs.existsSync("test/tmp/test-filtered-update/node_modules/" + depName), depName + " not expected to be installed")
@@ -88,6 +88,10 @@ module.exports = {
           
           // Version numbers should have changed
           var updatedPkg = JSON.parse(fs.readFileSync("test/tmp/test-filtered-update/package.json"))
+
+          // Ensure the dependencies still exist
+          test.ok(updatedPkg.dependencies.async)
+          test.ok(updatedPkg.devDependencies.request)
 
           depNames.forEach(function (depName) {
             if (depName === "async") {
@@ -98,7 +102,7 @@ module.exports = {
           })
 
           devDepNames.forEach(function (depName) {
-            if (depName === "grunt") {
+            if (depName === "request") {
               test.notEqual(pkg.devDependencies[depName], updatedPkg.devDependencies[depName], depName + " version expected to have changed")
             } else {
               test.equal(pkg.devDependencies[depName], updatedPkg.devDependencies[depName], depName + " version not expected to have changed")
