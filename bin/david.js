@@ -15,6 +15,7 @@ var optimist = require("optimist")
   .describe("v", "Print version number and exit")
   .alias("r", "registry")
   .describe("r", "The npm registry URL")
+  .describe("warn404", "If dependency not found, continue and warn")
   .default("r", "https://registry.npmjs.org/")
 
 var david = require("../")
@@ -29,6 +30,7 @@ var blue  = "\033[34m"
   , green = "\033[32m"
   , gray = "\033[90m"
   , yellow = "\033[33m"
+  , red = "\033[31m"
 
 if (argv.usage || argv.help || argv.h) {
   return optimist.showHelp()
@@ -40,12 +42,51 @@ if (argv.version) {
 
 argv.update = argv._.indexOf("update") > -1 || argv._.indexOf("u") > -1
 
-function printDeps (deps, type) {
+/**
+ * Like printDeps(), walk the list. But only print dependencies
+ * with warnings.
+ * @param {Object} deps
+ * @param {String} type
+ * @param {Object} [opts] Options
+ * @param {Boolean} [opts.padTop=true] Prepend newline to output.
+ */
+function printUnregisteredDeps (deps, type, opts) {
   if (!Object.keys(deps).length) {
     return
   }
 
   type = type ? type + " " : ""
+  opts = opts || {};
+  opts.padTop = opts.padTop === void 0 ? true : opts.padTop;
+
+  var warnings = []
+
+  for (var name in deps) {
+    var dep = deps[name]
+    if (dep.warn) {
+      warnings.push(gray + name + " (" + red + dep.warn + reset + ")")
+    }
+  }
+
+  if (warnings.length) {
+    if (opts.padTop)  {
+      console.log("")
+    }
+    console.log("%sUnregistered %sDependencies%s", yellow, type, reset)
+    console.log("")
+    for (var warn in warnings) {
+      console.log(warnings[warn])
+    }
+    console.log("")
+  }
+}
+
+function printDeps (deps, type) {
+  if (!Object.keys(deps).length) {
+    return
+  }
+
+  type = type ? type.trim() + " " : ""
 
   var oneLine = ["npm install"]
 
@@ -85,6 +126,8 @@ function printDeps (deps, type) {
   console.log("")
   console.log("%s%s%s", gray, oneLine.join(" "), reset)
   console.log("")
+
+  printUnregisteredDeps(deps, type, { padTop: false })
 }
 
 // Get a list of dependency filters
@@ -95,7 +138,7 @@ var filterList = argv._.filter(function (v) {
 // Filter the passed deps (result from david) by the dependency names passed on the command line
 function filterDeps (deps) {
   if (!filterList.length) return deps
-  
+
   return Object.keys(deps).reduce(function (filteredDeps, name) {
     if (filterList.indexOf(name) !== -1) {
       filteredDeps[name] = deps[name]
@@ -106,13 +149,13 @@ function filterDeps (deps) {
 
 // Get updated deps, devDeps and optionalDeps
 function getDeps (pkg, cb) {
-  david.getUpdatedDependencies(pkg, { npm: { registry: argv.registry }, stable: !argv.unstable, loose: true }, function (er, deps) {
+  david.getUpdatedDependencies(pkg, { npm: { registry: argv.registry }, stable: !argv.unstable, loose: true, warn: { E404: argv.warn404 } }, function (er, deps) {
     if (er) return cb(er)
 
-    david.getUpdatedDependencies(pkg, { npm: { registry: argv.registry }, dev: true, stable: !argv.unstable, loose: true }, function (er, devDeps) {
+    david.getUpdatedDependencies(pkg, { npm: { registry: argv.registry }, dev: true, stable: !argv.unstable, loose: true, warn: { E404: argv.warn404 } }, function (er, devDeps) {
       if (er) return cb(er)
 
-      david.getUpdatedDependencies(pkg, { npm: { registry: argv.registry }, optional: true, stable: !argv.unstable, loose: true }, function (er, optionalDeps) {
+      david.getUpdatedDependencies(pkg, { npm: { registry: argv.registry }, optional: true, stable: !argv.unstable, loose: true, warn: { E404: argv.warn404 } }, function (er, optionalDeps) {
         cb(er, filterDeps(deps), filterDeps(devDeps), filterDeps(optionalDeps))
       })
     })
@@ -135,12 +178,16 @@ function installDeps (deps, opts, cb) {
   opts = opts || {}
 
   var depNames = Object.keys(deps)
-  
+
   // Nothing to install!
   if (!depNames.length) {
     return cb(null)
   }
-  
+
+  depNames = depNames.filter(function (depName) {
+    return !deps[depName].warn
+  })
+
   npm.load({
     registry: opts.registry,
     global: opts.global
@@ -186,6 +233,8 @@ if (argv.global) {
 
           installDeps(deps, { registry: argv.registry, global: true}, function (er) {
             if (er) return console.error("Failed to update global dependencies", er)
+
+            printUnregisteredDeps(deps, "Global")
           })
 
         } else {
@@ -216,6 +265,10 @@ if (argv.global) {
 
           installDeps(optionalDeps, {registry: argv.registry, save: true, optional: true}, function (er) {
             if (er) return console.error("Failed to update/save optionalDependencies", er)
+
+            printUnregisteredDeps(deps)
+            printUnregisteredDeps(devDeps, "Dev")
+            printUnregisteredDeps(optionalDeps, "Optional")
           })
         })
       })
