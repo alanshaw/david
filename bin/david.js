@@ -47,20 +47,15 @@ argv.update = argv._.indexOf("update") > -1 || argv._.indexOf("u") > -1
  * with warnings.
  * @param {Object} deps
  * @param {String} type
- * @param {Object} [opts] Options
- * @param {Boolean} [opts.padTop=true] Prepend newline to output.
  */
-function printWarnings (deps, type, opts) {
+function printWarnings (deps, type) {
   if (!Object.keys(deps).length) {
     return
   }
 
   type = type ? type.trim() + " " : ""
-  opts = opts || {};
-  opts.padTop = opts.padTop === void 0 ? true : opts.padTop;
 
   var warnings = { E404: { title: "Unregistered", list: [] } }
-    , padTopPrinted = false
 
   for (var name in deps) {
     var dep = deps[name];
@@ -74,10 +69,7 @@ function printWarnings (deps, type, opts) {
     var warnList = warnings[warnType].list
 
     if (warnList.length) {
-      if (opts.padTop && !padTopPrinted) {
-        console.log("")
-        padTopPrinted = true
-      }
+      console.log("")
       console.log("%s%s %sDependencies%s", yellow, warnings[warnType].title, type, reset)
       console.log("")
       warnList.forEach(function (msg) {
@@ -139,7 +131,7 @@ function printDeps (deps, type) {
   console.log("%s%s%s", gray, oneLine.join(" "), reset)
   console.log("")
 
-  printWarnings(deps, type, { padTop: false })
+  printWarnings(deps, type)
 }
 
 // Get a list of dependency filters
