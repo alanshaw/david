@@ -113,6 +113,11 @@ function printDeps (deps, type) {
 
   for (var name in deps) {
     var dep = deps[name]
+
+    if (dep.warn) {
+      continue
+    }
+
     oneLine.push(name+"@"+dep[argv.unstable ? "latest" : "stable"])
     console.log("%s%s%s %s(package:%s %s, %slatest: %s%s%s)%s",
                 green,
