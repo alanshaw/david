@@ -50,35 +50,42 @@ argv.update = argv._.indexOf("update") > -1 || argv._.indexOf("u") > -1
  * @param {Object} [opts] Options
  * @param {Boolean} [opts.padTop=true] Prepend newline to output.
  */
-function printUnregisteredDeps (deps, type, opts) {
+function printWarnings (deps, type, opts) {
   if (!Object.keys(deps).length) {
     return
   }
 
-  type = type ? type + " " : ""
+  type = type ? type.trim() + " " : ""
   opts = opts || {};
   opts.padTop = opts.padTop === void 0 ? true : opts.padTop;
 
-  var warnings = []
+  var warnings = { E404: { title: "Unregistered", list: [] } }
+    , padTopPrinted = false
 
   for (var name in deps) {
-    var dep = deps[name]
+    var dep = deps[name];
+
     if (dep.warn) {
-      warnings.push(gray + name + " (" + red + dep.warn + reset + ")")
+      warnings[dep.warn.code].list.push(gray + name + " (" + red + dep.warn.msg + reset + ")")
     }
   }
 
-  if (warnings.length) {
-    if (opts.padTop)  {
+  Object.keys(warnings).forEach(function (warnType) {
+    var warnList = warnings[warnType].list
+
+    if (warnList.length) {
+      if (opts.padTop && !padTopPrinted) {
+        console.log("")
+        padTopPrinted = true
+      }
+      console.log("%s%s %sDependencies%s", yellow, warnings[warnType].title, type, reset)
+      console.log("")
+      warnList.forEach(function (msg) {
+        console.log(msg);
+      })
       console.log("")
     }
-    console.log("%sUnregistered %sDependencies%s", yellow, type, reset)
-    console.log("")
-    for (var warn in warnings) {
-      console.log(warnings[warn])
-    }
-    console.log("")
-  }
+  })
 }
 
 function printDeps (deps, type) {
@@ -86,7 +93,7 @@ function printDeps (deps, type) {
     return
   }
 
-  type = type ? type.trim() + " " : ""
+  type = type ? type + " " : ""
 
   var oneLine = ["npm install"]
 
@@ -127,7 +134,7 @@ function printDeps (deps, type) {
   console.log("%s%s%s", gray, oneLine.join(" "), reset)
   console.log("")
 
-  printUnregisteredDeps(deps, type, { padTop: false })
+  printWarnings(deps, type, { padTop: false })
 }
 
 // Get a list of dependency filters
@@ -234,7 +241,7 @@ if (argv.global) {
           installDeps(deps, { registry: argv.registry, global: true}, function (er) {
             if (er) return console.error("Failed to update global dependencies", er)
 
-            printUnregisteredDeps(deps, "Global")
+            printWarnings(deps, "Global")
           })
 
         } else {
@@ -266,9 +273,9 @@ if (argv.global) {
           installDeps(optionalDeps, {registry: argv.registry, save: true, optional: true}, function (er) {
             if (er) return console.error("Failed to update/save optionalDependencies", er)
 
-            printUnregisteredDeps(deps)
-            printUnregisteredDeps(devDeps, "Dev")
-            printUnregisteredDeps(optionalDeps, "Optional")
+            printWarnings(deps)
+            printWarnings(devDeps, "Dev")
+            printWarnings(optionalDeps, "Optional")
           })
         })
       })
