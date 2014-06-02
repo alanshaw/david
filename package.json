@@ -26,16 +26,16 @@
     "LICENCE"
   ],
   "dependencies": {
-    "async": "~0.2.9",
+    "async": "^0.9.0",
     "npm": "~1.4.4",
     "optimist": "~0.6.0",
-    "semver": "~2.2.1"
+    "semver": "^2.3.0"
   },
   "devDependencies": {
-    "coveralls": "~2.8.0",
-    "jscoverage": "~0.3.8",
-    "jshint": "~2.4.4",
-    "nodeunit": "~0.8.1",
+    "coveralls": "^2.10.0",
+    "jscoverage": "^0.5.3",
+    "jshint": "^2.5.1",
+    "nodeunit": "^0.9.0",
     "rewire": "~2.0.0",
     "rimraf": "~2.2.2"
   },
