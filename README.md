@@ -126,6 +126,7 @@ david update --registry http://registry.nodejitsu.com/
 Release History
 ---------------
 
+* 2014-06-02   v3.3.0   CLI Add `--warn404` option to print errors but not abort
 * 2014-03-11   v3.1.0   CLI Add `-r, --registry` option to use alternate npm registry
 * 2014-03-06   v3.0.0   Errors occurring whilst retrieving dependency status doesn't halt processing of other dependencies. An error object will be returned as first arg to callback, but status info for remaining dependencies will still be available (as second arg). CLI now uses loose semver version parsing. Also update npm dependency so `david update` uses "^" as per https://github.com/npm/npm/issues/4587
 * 2013-10-27   v2.4.0   Removes `semverext.js`. The `gtr` function is now available in `semver`
