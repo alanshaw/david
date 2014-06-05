@@ -70,7 +70,7 @@ david.getUpdatedDependencies(manifest, { dev: true, stable: true }, function (er
 });
 
 function listDependencies(deps) {
-  Object.keys(deps, function(depName) {
+  Object.keys(deps).forEach(function(depName) {
     var required = deps[depName].required || '*';
     var stable = deps[depName].stable || 'None';
     var latest = deps[depName].latest;
