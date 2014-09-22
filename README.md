@@ -126,6 +126,7 @@ david update --registry http://registry.nodejitsu.com/
 Release History
 ---------------
 
+* 2014-09-22   v5.0.0   Update to semver@4.0.0
 * 2014-09-22   v4.1.0   Add versions option to return all dependency versions
 * 2014-09-21   v4.0.0   Update to npm@2.0.2, add rangeVersions option
 * 2014-06-02   v3.3.0   CLI Add `--warn404` option to print errors but not abort

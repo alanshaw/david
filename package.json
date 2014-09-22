@@ -29,7 +29,7 @@
     "async": "^0.9.0",
     "npm": "^2.0.2",
     "optimist": "~0.6.0",
-    "semver": "^3.0.1"
+    "semver": "^4.0.0"
   },
   "devDependencies": {
     "coveralls": "^2.10.0",
