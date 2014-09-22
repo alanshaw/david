@@ -588,7 +588,42 @@ module.exports = {
       test.done()
     })
   },
-  "Return versions satisfying ranges when rangeVersions option is true": function (test) {
+  "Return dependency versions when versions option is true": function (test) {
+    var npmMock = {
+      load: function (config, cb) {
+        cb()
+      },
+      commands: {
+        view: function (args, silent, cb) {
+          process.nextTick(function () {
+            cb(null, {"1.1.0": {versions: ["0.2.0", "1.0.1", "1.1.0"]}})
+          })
+        }
+      }
+    }
+
+    david.__set__("npm", npmMock)
+
+    var manifest = {
+      dependencies: {
+        testDepName: "^1.0.1"
+      }
+    }
+
+    david.getDependencies(manifest, {loose: true, versions: true}, function (er, deps) {
+      test.expect(8)
+      test.ifError(er)
+      test.ok(deps)
+      test.ok(deps.testDepName)
+      test.ok(deps.testDepName.versions)
+      test.strictEqual(deps.testDepName.versions.length, 3)
+      test.strictEqual(deps.testDepName.versions[0], "0.2.0")
+      test.strictEqual(deps.testDepName.versions[1], "1.0.1")
+      test.strictEqual(deps.testDepName.versions[2], "1.1.0")
+      test.done()
+    })
+  },
+  "Return dependency versions satisfying ranges when rangeVersions option is true": function (test) {
     var npmMock = {
       load: function (config, cb) {
         cb()
