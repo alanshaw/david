@@ -191,6 +191,61 @@ module.exports = {
       })
     })
   },
+
+  "Test print-only output with git dependencies in each type": function (test) {
+
+    fs.mkdir("test/tmp/test-git-deps", function (er) {
+      test.ifError(er)
+
+      cp("test/fixtures/test-git-deps/package.json", "test/tmp/test-git-deps/package.json", function () {
+
+        var stdout = ""
+
+        var proc = childProcess.exec("node ../../../bin/david --skip-git-deps", { cwd: "test/tmp/test-git-deps" }, function (er) {
+          test.ifError(er)
+
+          // Should have installed+registered dependencies
+          var pkg = JSON.parse(fs.readFileSync("test/fixtures/test-git-deps/package.json"))
+          filterUnregistered(pkg)
+
+          var depNames = Object.keys(pkg.dependencies)
+            , devDepNames = Object.keys(pkg.devDependencies)
+            , optionalDepNames = Object.keys(pkg.optionalDependencies)
+
+          test.strictEqual(depNames.length, 3);
+          depNames.forEach(function (depName) {
+            test.ok(new RegExp("Outdated Dependencies[\\s\\S]*" + depName + "[\\s\\S]*Outdated Dev", "m").test(stdout), depName + " expected to be outdated")
+          })
+
+          test.strictEqual(devDepNames.length, 3);
+          devDepNames.forEach(function (depName) {
+            test.ok(new RegExp("Outdated Dev Dependencies[\\s\\S]*" + depName + "[\\s\\S]*Outdated Opt", "m").test(stdout), depName + " expected to be outdated")
+          })
+
+          test.strictEqual(optionalDepNames.length, 3);
+          optionalDepNames.forEach(function (depName) {
+            test.ok(new RegExp("Outdated Optional Dependencies[\\s\\S]*" + depName, "m").test(stdout), depName + " expected to be outdated")
+          })
+
+          test.ok(/Git Dep[\s\S]*skipped/m.test(stdout))
+          test.ok(/Git Dev[\s\S]*skipped/m.test(stdout))
+          test.ok(/Git Opt[\s\S]*skipped/m.test(stdout))
+
+          test.done()
+        })
+
+        proc.stdout.on("data", function (data) {
+          data = data.toString();
+          stdout += data;
+          console.log(data.trim())
+        })
+
+        proc.stderr.on("data", function (data) {
+          console.error(data.toString().trim())
+        })
+      })
+    })
+  },
   "Test default exit response to unregistered dependency": function (test) {
 
     var stderr = ""
