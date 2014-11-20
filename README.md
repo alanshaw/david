@@ -116,10 +116,18 @@ To update all your project dependencies to the latest versions
 david update --unstable
 ```
 
-Use an alternate reigstry:
+### Alternate reigstry
 
 ```sh
 david update --registry http://registry.nodejitsu.com/
+```
+
+### Non-npm dependencies
+
+If you have dependencies that are not published to npm, david will exit with an error message. To print a warning message instead, then pass the `warn404` option:
+
+```sh
+david --warn404
 ```
 
 
