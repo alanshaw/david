@@ -15,8 +15,9 @@ var optimist = require("optimist")
   .describe("v", "Print version number and exit")
   .alias("r", "registry")
   .describe("r", "The npm registry URL")
-  .describe("warn404", "If dependency not found, continue and warn")
   .default("r", "https://registry.npmjs.org/")
+  .describe("warn404", "If dependency not found, continue and warn")
+  .describe("skip-git-deps", "If dependency is a git deps, continue and warn")
 
 var david = require("../")
   , argv = optimist.argv
@@ -41,6 +42,7 @@ if (argv.version) {
 }
 
 argv.update = argv._.indexOf("update") > -1 || argv._.indexOf("u") > -1
+argv.skipGitDeps = argv["skip-git-deps"];
 
 /**
  * Like printDeps(), walk the list. But only print dependencies
@@ -55,7 +57,10 @@ function printWarnings (deps, type) {
 
   type = type ? type.trim() + " " : ""
 
-  var warnings = { E404: { title: "Unregistered", list: [] } }
+  var warnings = {
+    E404: { title: "Unregistered", list: [] },
+    EGIT: { title: "Git", list: [] }
+  }
 
   for (var name in deps) {
     var dep = deps[name];
@@ -153,13 +158,13 @@ function filterDeps (deps) {
 
 // Get updated deps, devDeps and optionalDeps
 function getDeps (pkg, cb) {
-  david.getUpdatedDependencies(pkg, { npm: { registry: argv.registry }, stable: !argv.unstable, loose: true, warn: { E404: argv.warn404 } }, function (er, deps) {
+  david.getUpdatedDependencies(pkg, { npm: { registry: argv.registry }, stable: !argv.unstable, loose: true, warn: { E404: argv.warn404, EGIT: argv.skipGitDeps } }, function (er, deps) {
     if (er) return cb(er)
 
-    david.getUpdatedDependencies(pkg, { npm: { registry: argv.registry }, dev: true, stable: !argv.unstable, loose: true, warn: { E404: argv.warn404 } }, function (er, devDeps) {
+    david.getUpdatedDependencies(pkg, { npm: { registry: argv.registry }, dev: true, stable: !argv.unstable, loose: true, warn: { E404: argv.warn404, EGIT: argv.skipGitDeps } }, function (er, devDeps) {
       if (er) return cb(er)
 
-      david.getUpdatedDependencies(pkg, { npm: { registry: argv.registry }, optional: true, stable: !argv.unstable, loose: true, warn: { E404: argv.warn404 } }, function (er, optionalDeps) {
+      david.getUpdatedDependencies(pkg, { npm: { registry: argv.registry }, optional: true, stable: !argv.unstable, loose: true, warn: { E404: argv.warn404, EGIT: argv.skipGitDeps } }, function (er, optionalDeps) {
         cb(er, filterDeps(deps), filterDeps(devDeps), filterDeps(optionalDeps))
       })
     })
