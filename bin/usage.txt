@@ -1,0 +1,13 @@
+Get latest dependency version information.
+
+Usage: david [command] [options...] [dependency names...]
+
+Command:
+  update, u  Update dependencies to latest STABLE versions and save to package.json
+
+Options:
+  -g, --global    Consider global dependencies              
+  -u, --unstable  Use UNSTABLE dependencies                 
+  -v, --version   Print version number and exit             
+  -r, --registry  The npm registry URL [default: "https://registry.npmjs.org/"]
+  --error404      If dependency not found, halt with an error code

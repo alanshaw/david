@@ -146,8 +146,9 @@ module.exports = {
 
         var stdout = ""
 
-        var proc = childProcess.exec("node ../../../bin/david --warn404 --registry http://registry.nodejitsu.com/", { cwd: "test/tmp/test-unregistered" }, function (er) {
-          test.ifError(er)
+        var proc = childProcess.exec("node ../../../bin/david --registry http://registry.nodejitsu.com/", { cwd: "test/tmp/test-unregistered" }, function (er) {
+          // There are dependencies to be updated so we expect a non zero exit code
+          test.ok(er.code, "Exited with non zero exit code")
 
           // Should have installed+registered dependencies
           var pkg = JSON.parse(fs.readFileSync("test/fixtures/test-unregistered/package.json"))
@@ -159,22 +160,22 @@ module.exports = {
 
           test.ok(depNames.length > 0);
           depNames.forEach(function (depName) {
-            test.ok(new RegExp("Outdated Dependencies[\\s\\S]*" + depName + "[\\s\\S]*Outdated Dev", "m").test(stdout), depName + " expected to be outdated")
+            test.ok(new RegExp(depName, "m").test(stdout), depName + " expected to be outdated")
           })
 
           test.ok(devDepNames.length > 0);
           devDepNames.forEach(function (depName) {
-            test.ok(new RegExp("Outdated Dev Dependencies[\\s\\S]*" + depName + "[\\s\\S]*Outdated Opt", "m").test(stdout), depName + " expected to be outdated")
+            test.ok(new RegExp(depName, "m").test(stdout), depName + " expected to be outdated")
           })
 
           test.ok(optionalDepNames.length > 0);
           optionalDepNames.forEach(function (depName) {
-            test.ok(new RegExp("Outdated Optional Dependencies[\\s\\S]*" + depName, "m").test(stdout), depName + " expected to be outdated")
+            test.ok(new RegExp(depName, "m").test(stdout), depName + " expected to be outdated")
           })
 
-          test.ok(/Unregistered Dep[\s\S]*unregistered--/m.test(stdout))
-          test.ok(/Unregistered Dev[\s\S]*unregistereddev--/m.test(stdout))
-          test.ok(/Unregistered Opt[\s\S]*unregisteredopt--/m.test(stdout))
+          test.ok(/Error: 404 Not Found: unregistered--/m.test(stdout))
+          test.ok(/Error: 404 Not Found: unregistereddev--/m.test(stdout))
+          test.ok(/Error: 404 Not Found: unregisteredopt--/m.test(stdout))
 
           test.done()
         })
@@ -193,22 +194,21 @@ module.exports = {
   },
   "Test default exit response to unregistered dependency": function (test) {
 
-    var stderr = ""
+    var stdout = ""
 
     var proc = childProcess.exec("node ../../../bin/david --registry http://registry.nodejitsu.com/", { cwd: "test/fixtures/test-unregistered" }, function (er) {
-      test.ifError(er)
-      test.ok(/Failed to get updated dependencies\/devDependencies.*unregistered--.*E404/.test(stderr))
+      // There are dependencies to be updated, so we expect non zero exit code
+      test.ok(er.code, "Exited with non zero exit code")
+      test.ok(/Error: 404 Not Found: unregistered--/m.test(stdout))
+      test.ok(/Error: 404 Not Found: unregistereddev--/m.test(stdout))
+      test.ok(/Error: 404 Not Found: unregisteredopt--/m.test(stdout))
       test.done()
     })
 
     proc.stdout.on("data", function (data) {
-      console.log(data.toString().trim())
-    })
-
-    proc.stderr.on("data", function (data) {
       data = data.toString()
-      stderr += data
-      console.error(data.toString().trim())
+      stdout += data
+      console.log(data.trim())
     })
   },
   "Test update with unregistered dependency in each type": function (test) {
@@ -220,7 +220,7 @@ module.exports = {
 
         var stdout = ""
 
-        var proc = childProcess.exec("node ../../../bin/david update --warn404 --registry http://registry.nodejitsu.com/", { cwd: "test/tmp/test-unregistered" }, function (er) {
+        var proc = childProcess.exec("node ../../../bin/david update --registry http://registry.nodejitsu.com/", { cwd: "test/tmp/test-unregistered" }, function (er) {
           test.ifError(er)
 
           // Should have installed+registered dependencies
@@ -253,16 +253,16 @@ module.exports = {
             test.notEqual(pkg.optionalDependencies[depName], updatedPkg.optionalDependencies[depName], depName + " version expected to have changed")
           })
 
-          test.ok(/Unregistered Dep[\s\S]*unregistered--/m.test(stdout))
-          test.ok(/Unregistered Dev[\s\S]*unregistereddev--/m.test(stdout))
-          test.ok(/Unregistered Opt[\s\S]*unregisteredopt--/m.test(stdout))
+          test.ok(/Error: 404 Not Found: unregistered--/m.test(stdout))
+          test.ok(/Error: 404 Not Found: unregistereddev--/m.test(stdout))
+          test.ok(/Error: 404 Not Found: unregisteredopt--/m.test(stdout))
 
           test.done()
         })
 
         proc.stdout.on("data", function (data) {
-          data = data.toString();
-          stdout += data;
+          data = data.toString()
+          stdout += data
           console.log(data.trim())
         })
 
