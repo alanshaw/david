@@ -271,5 +271,31 @@ module.exports = {
         })
       })
     })
+  },
+  "Test print-only output with git dependencies in each type": function (test) {
+
+    fs.mkdir("test/tmp/test-scm", function (er) {
+      test.ifError(er)
+
+      cp("test/fixtures/test-scm/package.json", "test/tmp/test-scm/package.json", function () {
+
+        var stdout = ""
+
+        var proc = childProcess.exec("node ../../../bin/david", { cwd: "test/tmp/test-scm" }, function () {
+          test.ok(/Error: SCM dependency: git\+https:\/\/github.com\/foo\/bar\.git/m.test(stdout))
+          test.done()
+        })
+
+        proc.stdout.on("data", function (data) {
+          data = data.toString();
+          stdout += data;
+          console.log(data.trim())
+        })
+
+        proc.stderr.on("data", function (data) {
+          console.error(data.toString().trim())
+        })
+      })
+    })
   }
 }

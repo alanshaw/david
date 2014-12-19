@@ -7,7 +7,7 @@
 [![Donate to help support David development](http://img.shields.io/gratipay/_alanshaw.svg?style=flat)](https://www.gittip.com/_alanshaw/)
 ___
 
-Node.js module that tells you when your package NPM dependencies are out of date.
+Node.js module that tells you when your package npm dependencies are out of date.
 
 
 ## Getting Started
@@ -122,7 +122,7 @@ david update --unstable
 david update --registry http://registry.nodejitsu.com/
 ```
 
-### Non-npm dependencies
+### Non-npm and SCM (Git) dependencies
 
 If you have dependencies that are not published to npm, david will print a warning message by default. To throw an error and exit, pass the `error404` option:
 
@@ -131,6 +131,14 @@ david --error404
 ```
 
 If using david programmatically, pass `error: {E404: true}` in the options object.
+
+If you have dependencies whose versions are SCM URLs, david will print a warning message by default. To throw an error and exit, pass the `errorSCM` option:
+
+```sh
+david --errorSCM
+```
+
+If using david programmatically, pass `error: {ESCM: true}` in the options object.
 
 
 Release History

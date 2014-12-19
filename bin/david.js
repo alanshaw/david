@@ -29,7 +29,10 @@ argv.update = argv._.indexOf("update") > -1 || argv._.indexOf("u") > -1
 function printWarnings (deps, type) {
   if (!Object.keys(deps).length) return
 
-  var warnings = {E404: {title: "Unregistered", list: []}}
+  var warnings = {
+    E404: {title: "Unregistered", list: []},
+    ESCM: {title: "SCM", list: []}
+  }
 
   for (var name in deps) {
     var dep = deps[name]
@@ -124,7 +127,10 @@ function getUpdatedDeps (pkg, cb) {
     npm: {registry: argv.registry},
     stable: !argv.unstable,
     loose: true,
-    error: {E404: argv.error404}
+    error: {
+      E404: argv.error404,
+      ESCM: argv.errorSCM
+    }
   }
 
   david.getUpdatedDependencies(pkg, opts, function (er, deps) {
