@@ -144,6 +144,7 @@ If using david programmatically, pass `error: {ESCM: true}` in the options objec
 Release History
 ---------------
 
+* 2014-12-19   v6.0.0   Warn about unregistered or git dependencies by default
 * 2014-09-22   v5.0.0   Update to semver@4.0.0
 * 2014-09-22   v4.1.0   Add versions option to return all dependency versions
 * 2014-09-21   v4.0.0   Update to npm@2.0.2, add rangeVersions option
