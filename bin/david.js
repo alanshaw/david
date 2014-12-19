@@ -124,13 +124,16 @@ function filterDeps (deps) {
 // Get updated deps, devDeps and optionalDeps
 function getUpdatedDeps (pkg, cb) {
   var opts = {
-    npm: {registry: argv.registry},
     stable: !argv.unstable,
     loose: true,
     error: {
       E404: argv.error404,
       ESCM: argv.errorSCM
     }
+  }
+
+  if (argv.registry) {
+    opts.npm = {registry: argv.registry}
   }
 
   david.getUpdatedDependencies(pkg, opts, function (er, deps) {
