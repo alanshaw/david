@@ -124,11 +124,13 @@ david update --registry http://registry.nodejitsu.com/
 
 ### Non-npm dependencies
 
-If you have dependencies that are not published to npm, david will exit with an error message. To print a warning message instead, then pass the `warn404` option:
+If you have dependencies that are not published to npm, david will print a warning message by default. To throw an error and exit, pass the `error404` option:
 
 ```sh
-david --warn404
+david --error404
 ```
+
+If using david programmatically, pass `error: {E404: true}` in the options object.
 
 
 Release History
