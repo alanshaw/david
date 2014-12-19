@@ -134,6 +134,13 @@ function printDeps (deps, type) {
   printWarnings(deps, type)
 }
 
+// Log feedback if all dependencies are up to date
+function printAllUpToDate (deps, devDeps, optionalDeps) {
+  if (!Object.keys(deps).length && !Object.keys(devDeps).length && !Object.keys(optionalDeps).length) {
+    console.log("%sAll dependencies up to date%s", green, reset)
+  }
+}
+
 // Get a list of dependency filters
 var filterList = argv._.filter(function (v) {
   return !(v === "update" || v === "u")
@@ -282,5 +289,6 @@ if (argv.global) {
       printDeps(devDeps, "Dev")
       printDeps(optionalDeps, "Optional")
     }
+    printAllUpToDate(deps, devDeps, optionalDeps)
   })
 }
