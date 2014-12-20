@@ -15,9 +15,9 @@
     "david": "bin/david.js"
   },
   "scripts": {
-    "coveralls": "jscoverage lib && DAVID_COV=1 nodeunit --reporter=lcov test | coveralls",
-    "lint": "jshint .",
-    "test": "jshint . && nodeunit test"
+    "test": "jshint . && istanbul cover node_modules/.bin/tape test/*.js",
+    "coveralls": "cat ./coverage/lcov.info | coveralls",
+    "lint": "jshint ."
   },
   "license": "MIT",
   "files": [
@@ -36,11 +36,11 @@
   },
   "devDependencies": {
     "coveralls": "^2.10.0",
-    "jscoverage": "^0.5.3",
+    "istanbul": "^0.3.5",
     "jshint": "^2.5.1",
-    "nodeunit": "^0.9.0",
     "rewire": "^2.1.0",
-    "rimraf": "~2.2.2"
+    "rimraf": "~2.2.2",
+    "tape": "^3.0.3"
   },
   "engines": {
     "node": "~0.10.1 || ~0.11.0"
