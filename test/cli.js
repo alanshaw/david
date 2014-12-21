@@ -40,8 +40,11 @@ function runDavid (args, fixture, cb) {
 
         cp(fixturePkgPath, tmpPkgPath, function () {
           args = [davidPath].concat(args)
-          opts = {cwd: path.join(tmpPath, fixture)}
-          childProcess.execFile("node", args, opts, cb)
+          var opts = {cwd: path.join(tmpPath, fixture)}
+          var proc = childProcess.execFile("node", args, opts, cb)
+
+          proc.stdout.pipe(process.stdout)
+          proc.stderr.pipe(process.stderr)
         })
       })
     })
@@ -49,9 +52,9 @@ function runDavid (args, fixture, cb) {
 }
 
 test("Test update and save dependencies, devDependencies & optionalDependencies", function (t) {
-  t.plan(5)
+  t.plan(11)
 
-  runDavid(["update"], "test-update", function (er, stdout, stderr) {
+  runDavid(["update"], "test-update", function (er) {
     t.ifError(er)
 
     // Should have installed dependencies
@@ -83,9 +86,9 @@ test("Test update and save dependencies, devDependencies & optionalDependencies"
 })
 
 test("Test update & save only async and request dependencies", function (t) {
-  t.plan(10)
+  t.plan(13)
 
-  runDavid(["update", "async", "request"], "test-update", function (er, stdout, stderr) {
+  runDavid(["update", "async", "request"], "test-update", function (er) {
     t.ifError(er)
 
     // Should have installed dependencies
@@ -96,14 +99,14 @@ test("Test update & save only async and request dependencies", function (t) {
 
     depNames.concat(devDepNames).concat(optionalDepNames).forEach(function (depName) {
       if (depName === "async" || depName === "request") {
-        t.ok(fs.existsSync("test/tmp/test-filtered-update/node_modules/" + depName), depName + " expected to be installed")
+        t.ok(fs.existsSync("test/tmp/test-update/node_modules/" + depName), depName + " expected to be installed")
       } else {
-        t.ok(!fs.existsSync("test/tmp/test-filtered-update/node_modules/" + depName), depName + " not expected to be installed")
+        t.ok(!fs.existsSync("test/tmp/test-update/node_modules/" + depName), depName + " not expected to be installed")
       }
     })
 
     // Version numbers should have changed
-    var updatedPkg = JSON.parse(fs.readFileSync("test/tmp/test-filtered-update/package.json"))
+    var updatedPkg = JSON.parse(fs.readFileSync("test/tmp/test-update/package.json"))
 
     // Ensure the dependencies still exist
     t.ok(updatedPkg.dependencies.async)
@@ -136,8 +139,8 @@ test("Test update & save only async and request dependencies", function (t) {
 test("Test print-only output with unregistered dependency in each type", function (t) {
   t.plan(10)
 
-  runDavid(["update", "async", "request"], "test-unregistered", function (er, stdout, stderr) {
-    // There are dependencies to be updated so we expect a non zero exit code
+  runDavid([], "test-unregistered", function (er, stdout) {
+    // There are dependencies to be updated, so we expect non zero exit code
     t.ok(er.code, "Exited with non zero exit code")
 
     // Should have installed+registered dependencies
@@ -150,17 +153,17 @@ test("Test print-only output with unregistered dependency in each type", functio
 
     t.ok(depNames.length > 0);
     depNames.forEach(function (depName) {
-      t.ok(new RegExp(depName, "m").test(stdout), depName + " expected to be outdated")
+      t.ok(new RegExp(depName, "m").test(stdout.toString()), depName + " expected to be outdated")
     })
 
     t.ok(devDepNames.length > 0);
     devDepNames.forEach(function (depName) {
-      t.ok(new RegExp(depName, "m").test(stdout), depName + " expected to be outdated")
+      t.ok(new RegExp(depName, "m").test(stdout.toString()), depName + " expected to be outdated")
     })
 
     t.ok(optionalDepNames.length > 0);
     optionalDepNames.forEach(function (depName) {
-      t.ok(new RegExp(depName, "m").test(stdout), depName + " expected to be outdated")
+      t.ok(new RegExp(depName, "m").test(stdout.toString()), depName + " expected to be outdated")
     })
 
     t.ok(/Error: 404 Not Found: unregistered--/m.test(stdout.toString()))
@@ -172,9 +175,9 @@ test("Test print-only output with unregistered dependency in each type", functio
 })
 
 test("Test default exit response to unregistered dependency", function (t) {
-  t.plan(10)
+  t.plan(4)
 
-  runDavid([], "test-unregistered", function (er, stdout, stderr) {
+  runDavid([], "test-unregistered", function (er, stdout) {
     // There are dependencies to be updated, so we expect non zero exit code
     t.ok(er.code, "Exited with non zero exit code")
     t.ok(/Error: 404 Not Found: unregistered--/m.test(stdout.toString()))
@@ -185,9 +188,9 @@ test("Test default exit response to unregistered dependency", function (t) {
 })
 
 test("Test update with unregistered dependency in each type", function (t) {
-  t.plan(10)
+  t.plan(12)
 
-  runDavid([], "test-unregistered", function (er, stdout, stderr) {
+  runDavid(["update"], "test-unregistered", function (er, stdout) {
     // Should have installed+registered dependencies
     var pkg = JSON.parse(fs.readFileSync("test/fixtures/test-unregistered/package.json"))
     filterUnregistered(pkg)
@@ -226,10 +229,10 @@ test("Test update with unregistered dependency in each type", function (t) {
   })
 })
 
-test("Test update with unregistered dependency in each type", function (t) {
-  t.plan(10)
+test("Test SCM dependency output", function (t) {
+  t.plan(1)
 
-  runDavid([], "test-scm", function (er, stdout, stderr) {
+  runDavid([], "test-scm", function (er, stdout) {
     t.ok(/Error: SCM dependency: git\+https:\/\/github.com\/foo\/bar\.git/m.test(stdout.toString()))
     t.end()
   })

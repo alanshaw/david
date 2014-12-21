@@ -1,5 +1,5 @@
 .git
-lib-cov
+coverage
 node_modules
 test/tmp
 test/fixtures
