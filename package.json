@@ -15,7 +15,7 @@
     "david": "bin/david.js"
   },
   "scripts": {
-    "test": "jshint . && istanbul cover node_modules/.bin/tape test/*.js",
+    "test": "jshint . && david && istanbul cover node_modules/.bin/tape test/*.js",
     "coveralls": "cat ./coverage/lcov.info | coveralls",
     "lint": "jshint ."
   },
