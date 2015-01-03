@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 var david = require("../")
-  , clc = require("cli-color")
+  , clc = require("cli-color-tty")()
   , Table = require("cli-table")
   , fs = require("fs")
   , npm = require("npm")
