@@ -31,7 +31,8 @@ function printWarnings (deps, type) {
 
   var warnings = {
     E404: {title: "Unregistered", list: []},
-    ESCM: {title: "SCM", list: []}
+    ESCM: {title: "SCM", list: []},
+    EDEPTYPE: {title: "Non-strng dependency", list: []}
   }
 
   for (var name in deps) {
@@ -128,7 +129,8 @@ function getUpdatedDeps (pkg, cb) {
     loose: true,
     error: {
       E404: argv.error404,
-      ESCM: argv.errorSCM
+      ESCM: argv.errorSCM,
+      EDEPTYPE: argv.errorDepType
     }
   }
 

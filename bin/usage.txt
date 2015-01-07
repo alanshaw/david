@@ -15,3 +15,4 @@ Options:
   --error404       If dependency not found, halt with an error code.
   --errorSCM       If dependency version is a source control URL, halt with an 
                    error code.
+  --errorDepType   If dependency version is invalid (not a string)

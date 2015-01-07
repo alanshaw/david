@@ -688,3 +688,25 @@ test("Test getDependencies SCM URL warning", function (t) {
     t.end()
   })
 })
+
+test("Test non-string dependency doesn't throw", function (t) {
+  t.plan(2)
+
+  var manifest = {
+    dependencies: {
+      "//": {
+        "passport-facebook": "~1.0.2",
+        "passport-github": "~0.1.5",
+        "passport-google-oauth": "~0.1.5",
+        "passport-linkedin": "~0.1.3",
+        "passport-twitter": "~1.0.2"
+      }
+    }
+  }
+
+  david.getDependencies(manifest, {error: {EDEPTYPE: true}}, function (er) {
+    t.ok(er, "Expected error")
+    t.equal(er.code, "EDEPTYPE", "Expected error code EDEPTYPE")
+    t.end()
+  })
+})
