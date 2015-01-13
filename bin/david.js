@@ -7,8 +7,6 @@ var david = require("../")
   , npm = require("npm")
   , argv = require("minimist")(process.argv.slice(2))
   , xtend = require("xtend")
-  , cwd = process.cwd()
-  , packageFile = cwd + "/package.json"
 
 if (argv.usage || argv.help || argv.h) {
   return console.log(fs.readFileSync(__dirname + "/usage.txt", "utf8"))
@@ -245,12 +243,20 @@ if (argv.global) {
   })
 
 } else {
-  if (!fs.existsSync(packageFile)) {
-    console.error("package.json does not exist")
+  var pkg
+
+  try {
+    pkg = fs.readFileSync(process.cwd() + "/package.json")
+    try {
+      pkg = JSON.parse(pkg)
+    } catch (er) {
+      console.error("Failed to parse package.json", er)
+      process.exit(1)
+    }
+  } catch (er) {
+    console.error("Failed to read package.json", er)
     process.exit(1)
   }
-
-  var pkg = require(cwd + "/package.json")
 
   getUpdatedDeps(pkg, function (er, deps, devDeps, optionalDeps) {
     if (er) {
