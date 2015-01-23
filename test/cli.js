@@ -237,3 +237,12 @@ test("Test SCM dependency output", function (t) {
     t.end()
   })
 })
+
+test("Test exit code for SCM dependency", function (t) {
+  t.plan(1)
+
+  runDavid([], "test-exit-code", function (er) {
+    t.notOk(er, "Expected no error")
+    t.end()
+  })
+})

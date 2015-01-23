@@ -18,6 +18,15 @@ if (argv.version || argv.v) {
 
 argv.update = argv._.indexOf("update") > -1 || argv._.indexOf("u") > -1
 
+function getNonWarnDepNames (deps) {
+  return Object.keys(deps).reduce(function (names, name) {
+    if (!deps[name].warn) {
+      names.push(name)
+    }
+    return names
+  }, [])
+}
+
 /**
  * Like printDeps, walk the list, but only print dependencies
  * with warnings.
@@ -48,11 +57,9 @@ function printWarnings (deps, type) {
 
     var table = new Table({head: ["Name", "Message"], style: {head: ["reset"]}})
 
-    console.log(clc.underline(warnings[warnType].title + " " + (type ? type + "D" : "d") + "ependencies"))
-    console.log("")
+    console.log(clc.underline(warnings[warnType].title + " " + (type ? type + "D" : "d") + "ependencies") + "\n")
     warnList.forEach(function (row) { table.push(row) })
-    console.log(table.toString())
-    console.log("")
+    console.log(table.toString() + "\n")
   })
 }
 
@@ -71,34 +78,31 @@ function printDeps (deps, type) {
     oneLine.push("--save")
   }
 
-  if (type) {
-    console.log(clc.underline("%sDependencies"), type)
-  } else {
-    console.log(clc.underline("dependencies"))
-  }
+  var nonWarnDepNames = getNonWarnDepNames(deps)
 
-  var table = new Table({head: ["Name", "Package", "Latest"], style: {head: ["reset"]}})
-
-  for (var name in deps) {
-    var dep = deps[name]
-
-    if (dep.warn) {
-      continue
+  if (nonWarnDepNames.length) {
+    if (type) {
+      console.log(clc.underline("%sDependencies"), type)
+    } else {
+      console.log(clc.underline("dependencies"))
     }
 
-    oneLine.push(name+"@"+dep[argv.unstable ? "latest" : "stable"])
+    var table = new Table({head: ["Name", "Package", "Latest"], style: {head: ["reset"]}})
 
-    table.push([
-      clc.magenta(name),
-      clc.red(dep.required),
-      clc.green(dep[argv.unstable ? "latest" : "stable"])
-    ])
+    nonWarnDepNames.forEach(function (name) {
+      var dep = deps[name]
+
+      oneLine.push(name+"@"+dep[argv.unstable ? "latest" : "stable"])
+
+      table.push([
+        clc.magenta(name),
+        clc.red(dep.required),
+        clc.green(dep[argv.unstable ? "latest" : "stable"])
+      ])
+    })
+
+    console.log("\n" + table.toString() + "\n\n" + oneLine.join(" ") + "\n")
   }
-  console.log("")
-  console.log(table.toString())
-  console.log("")
-  console.log(oneLine.join(" "))
-  console.log("")
 
   printWarnings(deps, type)
 }
@@ -297,7 +301,9 @@ if (argv.global) {
       printDeps(devDeps, "dev")
       printDeps(optionalDeps, "optional")
 
-      if (Object.keys(deps).length || Object.keys(devDeps).length || Object.keys(optionalDeps).length) {
+      if (getNonWarnDepNames(deps).length
+        || getNonWarnDepNames(devDeps).length 
+        || getNonWarnDepNames(optionalDeps).length) {
         process.exit(1)
       } else {
         // Log feedback if all dependencies are up to date
