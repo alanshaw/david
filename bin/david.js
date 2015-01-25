@@ -179,10 +179,14 @@ function installDeps (deps, opts, cb) {
     return !deps[depName].warn
   })
 
-  npm.load({
-    registry: opts.registry,
-    global: opts.global
-  }, function (er) {
+  var npmOpts = {global: opts.global}
+
+  // Avoid warning message from npm for invalid registry url
+  if (opts.registry) {
+    npmOpts.registry = opts.registry
+  }
+
+  npm.load(npmOpts, function (er) {
     if (er) return cb(er)
 
     if (opts.save) {
@@ -200,8 +204,15 @@ function installDeps (deps, opts, cb) {
   })
 }
 
-if (argv.global) {
-  npm.load({registry: argv.registry, global: true}, function (er) {
+if (argv.global || argv.g) {
+  var opts = {global: true}
+
+  // Avoid warning message from npm for invalid registry url
+  if (argv.registry) {
+    opts.registry = argv.registry
+  }
+
+  npm.load(opts, function (er) {
     if (er) {
       console.error("Failed to load npm", er)
       process.exit(1)
@@ -230,7 +241,7 @@ if (argv.global) {
 
         if (argv.update) {
 
-          installDeps(deps, {registry: argv.registry, global: true}, function (er) {
+          installDeps(deps, opts, function (er) {
             if (er) {
               console.error("Failed to update global dependencies", er)
               process.exit(1)
@@ -269,7 +280,7 @@ if (argv.global) {
     }
 
     if (argv.update) {
-      var opts = {registry: argv.registry, save: true}
+      var opts = {save: true, registry: argv.registry}
 
       installDeps(deps, opts, function (er) {
         if (er) {
