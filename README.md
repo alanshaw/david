@@ -4,6 +4,7 @@
 [![Coverage Status](http://img.shields.io/coveralls/alanshaw/david.svg?style=flat)](https://coveralls.io/r/alanshaw/david?branch=master)
 [![Dependency Status](https://david-dm.org/alanshaw/david.svg?style=flat)](https://david-dm.org/alanshaw/david)
 [![devDependency Status](https://david-dm.org/alanshaw/david/dev-status.svg?style=flat)](https://david-dm.org/alanshaw/david#info=devDependencies)
+[![Inline docs](http://inch-ci.org/github/alanshaw/david.svg?branch=master)](http://inch-ci.org/github/alanshaw/david)
 [![Donate to help support David development](http://img.shields.io/gratipay/_alanshaw.svg?style=flat)](https://www.gittip.com/_alanshaw/)
 ___
 
