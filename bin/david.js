@@ -70,7 +70,7 @@ function printDeps (deps, type) {
 
   if (type === "dev") {
     oneLine.push("--save-dev")
-  } else if (type === "optional ") {
+  } else if (type === "optional") {
     oneLine.push("--save-optional")
   } else if (type === "global") {
     oneLine.push("--global")
