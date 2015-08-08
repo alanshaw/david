@@ -15,9 +15,8 @@
     "david": "bin/david.js"
   },
   "scripts": {
-    "test": "jshint . && node bin/david && istanbul cover node_modules/.bin/tape test/*.js",
-    "coveralls": "cat ./coverage/lcov.info | coveralls",
-    "lint": "jshint ."
+    "test": "standard && node bin/david && istanbul cover node_modules/.bin/tape test/*.js",
+    "coveralls": "cat ./coverage/lcov.info | coveralls"
   },
   "license": "MIT",
   "files": [
@@ -40,6 +39,7 @@
     "jshint": "^2.5.1",
     "rewire": "^2.1.0",
     "rimraf": "^2.3.2",
+    "standard": "^5.0.2",
     "tape": "^4.0.0"
   },
   "engines": {
