@@ -147,10 +147,15 @@ david --errorSCM
 
 If using david programmatically, pass `error: {ESCM: true}` in the options object.
 
+### Specify package.json path
+
+Use `-p, --package` to specify the path to your package.json.
+
 
 Release History
 ---------------
 
+* 2015-08-08   v6.2.0   CLI Add `-p, --package` to specify package.json path
 * 2014-12-19   v6.0.0   Warn about unregistered or git dependencies by default
 * 2014-09-22   v5.0.0   Update to semver@4.0.0
 * 2014-09-22   v4.1.0   Add versions option to return all dependency versions
