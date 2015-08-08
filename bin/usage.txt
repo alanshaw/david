@@ -8,6 +8,8 @@ Command:
 
 Options:
   -g, --global     Consider global dependencies.
+  -p, --package    Specify a package.json file.
+                   [default: "./package.json"]
   -u, --unstable   Use UNSTABLE dependencies.
   -v, --version    Print version number and exit.
   -r, --registry   The npm registry URL.

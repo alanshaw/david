@@ -103,6 +103,13 @@ and save to your `package.json`, run:
 david update
 ```
 
+To update a particular project dependency to the latest **stable** version,
+and save to your `package.json`, run:
+
+```sh
+david update package-name
+```
+
 You can also update global dependencies to latest versions:
 
 ```sh
