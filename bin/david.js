@@ -4,6 +4,7 @@ var david = require("../")
   , clc = require("cli-color-tty")()
   , Table = require("cli-table")
   , fs = require("fs")
+  , path = require("path")
   , npm = require("npm")
   , argv = require("minimist")(process.argv.slice(2))
   , xtend = require("xtend")
@@ -193,14 +194,16 @@ function installDeps (deps, opts, cb) {
       npm.config.set("save" + (opts.dev ? "-dev" : opts.optional ? "-optional" : ""), true)
     }
 
-    var installArgs = depNames.map(function (depName) {
+    var installArgs = [depNames.map(function (depName) {
       return depName + "@" + deps[depName][argv.unstable ? "latest" : "stable"]
-    })
-
-    npm.commands.install(installArgs, function (er) {
+    }), function (er) {
       npm.config.set("save" + (opts.dev ? "-dev" : opts.optional ? "-optional" : ""), false)
       cb(er)
-    })
+    }]
+
+    if (opts.path) { installArgs.unshift(opts.path) }
+
+    npm.commands.install.apply(npm.commands, installArgs)
   })
 }
 
@@ -258,10 +261,18 @@ if (argv.global || argv.g) {
   })
 
 } else {
-  var pkg
+  var pkg, pkgDir
+
+  if (argv.package || argv.p) {
+    pkg = argv.package || argv.p
+    pkgDir = path.dirname(pkg)
+  } else {
+    pkgDir = process.cwd()
+    pkg = pkgDir + "/package.json"
+  }
 
   try {
-    pkg = fs.readFileSync(process.cwd() + "/package.json")
+    pkg = fs.readFileSync(pkg)
     try {
       pkg = JSON.parse(pkg)
     } catch (er) {
@@ -280,7 +291,7 @@ if (argv.global || argv.g) {
     }
 
     if (argv.update) {
-      var opts = {save: true, registry: argv.registry}
+      var opts = {save: true, registry: argv.registry, path: pkgDir}
 
       installDeps(deps, opts, function (er) {
         if (er) {
