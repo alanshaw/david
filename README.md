@@ -123,7 +123,7 @@ To update all your project dependencies to the latest versions
 david update --unstable
 ```
 
-### Alternate reigstry
+### Alternate registry
 
 ```sh
 david update --registry http://registry.nodejitsu.com/
