@@ -6,7 +6,6 @@
   "author": "Alan Shaw",
   "license": "MIT",
   "dependencies": {
-    "async": "0.1.x",
     "scm-url": "git+https://github.com/foo/bar.git"
   }
 }

@@ -166,9 +166,9 @@ test('Test print-only output with unregistered dependency in each type', functio
       t.ok(new RegExp(depName, 'm').test(stdout.toString()), depName + ' expected to be outdated')
     })
 
-    t.ok(/Error: 404 Not Found: unregistered--/m.test(stdout.toString()))
-    t.ok(/Error: 404 Not Found: unregistereddev--/m.test(stdout.toString()))
-    t.ok(/Error: 404 Not Found: unregisteredopt--/m.test(stdout.toString()))
+    t.ok(/Error: Registry returned 404 for GET on https:\/\/registry.npmjs.org\/unregistered--/m.test(stdout.toString()))
+    t.ok(/Error: Registry returned 404 for GET on https:\/\/registry.npmjs.org\/unregistereddev--/m.test(stdout.toString()))
+    t.ok(/Error: Registry returned 404 for GET on https:\/\/registry.npmjs.org\/unregisteredopt--/m.test(stdout.toString()))
 
     t.end()
   })
@@ -180,9 +180,9 @@ test('Test default exit response to unregistered dependency', function (t) {
   runDavid([], 'test-unregistered', function (err, stdout) {
     // There are dependencies to be updated, so we expect non zero exit code
     t.ok(err.code, 'Exited with non zero exit code')
-    t.ok(/Error: 404 Not Found: unregistered--/m.test(stdout.toString()))
-    t.ok(/Error: 404 Not Found: unregistereddev--/m.test(stdout.toString()))
-    t.ok(/Error: 404 Not Found: unregisteredopt--/m.test(stdout.toString()))
+    t.ok(/Error: Registry returned 404 for GET on https:\/\/registry.npmjs.org\/unregistered--/m.test(stdout.toString()))
+    t.ok(/Error: Registry returned 404 for GET on https:\/\/registry.npmjs.org\/unregistereddev--/m.test(stdout.toString()))
+    t.ok(/Error: Registry returned 404 for GET on https:\/\/registry.npmjs.org\/unregisteredopt--/m.test(stdout.toString()))
     t.end()
   })
 })
@@ -223,18 +223,19 @@ test('Test update with unregistered dependency in each type', function (t) {
       t.notEqual(pkg.optionalDependencies[depName], updatedPkg.optionalDependencies[depName], depName + ' version expected to have changed')
     })
 
-    t.ok(/Error: 404 Not Found: unregistered--/m.test(stdout.toString()))
-    t.ok(/Error: 404 Not Found: unregistereddev--/m.test(stdout.toString()))
-    t.ok(/Error: 404 Not Found: unregisteredopt--/m.test(stdout.toString()))
+    t.ok(/Error: Registry returned 404 for GET on https:\/\/registry.npmjs.org\/unregistered--/m.test(stdout.toString()))
+    t.ok(/Error: Registry returned 404 for GET on https:\/\/registry.npmjs.org\/unregistereddev--/m.test(stdout.toString()))
+    t.ok(/Error: Registry returned 404 for GET on https:\/\/registry.npmjs.org\/unregisteredopt--/m.test(stdout.toString()))
 
     t.end()
   })
 })
 
 test('Test SCM dependency output', function (t) {
-  t.plan(1)
+  t.plan(2)
 
   runDavid([], 'test-scm', function (err, stdout) {
+    t.ifError(err)
     t.ok(/Error: SCM dependency: git\+https:\/\/github.com\/foo\/bar\.git/m.test(stdout.toString()))
     t.end()
   })

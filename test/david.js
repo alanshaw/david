@@ -58,7 +58,7 @@ test('Test getUpdatedDependencies returns an empty object when passed a manifest
 })
 
 test('Test getDependencies returns desired result when only stable versions are available', function (t) {
-  t.plan(5)
+  t.plan(6)
 
   var npmMock = mockNpm(['0.0.1', '0.0.2', '0.0.3'])
 
@@ -71,6 +71,7 @@ test('Test getDependencies returns desired result when only stable versions are 
   }
 
   david.getDependencies(manifest, function (err, deps) {
+    t.ifError(err)
     t.ok(deps)
     t.ok(deps.testDepName)
     t.strictEqual(deps.testDepName.required, '~0.0.2')
@@ -81,7 +82,7 @@ test('Test getDependencies returns desired result when only stable versions are 
 })
 
 test('Test getDependencies returns correct result when both stable and unstable versions are available', function (t) {
-  t.plan(5)
+  t.plan(6)
 
   var npmMock = mockNpm(['0.0.1', '0.0.2', '0.0.3', '0.0.4-beta'])
 
@@ -94,6 +95,7 @@ test('Test getDependencies returns correct result when both stable and unstable 
   }
 
   david.getDependencies(manifest, function (err, deps) {
+    t.ifError(err)
     t.ok(deps)
     t.ok(deps.testDepName)
     t.strictEqual(deps.testDepName.required, '~0.0.3')
@@ -104,7 +106,7 @@ test('Test getDependencies returns correct result when both stable and unstable 
 })
 
 test('Test getUpdatedDependencies returns an empty object when there are no updated stable or unstable dependencies available', function (t) {
-  t.plan(2)
+  t.plan(3)
 
   var npmMock = mockNpm(['0.0.1', '0.0.2', '0.0.3'])
 
@@ -117,6 +119,7 @@ test('Test getUpdatedDependencies returns an empty object when there are no upda
   }
 
   david.getUpdatedDependencies(manifest, function (err, deps) {
+    t.ifError(err)
     t.ok(deps)
     t.strictEqual(Object.keys(deps).length, 0)
     t.end()
@@ -124,7 +127,7 @@ test('Test getUpdatedDependencies returns an empty object when there are no upda
 })
 
 test('Test getUpdatedDependencies returns correct dependency updates when only stable updates are available', function (t) {
-  t.plan(5)
+  t.plan(6)
 
   var npmMock = mockNpm(['0.0.1', '0.0.2', '0.0.3'])
 
@@ -137,6 +140,7 @@ test('Test getUpdatedDependencies returns correct dependency updates when only s
   }
 
   david.getUpdatedDependencies(manifest, function (err, deps) {
+    t.ifError(err)
     t.ok(deps)
     t.ok(deps.testDepName)
     t.strictEqual(deps.testDepName.required, '0.0.1')
@@ -147,7 +151,7 @@ test('Test getUpdatedDependencies returns correct dependency updates when only s
 })
 
 test('Test getUpdatedDependencies returns correct dependency updates when both unstable and stable updates are available', function (t) {
-  t.plan(5)
+  t.plan(6)
 
   var npmMock = mockNpm(['0.0.1', '0.1.2', '0.1.3', '0.1.4+build.11.e0f985a'])
 
@@ -160,6 +164,7 @@ test('Test getUpdatedDependencies returns correct dependency updates when both u
   }
 
   david.getUpdatedDependencies(manifest, function (err, deps) {
+    t.ifError(err)
     t.ok(deps)
     t.ok(deps.testDepName)
     t.strictEqual(deps.testDepName.required, '~0.0.1')
@@ -170,7 +175,7 @@ test('Test getUpdatedDependencies returns correct dependency updates when both u
 })
 
 test('Test getUpdatedDependencies returns correct dependency updates when latest tag point to the stable version', function (t) {
-  t.plan(5)
+  t.plan(6)
 
   var npmMock = mockNpm(['0.0.1', '0.1.2', '0.1.3', '0.1.4'], 'testDepName', '0.1.3')
 
@@ -183,6 +188,7 @@ test('Test getUpdatedDependencies returns correct dependency updates when latest
   }
 
   david.getUpdatedDependencies(manifest, function (err, deps) {
+    t.ifError(err)
     t.ok(deps)
     t.ok(deps.testDepName)
     t.strictEqual(deps.testDepName.required, '~0.0.1')
@@ -193,7 +199,7 @@ test('Test getUpdatedDependencies returns correct dependency updates when latest
 })
 
 test('Test getUpdatedDependencies returns correct dependency updates when unstable version is not the most recent version', function (t) {
-  t.plan(5)
+  t.plan(6)
 
   var npmMock = mockNpm(['0.0.1', '0.1.2', '0.2.0', '0.1.4'], 'testDepName', '0.1.4')
 
@@ -206,6 +212,7 @@ test('Test getUpdatedDependencies returns correct dependency updates when unstab
   }
 
   david.getUpdatedDependencies(manifest, function (err, deps) {
+    t.ifError(err)
     t.ok(deps)
     t.ok(deps.testDepName)
     t.strictEqual(deps.testDepName.required, '~0.0.1')
@@ -216,7 +223,7 @@ test('Test getUpdatedDependencies returns correct dependency updates when unstab
 })
 
 test('Test getUpdatedDependencies returns correct dependency updates when versions is not sorted by time', function (t) {
-  t.plan(5)
+  t.plan(6)
 
   var npmMock = mockNpm(['0.0.1', '0.1.2', '0.1.3', '0.1.4-alpha9', '0.1.4-alpha10'])
 
@@ -229,6 +236,7 @@ test('Test getUpdatedDependencies returns correct dependency updates when versio
   }
 
   david.getUpdatedDependencies(manifest, function (err, deps) {
+    t.ifError(err)
     t.ok(deps)
     t.ok(deps.testDepName)
     t.strictEqual(deps.testDepName.required, '~0.0.1')
@@ -239,7 +247,7 @@ test('Test getUpdatedDependencies returns correct dependency updates when versio
 })
 
 test('Test getDependencies returns correct dependencies when there is no stable version', function (t) {
-  t.plan(5)
+  t.plan(6)
 
   var npmMock = mockNpm(['0.0.0-alpha1', '0.0.0-alpha2', '0.0.0-alpha3'], 'testDepName', '0.0.0-alpha3')
 
@@ -252,6 +260,7 @@ test('Test getDependencies returns correct dependencies when there is no stable 
   }
 
   david.getDependencies(manifest, function (err, deps) {
+    t.ifError(err)
     t.ok(deps)
     t.ok(deps.testDepName)
     t.strictEqual(deps.testDepName.required, '~0.0.0')
@@ -262,7 +271,6 @@ test('Test getDependencies returns correct dependencies when there is no stable 
 })
 
 test('Positive getUpdatedDependencies onlyStable=true tests', function (t) {
-
   var dataSets = [
     // [array of versions, required range, expected stable version]
     [['0.6.0', '0.6.1-1', '0.7.0'], '~0.6.1-1', '0.7.0'],
@@ -274,15 +282,13 @@ test('Positive getUpdatedDependencies onlyStable=true tests', function (t) {
     [['0.1.3', '0.2.0-pre'], '0.1.2', '0.1.3']
   ]
 
-  t.plan(5 * dataSets.length)
+  t.plan(6 * dataSets.length)
 
   var done = 0
   var tests = []
 
   dataSets.forEach(function (data, i) {
-
     tests.push(function () {
-
       var testDepName = 'testDepName' + i
       var npmMock = mockNpm(data[0], testDepName)
 
@@ -293,7 +299,7 @@ test('Positive getUpdatedDependencies onlyStable=true tests', function (t) {
       manifest.dependencies[testDepName] = data[1]
 
       david.getUpdatedDependencies(manifest, { stable: true }, function (err, deps) {
-
+        t.ifError(err)
         t.ok(deps)
         t.ok(deps[testDepName])
         t.strictEqual(deps[testDepName].required, data[1])
@@ -315,7 +321,6 @@ test('Positive getUpdatedDependencies onlyStable=true tests', function (t) {
 })
 
 test('Negative getUpdatedDependencies onlyStable=true tests', function (t) {
-
   var dataSets = [
     [['0.6.0', '0.6.1-1'], '~0.6.1-1'],
     [['0.6.0'], '~0.6.0'],
@@ -332,15 +337,13 @@ test('Negative getUpdatedDependencies onlyStable=true tests', function (t) {
 
   ]
 
-  t.plan(3 * dataSets.length)
+  t.plan(4 * dataSets.length)
 
   var done = 0
   var tests = []
 
   dataSets.forEach(function (data, i) {
-
     tests.push(function () {
-
       var npmMock = mockNpm(data[0], 'testDepName' + i)
 
       david.__set__('npm', npmMock)
@@ -350,7 +353,7 @@ test('Negative getUpdatedDependencies onlyStable=true tests', function (t) {
       manifest.dependencies['testDepName' + i] = data[1]
 
       david.getUpdatedDependencies(manifest, { stable: true }, function (err, deps) {
-
+        t.ifError(err)
         t.ok(deps)
         t.equal(deps['testDepName' + i], undefined)
         t.strictEqual(Object.keys(deps).length, 0)
@@ -370,7 +373,7 @@ test('Negative getUpdatedDependencies onlyStable=true tests', function (t) {
 })
 
 test('Test getDependencies will consider devDependencies', function (t) {
-  t.plan(5)
+  t.plan(6)
 
   var npmMock = mockNpm(['0.0.1', '0.0.2', '0.0.3'])
 
@@ -383,6 +386,7 @@ test('Test getDependencies will consider devDependencies', function (t) {
   }
 
   david.getDependencies(manifest, { dev: true }, function (err, deps) {
+    t.ifError(err)
     t.ok(deps)
     t.ok(deps.testDepName)
     t.strictEqual(deps.testDepName.required, '~0.0.2')
@@ -393,7 +397,7 @@ test('Test getDependencies will consider devDependencies', function (t) {
 })
 
 test('Test getUpdatedDependencies will consider devDependencies', function (t) {
-  t.plan(5)
+  t.plan(6)
 
   var npmMock = mockNpm(['0.0.1', '0.0.2', '0.0.3'])
 
@@ -406,6 +410,7 @@ test('Test getUpdatedDependencies will consider devDependencies', function (t) {
   }
 
   david.getUpdatedDependencies(manifest, { dev: true }, function (err, deps) {
+    t.ifError(err)
     t.ok(deps)
     t.ok(deps.testDepName)
     t.strictEqual(deps.testDepName.required, '0.0.1')
@@ -416,7 +421,7 @@ test('Test getUpdatedDependencies will consider devDependencies', function (t) {
 })
 
 test('Test getDependencies will consider optionalDependencies', function (t) {
-  t.plan(5)
+  t.plan(6)
 
   var npmMock = mockNpm(['0.0.1', '0.0.2', '0.0.3'])
 
@@ -429,6 +434,7 @@ test('Test getDependencies will consider optionalDependencies', function (t) {
   }
 
   david.getDependencies(manifest, { optional: true }, function (err, deps) {
+    t.ifError(err)
     t.ok(deps)
     t.ok(deps.testDepName)
     t.strictEqual(deps.testDepName.required, '~0.0.2')
@@ -439,7 +445,7 @@ test('Test getDependencies will consider optionalDependencies', function (t) {
 })
 
 test('Test getUpdatedDependencies will consider optionalDependencies', function (t) {
-  t.plan(5)
+  t.plan(6)
 
   var npmMock = mockNpm(['0.0.1', '0.0.2', '0.0.3'])
 
@@ -452,6 +458,7 @@ test('Test getUpdatedDependencies will consider optionalDependencies', function 
   }
 
   david.getUpdatedDependencies(manifest, { optional: true }, function (err, deps) {
+    t.ifError(err)
     t.ok(deps)
     t.ok(deps.testDepName)
     t.strictEqual(deps.testDepName.required, '0.0.1')
@@ -462,7 +469,7 @@ test('Test getUpdatedDependencies will consider optionalDependencies', function 
 })
 
 test('Test getDependencies will consider peerDependencies', function (t) {
-  t.plan(5)
+  t.plan(6)
 
   var npmMock = mockNpm(['0.0.1', '0.0.2', '0.0.3'])
 
@@ -475,6 +482,7 @@ test('Test getDependencies will consider peerDependencies', function (t) {
   }
 
   david.getDependencies(manifest, { peer: true }, function (err, deps) {
+    t.ifError(err)
     t.ok(deps)
     t.ok(deps.testDepName)
     t.strictEqual(deps.testDepName.required, '~0.0.2')
@@ -485,7 +493,7 @@ test('Test getDependencies will consider peerDependencies', function (t) {
 })
 
 test('Test getUpdatedDependencies will consider peerDependencies', function (t) {
-  t.plan(5)
+  t.plan(6)
 
   var npmMock = mockNpm(['0.0.1', '0.0.2', '0.0.3'])
 
@@ -498,6 +506,7 @@ test('Test getUpdatedDependencies will consider peerDependencies', function (t) 
   }
 
   david.getUpdatedDependencies(manifest, { peer: true }, function (err, deps) {
+    t.ifError(err)
     t.ok(deps)
     t.ok(deps.testDepName)
     t.strictEqual(deps.testDepName.required, '0.0.1')
@@ -508,7 +517,7 @@ test('Test getUpdatedDependencies will consider peerDependencies', function (t) 
 })
 
 test('Test support dependencies specified as an array', function (t) {
-  t.plan(5)
+  t.plan(6)
 
   var npmMock = mockNpm(['0.0.0'])
 
@@ -519,6 +528,7 @@ test('Test support dependencies specified as an array', function (t) {
   }
 
   david.getDependencies(manifest, function (err, deps) {
+    t.ifError(err)
     t.ok(deps)
     t.ok(deps.testDepName)
     t.strictEqual(deps.testDepName.required, '*')

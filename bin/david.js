@@ -245,7 +245,6 @@ if (argv.global || argv.g) {
         }
 
         if (argv.update) {
-
           installDeps(deps, opts, function (err) {
             if (err) {
               console.error('Failed to update global dependencies', err)
@@ -254,14 +253,12 @@ if (argv.global || argv.g) {
 
             printWarnings(deps, 'global')
           })
-
         } else {
           printDeps(deps, 'global')
         }
       })
     })
   })
-
 } else {
   var pkg, pkgDir
 
@@ -319,7 +316,6 @@ if (argv.global || argv.g) {
           })
         })
       })
-
     } else {
       printDeps(deps)
       printDeps(devDeps, 'dev')
