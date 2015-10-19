@@ -151,10 +151,24 @@ If using david programmatically, pass `error: {ESCM: true}` in the options objec
 
 Use `-p, --package` to specify the path to your package.json.
 
+### Ignore dependencies
+
+To tell david to ignore dependencies, add a `david.ignore` property to your `package.json` which lists the dependencies david should ignore. If using david programmatically you can also pass this as an option. e.g.
+
+**package.json**
+```json
+{
+  "david": {
+    "ignore": ["async", "underscore"]
+  }
+}
+```
+
 
 Release History
 ---------------
 
+* 2015-10-19   v6.3.0   Ignore dependencies from `package.json` config
 * 2015-08-08   v6.2.0   CLI Add `-p, --package` to specify package.json path
 * 2014-12-19   v6.0.0   Warn about unregistered or git dependencies by default
 * 2014-09-22   v5.0.0   Update to semver@4.0.0
