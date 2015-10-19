@@ -136,7 +136,8 @@ function getUpdatedDeps (pkg, cb) {
       E404: argv.error404,
       ESCM: argv.errorSCM,
       EDEPTYPE: argv.errorDepType
-    }
+    },
+    ignore: argv.ignore || argv.i
   }
 
   if (argv.registry) {
