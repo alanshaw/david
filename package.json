@@ -1,6 +1,6 @@
 {
   "name": "david",
-  "version": "6.4.0",
+  "version": "7.0.0",
   "description": "Node.js module that tells you when your project npm dependencies are out of date.",
   "main": "lib/david.js",
   "repository": {
