@@ -44,10 +44,5 @@
   },
   "engines": {
     "node": ">=0.10.1"
-  },
-  "david": {
-    "ignore": [
-      "npm"
-    ]
   }
 }
