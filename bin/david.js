@@ -42,7 +42,7 @@ function printWarnings (deps, type) {
   var warnings = {
     E404: {title: 'Unregistered', list: []},
     ESCM: {title: 'SCM', list: []},
-    EDEPTYPE: {title: 'Non-strng dependency', list: []}
+    EDEPTYPE: {title: 'Non-string dependency', list: []}
   }
 
   for (var name in deps) {
