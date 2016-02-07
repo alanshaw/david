@@ -39,7 +39,7 @@
     "jshint": "^2.5.1",
     "rewire": "^2.1.0",
     "rimraf": "^2.3.2",
-    "standard": "^5.0.2",
+    "standard": "^6.0.2",
     "tape": "^4.0.0"
   },
   "engines": {
