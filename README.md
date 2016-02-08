@@ -1,5 +1,6 @@
 [![David](https://raw.github.com/alanshaw/david-www/master/david.png)](https://david-dm.org/)
 
+[![Npm Version](https://img.shields.io/npm/v/david.svg)](https://www.npmjs.com/package/david)
 [![Build Status](https://img.shields.io/travis/alanshaw/david/master.svg?style=flat)](https://travis-ci.org/alanshaw/david)
 [![Coverage Status](http://img.shields.io/coveralls/alanshaw/david.svg?style=flat)](https://coveralls.io/r/alanshaw/david?branch=master)
 [![Dependency Status](https://david-dm.org/alanshaw/david.svg?style=flat)](https://david-dm.org/alanshaw/david)
