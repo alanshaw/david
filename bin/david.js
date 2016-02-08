@@ -10,7 +10,7 @@ var argv = require('minimist')(process.argv.slice(2))
 var xtend = require('xtend')
 
 if (argv.usage || argv.help || argv.h) {
-  console.log(fs.readFileSync(__dirname + '/usage.txt', 'utf8'))
+  console.log(fs.readFileSync(path.join(__dirname, 'usage.txt'), 'utf8'))
   process.exit()
 }
 
