@@ -30,6 +30,7 @@
     "cli-table": "^0.3.1",
     "minimist": "^1.1.0",
     "npm": "^3.3.12",
+    "npm-registry-client": "^7.0.9",
     "semver": "^5.0.1",
     "xtend": "^4.0.0"
   },
