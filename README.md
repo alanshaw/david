@@ -196,3 +196,7 @@ Release History
 * 2013-03-05   v1.2.0   David can now get dependency information for `devDependencies`
 * 2013-02-07   v1.1.0   Adds `onlyStable` param to `getUpdatedDependencies` to filter by dependencies that are updated and stable
 * 2013-02-06   v1.0.0   Return latest stable version as well as latest version (including patch and build versions). API return values changed. Events changed.
+
+---
+
+[![js-standard-style](https://cdn.rawgit.com/feross/standard/master/badge.svg)](https://github.com/feross/standard)
