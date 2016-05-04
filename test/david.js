@@ -1,5 +1,3 @@
-/* jshint camelcase: false */
-
 var test = require('tape')
 var rewire = require('rewire')
 var semver = require('semver')
