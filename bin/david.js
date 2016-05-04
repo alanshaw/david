@@ -8,15 +8,16 @@ var path = require('path')
 var npm = require('npm')
 var argv = require('minimist')(process.argv.slice(2))
 var xtend = require('xtend')
+var exit = require('exit')
 
 if (argv.usage || argv.help || argv.h) {
   console.log(fs.readFileSync(path.join(__dirname, 'usage.txt'), 'utf8'))
-  process.exit()
+  exit()
 }
 
 if (argv.version || argv.v) {
   console.log('v' + require('../package.json').version)
-  process.exit()
+  exit()
 }
 
 argv.update = argv._.indexOf('update') > -1 || argv._.indexOf('u') > -1
@@ -221,13 +222,13 @@ if (argv.global || argv.g) {
   npm.load(opts, function (err) {
     if (err) {
       console.error('Failed to load npm', err)
-      process.exit(1)
+      exit(1)
     }
 
     npm.commands.ls([], true, function (err, data) {
       if (err) {
         console.error('Failed to list global dependencies', err)
-        process.exit(1)
+        exit(1)
       }
 
       var pkg = {
@@ -242,14 +243,14 @@ if (argv.global || argv.g) {
       getUpdatedDeps(pkg, function (err, deps) {
         if (err) {
           console.error('Failed to get updated dependencies/devDependencies', err)
-          process.exit(1)
+          exit(1)
         }
 
         if (argv.update) {
           installDeps(deps, opts, function (err) {
             if (err) {
               console.error('Failed to update global dependencies', err)
-              process.exit(1)
+              exit(1)
             }
 
             printWarnings(deps, 'global')
@@ -277,17 +278,17 @@ if (argv.global || argv.g) {
       pkg = JSON.parse(pkg)
     } catch (err) {
       console.error('Failed to parse package.json', err)
-      process.exit(1)
+      exit(1)
     }
   } catch (err) {
     console.error('Failed to read package.json', err)
-    process.exit(1)
+    exit(1)
   }
 
   getUpdatedDeps(pkg, function (err, deps, devDeps, optionalDeps) {
     if (err) {
       console.error('Failed to get updated dependencies/devDependencies', err)
-      process.exit(1)
+      exit(1)
     }
 
     if (argv.update) {
@@ -296,19 +297,19 @@ if (argv.global || argv.g) {
       installDeps(deps, opts, function (err) {
         if (err) {
           console.error('Failed to update/save dependencies', err)
-          process.exit(1)
+          exit(1)
         }
 
         installDeps(devDeps, xtend(opts, {dev: true}), function (err) {
           if (err) {
             console.error('Failed to update/save devDependencies', err)
-            process.exit(1)
+            exit(1)
           }
 
           installDeps(optionalDeps, xtend(opts, {optional: true}), function (err) {
             if (err) {
               console.error('Failed to update/save optionalDependencies', err)
-              process.exit(1)
+              exit(1)
             }
 
             printWarnings(deps)
@@ -325,7 +326,7 @@ if (argv.global || argv.g) {
       if (getNonWarnDepNames(deps).length ||
           getNonWarnDepNames(devDeps).length ||
           getNonWarnDepNames(optionalDeps).length) {
-        process.exit(1)
+        exit(1)
       } else {
         // Log feedback if all dependencies are up to date
         console.log(clc.green('All dependencies up to date'))
