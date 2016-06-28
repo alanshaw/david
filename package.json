@@ -31,7 +31,7 @@
     "exit": "^0.1.2",
     "minimist": "^1.1.0",
     "npm": "^3.8.8",
-    "semver": "^5.0.1",
+    "semver": "^5.2.0",
     "xtend": "^4.0.0"
   },
   "devDependencies": {
