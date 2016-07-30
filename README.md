@@ -1,4 +1,4 @@
-[![David](https://raw.github.com/alanshaw/david-www/master/david.png)](https://david-dm.org/)
+<a href="https://david-dm.org"><img src="https://raw.github.com/alanshaw/david-www/master/david-logo.png" alt="David" height="50" /></a>
 
 [![Npm Version](https://img.shields.io/npm/v/david.svg)](https://www.npmjs.com/package/david)
 [![Build Status](https://img.shields.io/travis/alanshaw/david/master.svg?style=flat)](https://travis-ci.org/alanshaw/david)
