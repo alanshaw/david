@@ -252,11 +252,15 @@ if (argv.global || argv.g) {
               console.error('Failed to update global dependencies', err)
               exit(1)
             }
-
             printWarnings(deps, 'global')
           })
         } else {
           printDeps(deps, 'global')
+          if (getNonWarnDepNames(deps).length) {
+            exit(1)
+          }
+          // Log feedback if all global dependencies are up to date
+          console.log(clc.green('All global dependencies up to date'))
         }
       })
     })
