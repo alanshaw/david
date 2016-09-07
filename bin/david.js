@@ -2,6 +2,7 @@
 
 var david = require('../')
 var clc = require('cli-color-tty')()
+var ansi = require('ansi')
 var Table = require('cli-table')
 var fs = require('fs')
 var path = require('path')
@@ -9,6 +10,9 @@ var npm = require('npm')
 var argv = require('minimist')(process.argv.slice(2))
 var xtend = require('xtend')
 var exit = require('exit')
+
+// Let's map a cursor to the terminal, to send ANSI escape sequences
+var cursor = ansi(process.stdout)
 
 if (argv.usage || argv.help || argv.h) {
   console.log(fs.readFileSync(path.join(__dirname, 'usage.txt'), 'utf8'))
@@ -21,6 +25,11 @@ if (argv.version || argv.v) {
 }
 
 argv.update = argv._.indexOf('update') > -1 || argv._.indexOf('u') > -1
+
+// Any necessary ANSI commands, that will ensure terminal staying nice after exit
+function cleanUpTTY () {
+  cursor.show()
+}
 
 function getNonWarnDepNames (deps) {
   return Object.keys(deps).reduce(function (names, name) {
@@ -222,12 +231,14 @@ if (argv.global || argv.g) {
   npm.load(opts, function (err) {
     if (err) {
       console.error('Failed to load npm', err)
+      cleanUpTTY()
       exit(1)
     }
 
     npm.commands.ls([], true, function (err, data) {
       if (err) {
         console.error('Failed to list global dependencies', err)
+        cleanUpTTY()
         exit(1)
       }
 
@@ -243,6 +254,7 @@ if (argv.global || argv.g) {
       getUpdatedDeps(pkg, function (err, deps) {
         if (err) {
           console.error('Failed to get updated dependencies/devDependencies', err)
+          cleanUpTTY()
           exit(1)
         }
 
@@ -250,6 +262,7 @@ if (argv.global || argv.g) {
           installDeps(deps, opts, function (err) {
             if (err) {
               console.error('Failed to update global dependencies', err)
+              cleanUpTTY()
               exit(1)
             }
             printWarnings(deps, 'global')
@@ -257,6 +270,7 @@ if (argv.global || argv.g) {
         } else {
           printDeps(deps, 'global')
           if (getNonWarnDepNames(deps).length) {
+            cleanUpTTY()
             exit(1)
           }
           // Log feedback if all global dependencies are up to date
@@ -282,16 +296,19 @@ if (argv.global || argv.g) {
       pkg = JSON.parse(pkg)
     } catch (err) {
       console.error('Failed to parse package.json', err)
+      cleanUpTTY()
       exit(1)
     }
   } catch (err) {
     console.error('Failed to read package.json', err)
+    cleanUpTTY()
     exit(1)
   }
 
   getUpdatedDeps(pkg, function (err, deps, devDeps, optionalDeps) {
     if (err) {
       console.error('Failed to get updated dependencies/devDependencies', err)
+      cleanUpTTY()
       exit(1)
     }
 
@@ -301,18 +318,21 @@ if (argv.global || argv.g) {
       installDeps(deps, opts, function (err) {
         if (err) {
           console.error('Failed to update/save dependencies', err)
+          cleanUpTTY()
           exit(1)
         }
 
         installDeps(devDeps, xtend(opts, {dev: true}), function (err) {
           if (err) {
             console.error('Failed to update/save devDependencies', err)
+            cleanUpTTY()
             exit(1)
           }
 
           installDeps(optionalDeps, xtend(opts, {optional: true}), function (err) {
             if (err) {
               console.error('Failed to update/save optionalDependencies', err)
+              cleanUpTTY()
               exit(1)
             }
 
@@ -330,6 +350,7 @@ if (argv.global || argv.g) {
       if (getNonWarnDepNames(deps).length ||
           getNonWarnDepNames(devDeps).length ||
           getNonWarnDepNames(optionalDeps).length) {
+        cleanUpTTY()
         exit(1)
       } else {
         // Log feedback if all dependencies are up to date
