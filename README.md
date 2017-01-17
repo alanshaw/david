@@ -171,6 +171,8 @@ To tell david to ignore dependencies, add a `david.ignore` property to your `pac
 Release History
 ---------------
 
+* 2016-08-26   v9.0.0   CLI add global dependencies up to date message
+* 2016-06-30   v8.0.0   Update dependencies
 * 2015-11-09   v7.0.0   Update to npm@3
 * 2015-10-19   v6.4.0   CLI Add `-i, --ignore` option to ignore dependencies
 * 2015-10-19   v6.3.0   Ignore dependencies from `package.json` config
