@@ -2,6 +2,9 @@ var test = require('tape')
 var rewire = require('rewire')
 var semver = require('semver')
 var david = rewire('../lib/david')
+var Npm = rewire('../lib/npm')
+
+david.__set__('Npm', Npm)
 
 function mockNpm (versions, depName, latestTag) {
   depName = depName || 'testDepName'
@@ -60,7 +63,7 @@ test('Test getDependencies returns desired result when only stable versions are 
 
   var npmMock = mockNpm(['0.0.1', '0.0.2', '0.0.3'])
 
-  david.__set__('npm', npmMock)
+  Npm.__set__('npm', npmMock)
 
   var manifest = {
     dependencies: {
@@ -84,7 +87,7 @@ test('Test getDependencies returns correct result when both stable and unstable 
 
   var npmMock = mockNpm(['0.0.1', '0.0.2', '0.0.3', '0.0.4-beta'])
 
-  david.__set__('npm', npmMock)
+  Npm.__set__('npm', npmMock)
 
   var manifest = {
     dependencies: {
@@ -108,7 +111,7 @@ test('Test getUpdatedDependencies returns an empty object when there are no upda
 
   var npmMock = mockNpm(['0.0.1', '0.0.2', '0.0.3'])
 
-  david.__set__('npm', npmMock)
+  Npm.__set__('npm', npmMock)
 
   var manifest = {
     dependencies: {
@@ -129,7 +132,7 @@ test('Test getUpdatedDependencies returns correct dependency updates when only s
 
   var npmMock = mockNpm(['0.0.1', '0.0.2', '0.0.3'])
 
-  david.__set__('npm', npmMock)
+  Npm.__set__('npm', npmMock)
 
   var manifest = {
     dependencies: {
@@ -153,7 +156,7 @@ test('Test getUpdatedDependencies returns correct dependency updates when both u
 
   var npmMock = mockNpm(['0.0.1', '0.1.2', '0.1.3', '0.1.4+build.11.e0f985a'])
 
-  david.__set__('npm', npmMock)
+  Npm.__set__('npm', npmMock)
 
   var manifest = {
     dependencies: {
@@ -177,7 +180,7 @@ test('Test getUpdatedDependencies returns correct dependency updates when latest
 
   var npmMock = mockNpm(['0.0.1', '0.1.2', '0.1.3', '0.1.4'], 'testDepName', '0.1.3')
 
-  david.__set__('npm', npmMock)
+  Npm.__set__('npm', npmMock)
 
   var manifest = {
     dependencies: {
@@ -201,7 +204,7 @@ test('Test getUpdatedDependencies returns correct dependency updates when unstab
 
   var npmMock = mockNpm(['0.0.1', '0.1.2', '0.2.0', '0.1.4'], 'testDepName', '0.1.4')
 
-  david.__set__('npm', npmMock)
+  Npm.__set__('npm', npmMock)
 
   var manifest = {
     dependencies: {
@@ -225,7 +228,7 @@ test('Test getUpdatedDependencies returns correct dependency updates when versio
 
   var npmMock = mockNpm(['0.0.1', '0.1.2', '0.1.3', '0.1.4-alpha9', '0.1.4-alpha10'])
 
-  david.__set__('npm', npmMock)
+  Npm.__set__('npm', npmMock)
 
   var manifest = {
     dependencies: {
@@ -249,7 +252,7 @@ test('Test getDependencies returns correct dependencies when there is no stable 
 
   var npmMock = mockNpm(['0.0.0-alpha1', '0.0.0-alpha2', '0.0.0-alpha3'], 'testDepName', '0.0.0-alpha3')
 
-  david.__set__('npm', npmMock)
+  Npm.__set__('npm', npmMock)
 
   var manifest = {
     dependencies: {
@@ -290,7 +293,7 @@ test('Positive getUpdatedDependencies onlyStable=true tests', function (t) {
       var testDepName = 'testDepName' + i
       var npmMock = mockNpm(data[0], testDepName)
 
-      david.__set__('npm', npmMock)
+      Npm.__set__('npm', npmMock)
 
       var manifest = { dependencies: {} }
 
@@ -344,7 +347,7 @@ test('Negative getUpdatedDependencies onlyStable=true tests', function (t) {
     tests.push(function () {
       var npmMock = mockNpm(data[0], 'testDepName' + i)
 
-      david.__set__('npm', npmMock)
+      Npm.__set__('npm', npmMock)
 
       var manifest = { dependencies: {} }
 
@@ -375,7 +378,7 @@ test('Test getDependencies will consider devDependencies', function (t) {
 
   var npmMock = mockNpm(['0.0.1', '0.0.2', '0.0.3'])
 
-  david.__set__('npm', npmMock)
+  Npm.__set__('npm', npmMock)
 
   var manifest = {
     devDependencies: {
@@ -399,7 +402,7 @@ test('Test getUpdatedDependencies will consider devDependencies', function (t) {
 
   var npmMock = mockNpm(['0.0.1', '0.0.2', '0.0.3'])
 
-  david.__set__('npm', npmMock)
+  Npm.__set__('npm', npmMock)
 
   var manifest = {
     devDependencies: {
@@ -423,7 +426,7 @@ test('Test getDependencies will consider optionalDependencies', function (t) {
 
   var npmMock = mockNpm(['0.0.1', '0.0.2', '0.0.3'])
 
-  david.__set__('npm', npmMock)
+  Npm.__set__('npm', npmMock)
 
   var manifest = {
     optionalDependencies: {
@@ -447,7 +450,7 @@ test('Test getUpdatedDependencies will consider optionalDependencies', function 
 
   var npmMock = mockNpm(['0.0.1', '0.0.2', '0.0.3'])
 
-  david.__set__('npm', npmMock)
+  Npm.__set__('npm', npmMock)
 
   var manifest = {
     optionalDependencies: {
@@ -471,7 +474,7 @@ test('Test getDependencies will consider peerDependencies', function (t) {
 
   var npmMock = mockNpm(['0.0.1', '0.0.2', '0.0.3'])
 
-  david.__set__('npm', npmMock)
+  Npm.__set__('npm', npmMock)
 
   var manifest = {
     peerDependencies: {
@@ -495,7 +498,7 @@ test('Test getUpdatedDependencies will consider peerDependencies', function (t) 
 
   var npmMock = mockNpm(['0.0.1', '0.0.2', '0.0.3'])
 
-  david.__set__('npm', npmMock)
+  Npm.__set__('npm', npmMock)
 
   var manifest = {
     peerDependencies: {
@@ -519,7 +522,7 @@ test('Test support dependencies specified as an array', function (t) {
 
   var npmMock = mockNpm(['0.0.0'])
 
-  david.__set__('npm', npmMock)
+  Npm.__set__('npm', npmMock)
 
   var manifest = {
     dependencies: ['testDepName']
@@ -552,7 +555,7 @@ test('Test `npm view 0 versions` does not throw!', function (t) {
     }
   }
 
-  david.__set__('npm', npmMock)
+  Npm.__set__('npm', npmMock)
 
   var manifest = {dependencies: ['0']}
 
@@ -583,7 +586,7 @@ test('Test error whilst getting dependency status doesn\'t cause remaining proce
     }
   }
 
-  david.__set__('npm', npmMock)
+  Npm.__set__('npm', npmMock)
 
   var manifest = {
     dependencies: {
@@ -621,7 +624,7 @@ test('Return dependency versions when versions option is true', function (t) {
     }
   }
 
-  david.__set__('npm', npmMock)
+  Npm.__set__('npm', npmMock)
 
   var manifest = {
     dependencies: {
@@ -658,7 +661,7 @@ test('Return dependency versions satisfying ranges when rangeVersions option is 
     }
   }
 
-  david.__set__('npm', npmMock)
+  Npm.__set__('npm', npmMock)
 
   var manifest = {
     dependencies: {
