@@ -15,7 +15,7 @@
     "david": "bin/david.js"
   },
   "scripts": {
-    "test": "standard && node bin/david && istanbul cover node_modules/tape/bin/tape test/*.js",
+    "test": "standard && istanbul cover node_modules/tape/bin/tape test/*.js",
     "coveralls": "cat ./coverage/lcov.info | coveralls"
   },
   "license": "MIT",
