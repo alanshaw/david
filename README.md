@@ -8,7 +8,6 @@
 <a href="http://inch-ci.org/github/alanshaw/david"><img src="http://inch-ci.org/github/alanshaw/david.svg?branch=master" alt="Inline docs"></a>
 <a href="https://www.gittip.com/_alanshaw/"><img src="http://img.shields.io/gratipay/_alanshaw.svg?style=flat" alt="Donate to help support David development"></a>
 </p>
-___
 
 Node.js module that tells you when your package npm dependencies are out of date.
 
