@@ -36,12 +36,12 @@
     "xtend": "^4.0.0"
   },
   "devDependencies": {
-    "coveralls": "^2.11.12",
+    "coveralls": "^3.0.1",
     "istanbul": "^0.4.0",
     "jshint": "^2.5.1",
-    "rewire": "^2.1.0",
+    "rewire": "^4.0.1",
     "rimraf": "^2.5.4",
-    "standard": "^10.0.2",
+    "standard": "^11.0.1",
     "tape": "^4.0.0"
   },
   "engines": {
