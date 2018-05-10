@@ -47,6 +47,45 @@ test('Test getDependencies returns an empty object when passed a manifest with n
   })
 })
 
+test('Test getDependencies ignores specified packages', function (t) {
+  t.plan(4)
+
+  var manifest = {
+    dependencies: {
+      testDepName: '~0.0.2',
+      testDepName2: '~0.3.2'
+    }
+  }
+
+  david.getDependencies(manifest, {ignore: ['testDepName']}, function (err, deps) {
+    t.equal(err, undefined)
+    t.ok(deps)
+    t.ok(deps.testDepName2)
+    t.strictEqual(Object.keys(deps).length, 1)
+    t.end()
+  })
+})
+
+test('Test getDependencies ignores specified package glob', function (t) {
+  t.plan(4)
+
+  var manifest = {
+    dependencies: {
+      testDepName: '~0.0.2',
+      testDepName2: '~0.3.2',
+      testOtherName: '~1.0.2'
+    }
+  }
+
+  david.getDependencies(manifest, {ignore: ['testDep*']}, function (err, deps) {
+    t.equal(err, undefined)
+    t.ok(deps)
+    t.ok(deps.testOtherName)
+    t.strictEqual(Object.keys(deps).length, 1)
+    t.end()
+  })
+})
+
 test('Test getUpdatedDependencies returns an empty object when passed a manifest with no dependencies', function (t) {
   t.plan(3)
 
