@@ -165,40 +165,6 @@ To tell david to ignore dependencies, add a `david.ignore` property to your `pac
 }
 ```
 
-
-Release History
----------------
-
-* 2017-01-20   v10.0.0   Update to npm@4
-* 2016-08-26   v9.0.0   CLI add global dependencies up to date message
-* 2016-06-30   v8.0.0   Update dependencies
-* 2015-11-09   v7.0.0   Update to npm@3
-* 2015-10-19   v6.4.0   CLI Add `-i, --ignore` option to ignore dependencies
-* 2015-10-19   v6.3.0   Ignore dependencies from `package.json` config
-* 2015-08-08   v6.2.0   CLI Add `-p, --package` to specify package.json path
-* 2014-12-19   v6.0.0   Warn about unregistered or git dependencies by default
-* 2014-09-22   v5.0.0   Update to semver@4.0.0
-* 2014-09-22   v4.1.0   Add versions option to return all dependency versions
-* 2014-09-21   v4.0.0   Update to npm@2.0.2, add rangeVersions option
-* 2014-06-02   v3.3.0   CLI Add `--warn404` option to print errors but not abort
-* 2014-03-11   v3.1.0   CLI Add `-r, --registry` option to use alternate npm registry
-* 2014-03-06   v3.0.0   Errors occurring whilst retrieving dependency status doesn't halt processing of other dependencies. An error object will be returned as first arg to callback, but status info for remaining dependencies will still be available (as second arg). CLI now uses loose semver version parsing. Also update npm dependency so `david update` uses "^" as per https://github.com/npm/npm/issues/4587
-* 2013-10-27   v2.4.0   Removes `semverext.js`. The `gtr` function is now available in `semver`
-* 2013-10-08   v2.3.0   Support update specific modules from CLI via `david update [module]`
-* 2013-10-01   v2.2.0   Support for `optionalDependencies` and `peerDependencies`
-* 2013-09-16   v2.1.0   Fixed issues with latest/stable version detection
-* 2013-08-25   v2.0.0   Simplification refactor to remove caching and useless events. Code style changes, performance improvements.
-* 2013-08-04   v1.9.0   CLI added `--unstable` flag to view/update to latest _unstable_ dependency versions
-* 2013-07-30   v1.8.0   CLI added `david update` to update dependencies to latest _stable_ versions and save to your project `package.json`
-* 2013-06-27   v1.7.0   Updated to use semver 2 module. Simplified code that determines if a version is greater than a range
-* 2013-03-28   v1.6.0   Use `setImmediate` instead of `process.nextTick`. David now requires Node.js 0.10.x
-* 2013-03-27   v1.5.0   CLI added `--global` flag to find outdated global dependencies
-* 2013-03-15   v1.4.0   Allow set the maximum number of dependencies that can be stored in the cache
-* 2013-03-14   v1.3.0   Added CLI support
-* 2013-03-05   v1.2.0   David can now get dependency information for `devDependencies`
-* 2013-02-07   v1.1.0   Adds `onlyStable` param to `getUpdatedDependencies` to filter by dependencies that are updated and stable
-* 2013-02-06   v1.0.0   Return latest stable version as well as latest version (including patch and build versions). API return values changed. Events changed.
-
 ---
 
 <p align="center">
