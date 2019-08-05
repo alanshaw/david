@@ -1,12 +1,11 @@
 <p align="center"><a href="https://david-dm.org"><img src="https://raw.github.com/alanshaw/david-www/master/david-logo.png" alt="David" height="50" /></a></p>
 <p align="center">
 <a href="https://www.npmjs.com/package/david"><img src="https://img.shields.io/npm/v/david.svg" alt="npm version"></a>
+<a href="http://inch-ci.org/github/alanshaw/david"><img src="http://inch-ci.org/github/alanshaw/david.svg?branch=master" alt="Inline docs"></a>
 <a href="https://travis-ci.org/alanshaw/david"><img src="https://travis-ci.org/alanshaw/david.svg" alt="Build Status"></a>
 <a href="https://coveralls.io/r/alanshaw/david?branch=master"><img src="http://img.shields.io/coveralls/alanshaw/david.svg?style=flat" alt="Coverage Status"></a>
 <a href="https://david-dm.org/alanshaw/david"><img src="https://david-dm.org/alanshaw/david.svg" alt="Dependency Status"></a>
 <a href="https://david-dm.org/alanshaw/david/?type=dev"><img src="https://david-dm.org/alanshaw/david/dev-status.svg" alt="devDependency Status"></a>
-<a href="http://inch-ci.org/github/alanshaw/david"><img src="http://inch-ci.org/github/alanshaw/david.svg?branch=master" alt="Inline docs"></a>
-<a href="https://www.gittip.com/_alanshaw/"><img src="http://img.shields.io/gratipay/_alanshaw.svg?style=flat" alt="Donate to help support David development"></a>
 </p>
 
 Node.js module that tells you when your package npm dependencies are out of date.
