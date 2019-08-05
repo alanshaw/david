@@ -40,7 +40,7 @@ function runDavid (args, fixture, cb) {
 
         cp(fixturePkgPath, tmpPkgPath, function () {
           args = [davidPath].concat(args)
-          var opts = {cwd: path.join(tmpPath, fixture)}
+          var opts = { cwd: path.join(tmpPath, fixture) }
           var proc = childProcess.execFile('node', args, opts, cb)
 
           proc.stdout.pipe(process.stdout)

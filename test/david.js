@@ -557,7 +557,7 @@ test('Test `npm view 0 versions` does not throw!', function (t) {
 
   Npm.__set__('npm', npmMock)
 
-  var manifest = {dependencies: ['0']}
+  var manifest = { dependencies: ['0'] }
 
   t.doesNotThrow(function () {
     david.getDependencies(manifest, function () {})
@@ -577,9 +577,9 @@ test('Test error whilst getting dependency status doesn\'t cause remaining proce
       view: function (args, silent, cb) {
         process.nextTick(function () {
           if (args[0] === 'testDepName') {
-            cb(null, {'0.0.1rc1': {versions: ['0.0.1rc1', '1.0.0'], time: [new Date().toISOString()]}})
+            cb(null, { '0.0.1rc1': { versions: ['0.0.1rc1', '1.0.0'], time: [new Date().toISOString()] } })
           } else {
-            cb(null, {'1.2.3': {versions: ['1.2.3'], time: [new Date().toISOString()]}})
+            cb(null, { '1.2.3': { versions: ['1.2.3'], time: [new Date().toISOString()] } })
           }
         })
       }
@@ -596,7 +596,7 @@ test('Test error whilst getting dependency status doesn\'t cause remaining proce
   }
 
   // Force and error to be returned by david, by specifying dependecy as invalid semver (but valid loose semver)
-  david.getDependencies(manifest, {loose: false}, function (err, deps) {
+  david.getDependencies(manifest, { loose: false }, function (err, deps) {
     t.ok(err) // An error object should have been passed back
     t.ok(deps) // A deps object containing only testDepName2 should have been passed back
     t.ok(!deps.testDepName)
@@ -618,7 +618,7 @@ test('Return dependency versions when versions option is true', function (t) {
     commands: {
       view: function (args, silent, cb) {
         process.nextTick(function () {
-          cb(null, {'1.1.0': {versions: ['0.2.0', '1.0.1', '1.1.0']}})
+          cb(null, { '1.1.0': { versions: ['0.2.0', '1.0.1', '1.1.0'] } })
         })
       }
     }
@@ -632,7 +632,7 @@ test('Return dependency versions when versions option is true', function (t) {
     }
   }
 
-  david.getDependencies(manifest, {loose: true, versions: true}, function (err, deps) {
+  david.getDependencies(manifest, { loose: true, versions: true }, function (err, deps) {
     t.ifError(err)
     t.ok(deps)
     t.ok(deps.testDepName)
@@ -655,7 +655,7 @@ test('Return dependency versions satisfying ranges when rangeVersions option is 
     commands: {
       view: function (args, silent, cb) {
         process.nextTick(function () {
-          cb(null, {'1.1.0': {versions: ['0.2.0', '1.0.1', '1.1.0']}})
+          cb(null, { '1.1.0': { versions: ['0.2.0', '1.0.1', '1.1.0'] } })
         })
       }
     }
@@ -669,7 +669,7 @@ test('Return dependency versions satisfying ranges when rangeVersions option is 
     }
   }
 
-  david.getDependencies(manifest, {loose: true, rangeVersions: true}, function (err, deps) {
+  david.getDependencies(manifest, { loose: true, rangeVersions: true }, function (err, deps) {
     t.ifError(err)
     t.ok(deps)
     t.ok(deps.testDepName)
@@ -715,7 +715,7 @@ test('Test non-string dependency doesn\'t throw', function (t) {
     }
   }
 
-  david.getDependencies(manifest, {error: {EDEPTYPE: true}}, function (err) {
+  david.getDependencies(manifest, { error: { EDEPTYPE: true } }, function (err) {
     t.ok(err, 'Expected error')
     t.equal(err.code, 'EDEPTYPE', 'Expected error code EDEPTYPE')
     t.end()
