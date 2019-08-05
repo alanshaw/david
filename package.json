@@ -25,23 +25,23 @@
     "LICENCE"
   ],
   "dependencies": {
-    "async": "^2.0.1",
+    "async": "^3.1.0",
     "cli-color-tty": "^2.0.0",
     "cli-table": "^0.3.1",
     "exit": "^0.1.2",
     "minimist": "^1.1.0",
-    "npm": "^4.0.3",
-    "semver": "^5.3.0",
+    "npm": "^6.10.2",
+    "semver": "^6.3.0",
     "xtend": "^4.0.0"
   },
   "devDependencies": {
-    "coveralls": "^2.11.12",
-    "istanbul": "^0.4.0",
-    "jshint": "^2.5.1",
-    "rewire": "^2.1.0",
-    "rimraf": "^2.5.4",
-    "standard": "^10.0.2",
-    "tape": "^4.0.0"
+    "coveralls": "^3.0.5",
+    "istanbul": "^0.4.5",
+    "jshint": "^2.10.2",
+    "rewire": "^4.0.1",
+    "rimraf": "^2.6.3",
+    "standard": "^13.1.0",
+    "tape": "^4.11.0"
   },
   "engines": {
     "node": ">=0.10.1"
