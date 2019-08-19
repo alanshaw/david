@@ -40,7 +40,7 @@ function runDavid (args, fixture, cb) {
 
         cp(fixturePkgPath, tmpPkgPath, function () {
           args = [davidPath].concat(args)
-          var opts = {cwd: path.join(tmpPath, fixture)}
+          var opts = { cwd: path.join(tmpPath, fixture) }
           var proc = childProcess.execFile('node', args, opts, cb)
 
           proc.stdout.pipe(process.stdout)
@@ -166,9 +166,9 @@ test('Test print-only output with unregistered dependency in each type', functio
       t.ok(new RegExp(depName, 'm').test(stdout.toString()), depName + ' expected to be outdated')
     })
 
-    t.ok(/Error: Registry returned 404 for GET on https:\/\/registry.npmjs.org\/unregistered--/m.test(stdout.toString()))
-    t.ok(/Error: Registry returned 404 for GET on https:\/\/registry.npmjs.org\/unregistereddev--/m.test(stdout.toString()))
-    t.ok(/Error: Registry returned 404 for GET on https:\/\/registry.npmjs.org\/unregisteredopt--/m.test(stdout.toString()))
+    t.notOk(/Error: Registry returned 404 for GET on https:\/\/registry.npmjs.org\/unregistered--/m.test(stdout.toString()))
+    t.notOk(/Error: Registry returned 404 for GET on https:\/\/registry.npmjs.org\/unregistereddev--/m.test(stdout.toString()))
+    t.notOk(/Error: Registry returned 404 for GET on https:\/\/registry.npmjs.org\/unregisteredopt--/m.test(stdout.toString()))
 
     t.end()
   })
@@ -180,9 +180,9 @@ test('Test default exit response to unregistered dependency', function (t) {
   runDavid([], 'test-unregistered', function (err, stdout) {
     // There are dependencies to be updated, so we expect non zero exit code
     t.ok(err.code, 'Exited with non zero exit code')
-    t.ok(/Error: Registry returned 404 for GET on https:\/\/registry.npmjs.org\/unregistered--/m.test(stdout.toString()))
-    t.ok(/Error: Registry returned 404 for GET on https:\/\/registry.npmjs.org\/unregistereddev--/m.test(stdout.toString()))
-    t.ok(/Error: Registry returned 404 for GET on https:\/\/registry.npmjs.org\/unregisteredopt--/m.test(stdout.toString()))
+    t.notOk(/Error: Registry returned 404 for GET on https:\/\/registry.npmjs.org\/unregistered--/m.test(stdout.toString()))
+    t.notOk(/Error: Registry returned 404 for GET on https:\/\/registry.npmjs.org\/unregistereddev--/m.test(stdout.toString()))
+    t.notOk(/Error: Registry returned 404 for GET on https:\/\/registry.npmjs.org\/unregisteredopt--/m.test(stdout.toString()))
     t.end()
   })
 })
@@ -223,9 +223,9 @@ test('Test update with unregistered dependency in each type', function (t) {
       t.notEqual(pkg.optionalDependencies[depName], updatedPkg.optionalDependencies[depName], depName + ' version expected to have changed')
     })
 
-    t.ok(/Error: Registry returned 404 for GET on https:\/\/registry.npmjs.org\/unregistered--/m.test(stdout.toString()))
-    t.ok(/Error: Registry returned 404 for GET on https:\/\/registry.npmjs.org\/unregistereddev--/m.test(stdout.toString()))
-    t.ok(/Error: Registry returned 404 for GET on https:\/\/registry.npmjs.org\/unregisteredopt--/m.test(stdout.toString()))
+    t.notOk(/Error: Registry returned 404 for GET on https:\/\/registry.npmjs.org\/unregistered--/m.test(stdout.toString()))
+    t.notOk(/Error: Registry returned 404 for GET on https:\/\/registry.npmjs.org\/unregistereddev--/m.test(stdout.toString()))
+    t.notOk(/Error: Registry returned 404 for GET on https:\/\/registry.npmjs.org\/unregisteredopt--/m.test(stdout.toString()))
 
     t.end()
   })
