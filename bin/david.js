@@ -41,9 +41,9 @@ function printWarnings (deps, type) {
   if (!Object.keys(deps).length) return
 
   var warnings = {
-    E404: {title: 'Unregistered', list: []},
-    ESCM: {title: 'SCM', list: []},
-    EDEPTYPE: {title: 'Non-string dependency', list: []}
+    E404: { title: 'Unregistered', list: [] },
+    ESCM: { title: 'SCM', list: [] },
+    EDEPTYPE: { title: 'Non-string dependency', list: [] }
   }
 
   for (var name in deps) {
@@ -59,7 +59,7 @@ function printWarnings (deps, type) {
 
     if (!warnList.length) return
 
-    var table = new Table({head: ['Name', 'Message'], style: {head: ['reset']}})
+    var table = new Table({ head: ['Name', 'Message'], style: { head: ['reset'] } })
 
     console.log(clc.underline(warnings[warnType].title + ' ' + (type ? type + 'D' : 'd') + 'ependencies') + '\n')
     warnList.forEach(function (row) { table.push(row) })
@@ -91,7 +91,7 @@ function printDeps (deps, type) {
       console.log(clc.underline('dependencies'))
     }
 
-    var table = new Table({head: ['Name', 'Package', 'Latest'], style: {head: ['reset']}})
+    var table = new Table({ head: ['Name', 'Package', 'Latest'], style: { head: ['reset'] } })
 
     nonWarnDepNames.forEach(function (name) {
       var dep = deps[name]
@@ -142,16 +142,16 @@ function getUpdatedDeps (pkg, cb) {
   }
 
   if (argv.registry) {
-    opts.npm = {registry: argv.registry}
+    opts.npm = { registry: argv.registry }
   }
 
   david.getUpdatedDependencies(pkg, opts, function (err, deps) {
     if (err) return cb(err)
 
-    david.getUpdatedDependencies(pkg, xtend(opts, {dev: true}), function (err, devDeps) {
+    david.getUpdatedDependencies(pkg, xtend(opts, { dev: true }), function (err, devDeps) {
       if (err) return cb(err)
 
-      david.getUpdatedDependencies(pkg, xtend(opts, {optional: true}), function (err, optionalDeps) {
+      david.getUpdatedDependencies(pkg, xtend(opts, { optional: true }), function (err, optionalDeps) {
         cb(err, filterDeps(deps), filterDeps(devDeps), filterDeps(optionalDeps))
       })
     })
@@ -184,7 +184,7 @@ function installDeps (deps, opts, cb) {
     return !deps[depName].warn
   })
 
-  var npmOpts = {global: opts.global}
+  var npmOpts = { global: opts.global }
 
   // Avoid warning message from npm for invalid registry url
   if (opts.registry) {
@@ -212,7 +212,7 @@ function installDeps (deps, opts, cb) {
 }
 
 if (argv.global || argv.g) {
-  var opts = {global: true}
+  var opts = { global: true }
 
   // Avoid warning message from npm for invalid registry url
   if (argv.registry) {
@@ -296,7 +296,7 @@ if (argv.global || argv.g) {
     }
 
     if (argv.update) {
-      var opts = {save: true, registry: argv.registry, path: pkgDir}
+      var opts = { save: true, registry: argv.registry, path: pkgDir }
 
       installDeps(deps, opts, function (err) {
         if (err) {
@@ -304,13 +304,13 @@ if (argv.global || argv.g) {
           exit(1)
         }
 
-        installDeps(devDeps, xtend(opts, {dev: true}), function (err) {
+        installDeps(devDeps, xtend(opts, { dev: true }), function (err) {
           if (err) {
             console.error('Failed to update/save devDependencies', err)
             exit(1)
           }
 
-          installDeps(optionalDeps, xtend(opts, {optional: true}), function (err) {
+          installDeps(optionalDeps, xtend(opts, { optional: true }), function (err) {
             if (err) {
               console.error('Failed to update/save optionalDependencies', err)
               exit(1)
