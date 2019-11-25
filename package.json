@@ -15,7 +15,7 @@
     "david": "bin/david.js"
   },
   "scripts": {
-    "test": "standard && istanbul cover node_modules/tape/bin/tape test/*.js",
+    "test": "standard && nyc --reporter=lcov --reporter=text tape test/*.js",
     "coveralls": "cat ./coverage/lcov.info | coveralls"
   },
   "license": "MIT",
@@ -30,15 +30,14 @@
     "cli-table": "^0.3.1",
     "exit": "^0.1.2",
     "minimist": "^1.1.0",
-    "multimatch": "^2.1.0",
+    "multimatch": "^4.0.0",
     "npm": "^6.10.2",
     "semver": "^6.3.0",
     "xtend": "^4.0.0"
   },
   "devDependencies": {
     "coveralls": "^3.0.5",
-    "istanbul": "^0.4.5",
-    "jshint": "^2.10.2",
+    "nyc": "^14.1.1",
     "rewire": "^4.0.1",
     "rimraf": "^2.6.3",
     "standard": "^14.3.1",
