@@ -57,7 +57,7 @@ test('Test getDependencies ignores specified packages', function (t) {
     }
   }
 
-  david.getDependencies(manifest, {ignore: ['testDepName']}, function (err, deps) {
+  david.getDependencies(manifest, { ignore: ['testDepName'] }, function (err, deps) {
     t.equal(err, undefined)
     t.ok(deps)
     t.ok(deps.testDepName2)
@@ -77,7 +77,7 @@ test('Test getDependencies ignores specified package glob', function (t) {
     }
   }
 
-  david.getDependencies(manifest, {ignore: ['testDep*']}, function (err, deps) {
+  david.getDependencies(manifest, { ignore: ['testDep*'] }, function (err, deps) {
     t.equal(err, undefined)
     t.ok(deps)
     t.ok(deps.testOtherName)
