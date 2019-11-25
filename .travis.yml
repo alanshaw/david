@@ -8,6 +8,6 @@ git:
 node_js:
   - 10
   - 12
-  - "latest"
+  - "stable"
 after_script:
   - npm run coveralls
