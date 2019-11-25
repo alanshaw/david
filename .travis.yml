@@ -6,8 +6,8 @@ cache:
 git:
   depth: 5
 node_js:
-  - 8
-  - 9
   - 10
+  - 12
+  - "latest"
 after_script:
   - npm run coveralls
