@@ -154,13 +154,13 @@ Use `-p, --package` to specify the path to your package.json.
 
 ### Ignore dependencies
 
-To tell david to ignore dependencies, add a `david.ignore` property to your `package.json` which lists the dependencies david should ignore. If using david programmatically you can also pass this as an option. e.g.
+To tell david to ignore dependencies, add a `david.ignore` property to your `package.json` which lists the dependencies david should ignore. If using david programmatically you can also pass this as an option. Globs are also supported. e.g.
 
 **package.json**
 ```json
 {
   "david": {
-    "ignore": ["async", "underscore"]
+    "ignore": ["async", "underscore", "@types/*"]
   }
 }
 ```

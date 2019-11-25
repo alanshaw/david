@@ -30,6 +30,7 @@
     "cli-table": "^0.3.1",
     "exit": "^0.1.2",
     "minimist": "^1.1.0",
+    "multimatch": "^2.1.0",
     "npm": "^6.10.2",
     "semver": "^6.3.0",
     "xtend": "^4.0.0"
@@ -40,7 +41,7 @@
     "jshint": "^2.10.2",
     "rewire": "^4.0.1",
     "rimraf": "^2.6.3",
-    "standard": "^13.1.0",
+    "standard": "^14.3.1",
     "tape": "^4.11.0"
   },
   "engines": {

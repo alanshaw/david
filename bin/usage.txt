@@ -14,7 +14,7 @@ Options:
   -v, --version    Print version number and exit.
   -r, --registry   The npm registry URL.
                    [default: "https://registry.npmjs.org/"]
-  -i, --ignore     List of dependencies to ignore.
+  -i, --ignore     List of dependency names or globs to ignore.
   --error404       If dependency not found, halt with an error code.
   --errorSCM       If dependency version is a source control URL, halt with an
                    error code.
