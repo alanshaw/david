@@ -28,19 +28,18 @@ const CORGI_DOC = 'application/vnd.npm.install-v1+json; q=1.0, application/json;
 
 /**
  * moduleInfo gets version info for the passed module.
- * @param {Dependencies} deps A dependencies, devDependencies, peerDependencies etc. object as would be found in a package.json.
+ * @param {string} name Module name.
  * @param {object} [options] Options
- * @param {boolean} [options.registry] npm registry URL.
+ * @param {string} [options.registry] npm registry URL.
  * @param {{ loose?: boolean }} [options.semver] Semver options.
  * @param {boolean} [options.ignoreNotFound] Ignore 404 errors.
  * @param {string[]} [options.ignoreModules] List of dependency names or globs to ignore.
- * @return {Promise<Info>}
+ * @return {Promise<{ latest: string, stable: string, versions: string[] }>}
  */
-export function moduleInfo (name, range, options) {
-  range = range || '*'
+function moduleInfo (name, options) {
   options = options || {}
 
-  return inflight(`${name}:${range}`, async () => {
+  return inflight(name, async () => {
     const url = `${options.registry || REGISTRY}/${encodeURIComponent(name)}`
     const res = await fetch(url, { headers: { accept: CORGI_DOC } })
 
@@ -60,7 +59,7 @@ export function moduleInfo (name, range, options) {
     const versions = Object.keys(packument.versions)
     const { latest, stable } = getLatest(distTagsLatest, versions, options)
 
-    return { required: range, latest, stable, versions }
+    return { latest, stable, versions }
   })
 }
 
@@ -68,7 +67,7 @@ export function moduleInfo (name, range, options) {
  * dependenciesInfo gets module info for the passed dependencies object.
  * @param {Dependencies} deps A dependencies, devDependencies, peerDependencies etc. object as would be found in a package.json.
  * @param {object} [options] Options
- * @param {boolean} [options.registry] npm registry URL.
+ * @param {string} [options.registry] npm registry URL.
  * @param {{ loose?: boolean }} [options.semver] Semver options.
  * @param {string[]} [options.ignoreModules] List of dependency names or globs to ignore.
  * @param {boolean} [options.ignoreNotFound] Ignore 404 errors.
@@ -96,7 +95,8 @@ export async function dependenciesInfo (deps, options) {
       })
       .map(async ([n, r]) => {
         try {
-          return [n, await moduleInfo(n, r, options)]
+          const info = await moduleInfo(n, options)
+          return [n, { required: r, ...info }]
         } catch (err) {
           if (options.ignoreNotFound && err.response && err.response.status === 404) {
             return null
@@ -160,11 +160,12 @@ function isStable (version) {
 }
 
 /**
- * Get the latest version and latest stable version.
+ * getLatest get the latest version and latest stable version.
  * @param {string} current The version you get when you `npm install [package]`
  * @param {string[]} versions All versions available
  * @param {object} options Options
  * @param {object} [opts.semver] Semver options
+ * @returns {Promise<{ latest: string, stable: string }>}
  */
 function getLatest (current, versions, options) {
   options = options || {}

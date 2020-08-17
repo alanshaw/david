@@ -2,7 +2,7 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## 12.0.0 - 2020-08-xx
+## 13.0.0 - 2020-08-xx
 
 This release switches the code base to use esmodules and promises and removes the npm dependency in favour of calling the API directly. It has breaking API changes:
 
@@ -14,10 +14,14 @@ This release switches the code base to use esmodules and promises and removes th
     - `errors.EDEPTYPE` and `errors.ESCM` options have merged into `ignoreNonSemverRange`. Any version ranges that are not a semver version or range will be ignored when set to `true`.
     - `ignore` option has been renamed to `ignoreModules`.
 - `getUpdatedDependencies` has been removed, use `dependenciesInfo` and then `isUpdated` to filter out the dependencies that are not updates.
-- A new function `moduleInfo` has been added (and exported) to get the module versions info for a single module. It is used by `dependenciesInfo` for each module.
+
+## 12.0.0 - 2019-12-09
+
+- Fix broken package.lock
 
 ## 11.0.0 - 2017-03-02
 
+- Ignore dependencies via globs
 - Update dependencies
 
 ## 10.0.0 - 2017-01-20

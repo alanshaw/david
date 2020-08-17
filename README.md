@@ -11,7 +11,7 @@
 Node.js module that tells you when your package npm dependencies are out of date.
 
 
-## Getting Started
+## Install
 
 Install [Node.js](http://nodejs.org/).
 
@@ -22,80 +22,42 @@ cd /your/project/directory
 npm install david
 ```
 
-Use:
+## Usage
 
-```javascript
-var david = require('david');
+```js
+import * as david from 'david'
+import fs from 'fs'
 
-// Your package.json
-var manifest = {
-  name: 'xxx',
-  dependencies: {
-    'aaa': '~0.0.0',
-    'bbb': '~0.0.0'
-  },
-  devDependencies: {
-    'yyy': '~0.0.0',
-    'zzz': '~0.0.0'
-  }
-};
+async function main () {
+  const pkg = JSON.parse(fs.readFileSync('package.json'))
 
-david.getDependencies(manifest, function (er, deps) {
-  console.log('latest dependencies information for', manifest.name);
-  listDependencies(deps);
-});
+  const infos = await david.dependenciesInfo(pkg.dependencies)
+  console.log(`\n# Dependencies information for "${pkg.name}":`)
+  Object.entries(infos).forEach(printInfo)
 
-david.getDependencies(manifest, { dev: true }, function (er, deps) {
-  console.log('latest devDependencies information for', manifest.name);
-  listDependencies(deps);
-});
+  console.log('\n# Newer versions:')
+  Object.entries(infos).filter(([_, i]) => david.isUpdated(i)).forEach(printInfo)
 
-david.getUpdatedDependencies(manifest, function (er, deps) {
-  console.log('dependencies with newer versions for', manifest.name);
-  listDependencies(deps);
-});
-
-david.getUpdatedDependencies(manifest, { dev: true }, function (er, deps) {
-  console.log('devDependencies with newer versions for', manifest.name);
-  listDependencies(deps);
-});
-
-david.getUpdatedDependencies(manifest, { stable: true }, function (er, deps) {
-  console.log('dependencies with newer STABLE versions for', manifest.name);
-  listDependencies(deps);
-});
-
-david.getUpdatedDependencies(manifest, { dev: true, stable: true }, function (er, deps) {
-  console.log('devDependencies with newer STABLE versions for', manifest.name);
-  listDependencies(deps);
-});
-
-function listDependencies(deps) {
-  Object.keys(deps).forEach(function(depName) {
-    var required = deps[depName].required || '*';
-    var stable = deps[depName].stable || 'None';
-    var latest = deps[depName].latest;
-    console.log('%s Required: %s Stable: %s Latest: %s', depName, required, stable, latest);
-  });
+  console.log('\n# Newer STABLE versions:')
+  Object.entries(infos).filter(([_, i]) => david.isUpdated(i, { stable: true })).forEach(printInfo)
 }
+
+function printInfo ([name, info]) {
+  const { required, stable, latest } = info
+  console.log(`${name} (Required: ${required} Stable: ${stable || 'None'} Latest: ${latest})`)
+}
+
+main()
 ```
 
-Both `getDependencies` and `getUpdatedDependencies` return an object result,
-whose keys are package names. The values are objects which contain the following properties:
-
-* `required` - The version required according to the manifest
-* `stable` - The latest stable version available
-* `latest` - The latest version available (including build and patch versions)
-
-
-## CLI
+### CLI
 
 If you install David globally with `npm install -g david`, you can run `david`
 in your project directory to see which dependencies are out of date.
 
 You can also run `david --global` to see your outdated global dependencies.
 
-### Update to latest
+#### Update to latest
 
 To update all your project dependencies to the latest **stable** versions,
 and save to your `package.json`, run:
@@ -124,13 +86,13 @@ To update all your project dependencies to the latest versions
 david update --unstable
 ```
 
-### Alternate registry
+#### Alternate registry
 
 ```sh
 david update --registry http://registry.nodejitsu.com/
 ```
 
-### Non-npm and SCM (Git) dependencies
+#### Non-npm and SCM (Git) dependencies
 
 If you have dependencies that are not published to npm, david will print a warning message by default. To throw an error and exit, pass the `error404` option:
 
@@ -148,11 +110,11 @@ david --errorSCM
 
 If using david programmatically, pass `error: {ESCM: true}` in the options object.
 
-### Specify package.json path
+#### Specify package.json path
 
 Use `-p, --package` to specify the path to your package.json.
 
-### Ignore dependencies
+#### Ignore dependencies
 
 To tell david to ignore dependencies, add a `david.ignore` property to your `package.json` which lists the dependencies david should ignore. If using david programmatically you can also pass this as an option. Globs are also supported. e.g.
 
@@ -164,6 +126,17 @@ To tell david to ignore dependencies, add a `david.ignore` property to your `pac
   }
 }
 ```
+
+## API
+
+### `dependenciesInfo(deps: Dependencies): Promise<Infos>`
+
+`dependenciesInfo` returns a promise of a object result, whose keys are package names. The values are objects which contain the following properties:
+
+* `required` - The version required according to the manifest.
+* `stable` - The latest stable version available.
+* `latest` - The latest version available (including build and patch versions).
+* `versions` - All versions of the module.
 
 ---
 
