@@ -111,9 +111,14 @@ export async function dependenciesInfo (deps, options) {
 
 // normaliseDeps converts dependencies specified as an array to an object.
 function normaliseDeps (deps) {
-  return Array.isArray(deps)
-    ? Object.fromEntries(deps.map(n => [n, '*']))
-    : deps || {}
+  if (Array.isArray(deps)) {
+    return Object.fromEntries(deps.map(n => [n, '*']))
+  } else if (Object.prototype.toString.call(deps) === '[object String]') {
+    return { [deps]: '*' }
+  } else if (!(deps instanceof Object)) {
+    return {}
+  }
+  return deps
 }
 
 /**
