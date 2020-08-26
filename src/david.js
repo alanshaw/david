@@ -75,7 +75,7 @@ function moduleInfo (name, options) {
  * @return {Promise<Infos>}
  */
 export async function dependenciesInfo (deps, options) {
-  deps = normaliseDeps(deps)
+  deps = normalizeDependencies(deps)
   options = options || {}
 
   const entries = await Promise.all(
@@ -109,8 +109,8 @@ export async function dependenciesInfo (deps, options) {
   return Object.fromEntries(entries.filter(Boolean))
 }
 
-// normaliseDeps converts dependencies specified as an array to an object.
-function normaliseDeps (deps) {
+// normalizeDependencies converts dependencies specified as an array to an object.
+export function normalizeDependencies (deps) {
   if (Array.isArray(deps)) {
     return Object.fromEntries(deps.map(n => [n, '*']))
   } else if (Object.prototype.toString.call(deps) === '[object String]') {
