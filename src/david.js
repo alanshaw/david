@@ -32,8 +32,6 @@ const CORGI_DOC = 'application/vnd.npm.install-v1+json; q=1.0, application/json;
  * @param {object} [options] Options
  * @param {string} [options.registry] npm registry URL.
  * @param {{ loose?: boolean }} [options.semver] Semver options.
- * @param {boolean} [options.ignoreNotFound] Ignore 404 errors.
- * @param {string[]} [options.ignoreModules] List of dependency names or globs to ignore.
  * @return {Promise<{ latest: string, stable: string, versions: string[] }>}
  */
 function moduleInfo (name, options) {
