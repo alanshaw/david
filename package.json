@@ -1,6 +1,6 @@
 {
   "name": "david",
-  "version": "13.0.0-alpha.2",
+  "version": "13.0.0-beta.0",
   "description": "Node.js module that tells you when your project npm dependencies are out of date.",
   "type": "module",
   "main": "src/david.js",
