@@ -86,7 +86,7 @@ export async function dependenciesInfo (deps, options) {
           if (options.ignoreNonSemverRange) {
             return false
           } else {
-            throw new Error(`non semver version for module ${n}`)
+            throw new Error(`non semver version for module ${n}: ${r}`)
           }
         }
         return true
