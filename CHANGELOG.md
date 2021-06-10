@@ -2,8 +2,26 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## 13.0.0 - 2020-08-xx
+
+This release switches the code base to use esmodules and promises and removes the npm dependency in favour of calling the API directly. It has breaking API changes:
+
+- `getDependencies` has been renamed to `dependenciesInfo`, it now returns a promise and no longer takes a callback. The following changes to the options this function takes have been made:
+    - `versions` option has been removed, dependency versions are always returned
+    - `rangeVersions` option has been removed, simply filter versions by `semver.satisfies(version, range)`
+    - `loose` option should now be passed as `{ semver: { loose: true } }`
+    - `errors.E404` option has changed to `ignoreNotFound` and has the opposite meaning i.e. 404 errors are thrown by default
+    - `errors.EDEPTYPE` and `errors.ESCM` options have merged into `ignoreNonSemverRange`. Any version ranges that are not a semver version or range will be ignored when set to `true`.
+    - `ignore` option has been renamed to `ignoreModules`.
+- `getUpdatedDependencies` has been removed, use `dependenciesInfo` and then `isUpdated` to filter out the dependencies that are not updates.
+
+## 12.0.0 - 2019-12-09
+
+- Fix broken package.lock
+
 ## 11.0.0 - 2017-03-02
 
+- Ignore dependencies via globs
 - Update dependencies
 
 ## 10.0.0 - 2017-01-20
