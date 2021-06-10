@@ -15,7 +15,7 @@ function mockNpm (versions, depName, latestTag) {
   versions.forEach(function (value, index) { time[value] = new Date(index).toISOString() })
   latestTag = latestTag || versions[versions.length - 1]
   versions.sort(function (a, b) { return semver.compare(a, b) })
-  npmData[latestTag] = { versions: versions, time: time }
+  npmData[latestTag] = { versions, time }
 
   // Mock out NPM
   return {
